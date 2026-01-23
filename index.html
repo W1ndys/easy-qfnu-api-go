@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>曲奇教务 - API测试台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body class="bg-slate-100 min-h-screen py-10">
+
+    <div id="app" class="max-w-3xl mx-auto px-4">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-slate-800">🍪 曲奇教务 API 聚合测试</h1>
+            <p class="text-slate-500 mt-2">Go + Gin + Resty + Goquery</p>
+        </header>
+
+        <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+            <label class="block text-sm font-medium text-slate-700 mb-2">
+                教务系统 Cookie (JSESSIONID)
+            </label>
+            <textarea v-model="cookieStr" rows="3"
+                class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition font-mono text-sm"
+                placeholder="粘贴你的 Cookie，例如: JSESSIONID=abc123456..."></textarea>
+
+            <div class="mt-4 flex justify-end">
+                <button @click="fetchGrades" :disabled="loading"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition flex items-center disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span v-if="loading" class="mr-2">
+                        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                            </circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
+                    </span>
+                    {{ loading ? '查询中...' : '获取成绩 JSON' }}
+                </button>
+            </div>
+        </div>
+
+        <div v-if="result" class="bg-slate-800 rounded-xl shadow-lg p-6 text-slate-200 overflow-hidden">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-600 pb-2">
+                <span class="font-mono text-green-400">Response Status: 200 OK</span>
+                <span class="text-xs text-slate-400">共 {{ result.data?.count || 0 }} 条记录</span>
+            </div>
+            <div class="overflow-x-auto max-h-[600px]">
+                <pre class="font-mono text-xs leading-5">{{ formattedJson }}</pre>
+            </div>
+        </div>
+
+        <div v-if="errorMsg" class="bg-red-50 text-red-600 p-4 rounded-lg border border-red-200 mt-4">
+            ❌ {{ errorMsg }}
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref, computed } = Vue;
+
+        createApp({
+            setup() {
+                const cookieStr = ref('');
+                const result = ref(null);
+                const loading = ref(false);
+                const errorMsg = ref('');
+
+                // 格式化 JSON 以便展示
+                const formattedJson = computed(() => {
+                    if (!result.value) return '';
+                    return JSON.stringify(result.value, null, 2);
+                });
+
+                const fetchGrades = async () => {
+                    if (!cookieStr.value) {
+                        alert('请先填写 Cookie');
+                        return;
+                    }
+
+                    loading.value = true;
+                    errorMsg.value = '';
+                    result.value = null;
+
+                    try {
+                        // 重点：Cookie 放在 Header 中发送，而不是 URL
+                        const response = await fetch('http://localhost:8080/api/grades', {
+                            method: 'GET',
+                            headers: {
+                                'X-Token': cookieStr.value.trim() // 去除首尾空格
+                            }
+                        });
+
+                        const data = await response.json();
+
+                        if (!response.ok) {
+                            throw new Error(data.msg || '请求失败');
+                        }
+
+                        result.value = data;
+                    } catch (e) {
+                        errorMsg.value = e.message;
+                    } finally {
+                        loading.value = false;
+                    }
+                };
+
+                return {
+                    cookieStr,
+                    result,
+                    loading,
+                    errorMsg,
+                    formattedJson,
+                    fetchGrades
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+
+</html>

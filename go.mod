@@ -1,4 +1,4 @@
-module W1ndys/qfnu-api-go
+module github.com/W1ndys/qfnu-api-go
 
 go 1.25.1
 

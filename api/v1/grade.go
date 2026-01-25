@@ -3,6 +3,7 @@ package v1
 import (
 	"net/http"
 
+	"github.com/W1ndys/qfnu-api-go/common/response"
 	"github.com/W1ndys/qfnu-api-go/model"
 	"github.com/W1ndys/qfnu-api-go/service"
 	"github.com/gin-gonic/gin"
@@ -28,14 +29,11 @@ func GetGradeList(c *gin.Context) {
 	data, err := service.FetchGrades(token, req.Term, req.CourseType, req.CourseName, req.DisplayType)
 	// 处理业务结果
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		response.Fail(c, err.Error())
 		return
 	}
 
 	// 返回 JSON
-	c.JSON(http.StatusOK, gin.H{
-		"code": 0,
-		"msg":  "success",
-		"data": data,
-	})
+	response.Success(c, data)
+
 }

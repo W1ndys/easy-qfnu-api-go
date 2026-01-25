@@ -97,3 +97,30 @@ func GetCourseTypeID(input string) string {
 	// 如果不在映射表中，假设已经是ID，直接返回，不做额外限制，防止后续教务系统更新新增类型而本系统未更新
 	return input
 }
+
+// GradeStat 统计信息（加权平均绩点和总学分）
+type GradeStat struct {
+	WeightedGPA  float64 `json:"weighted_gpa"`  // 加权平均绩点
+	TotalCredits float64 `json:"total_credits"` // 总学分
+	CourseCount  int     `json:"course_count"`  // 课程数量
+}
+
+// SemesterStat 学期统计
+type SemesterStat struct {
+	Semester string    `json:"semester"` // 学期名称，如 "2023-2024-1"
+	Stat     GradeStat `json:"stat"`     // 统计数据
+}
+
+// YearStat 学年统计
+type YearStat struct {
+	Year string    `json:"year"` // 学年名称，如 "2023-2024"
+	Stat GradeStat `json:"stat"` // 统计数据
+}
+
+// GradeResponse 成绩查询响应结构
+type GradeResponse struct {
+	Grades        []Grade        `json:"grades"`         // 成绩列表
+	TotalStat     GradeStat      `json:"total_stat"`     // 总体统计
+	YearStats     []YearStat     `json:"year_stats"`     // 按学年统计
+	SemesterStats []SemesterStat `json:"semester_stats"` // 按学期统计
+}

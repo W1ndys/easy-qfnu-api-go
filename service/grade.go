@@ -3,6 +3,8 @@ package service
 import (
 	"bytes"
 	"fmt"
+	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -10,9 +12,8 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
-// FetchGrades 抓取并解析成绩
-// 返回值：([]model.Grade, error) -> Go 函数支持多返回值
-func FetchGrades(cookie string, term string, courseType string, courseName string, displayType string) ([]model.Grade, error) {
+// FetchGrades 抓取并解析成绩，返回包含统计信息的响应
+func FetchGrades(cookie string, term string, courseType string, courseName string, displayType string) (*model.GradeResponse, error) {
 
 	// 课程类型：支持中文名称或ID，统一转换为ID
 	courseType = model.GetCourseTypeID(courseType)
@@ -41,13 +42,119 @@ func FetchGrades(cookie string, term string, courseType string, courseName strin
 		return nil, err
 	}
 
-	// 语法点 3: 错误处理习惯
+	// 错误处理习惯
 	if err != nil {
 		return nil, err // 遇到错误立刻返回
 	}
 
-	// 3. 解析 HTML (调用内部私有函数)
-	return parseHtml(resp.Body())
+	// 解析 HTML (调用内部私有函数)
+	grades, err := parseHtml(resp.Body())
+	if err != nil {
+		return nil, err
+	}
+
+	// 计算统计信息
+	response := calculateStats(grades)
+	return response, nil
+}
+
+// calculateStats 计算成绩统计信息
+func calculateStats(grades []model.Grade) *model.GradeResponse {
+	response := &model.GradeResponse{
+		Grades:        grades,
+		YearStats:     []model.YearStat{},
+		SemesterStats: []model.SemesterStat{},
+	}
+
+	// 按学期分组
+	semesterMap := make(map[string][]model.Grade)
+	// 按学年分组
+	yearMap := make(map[string][]model.Grade)
+
+	for _, g := range grades {
+		semester := g.Semester
+		semesterMap[semester] = append(semesterMap[semester], g)
+
+		// 提取学年 (如 "2023-2024-1" -> "2023-2024")
+		parts := strings.Split(semester, "-")
+		if len(parts) >= 2 {
+			year := parts[0] + "-" + parts[1]
+			yearMap[year] = append(yearMap[year], g)
+		}
+	}
+
+	// 计算每学期统计
+	var semesters []string
+	for s := range semesterMap {
+		semesters = append(semesters, s)
+	}
+	sort.Sort(sort.Reverse(sort.StringSlice(semesters))) // 按学期倒序
+
+	for _, semester := range semesters {
+		stat := calculateGradeStat(semesterMap[semester])
+		response.SemesterStats = append(response.SemesterStats, model.SemesterStat{
+			Semester: semester,
+			Stat:     stat,
+		})
+	}
+
+	// 计算每学年统计
+	var years []string
+	for y := range yearMap {
+		years = append(years, y)
+	}
+	sort.Sort(sort.Reverse(sort.StringSlice(years))) // 按学年倒序
+
+	for _, year := range years {
+		stat := calculateGradeStat(yearMap[year])
+		response.YearStats = append(response.YearStats, model.YearStat{
+			Year: year,
+			Stat: stat,
+		})
+	}
+
+	// 计算总体统计
+	response.TotalStat = calculateGradeStat(grades)
+
+	return response
+}
+
+// calculateGradeStat 计算一组成绩的加权平均绩点和总学分
+func calculateGradeStat(grades []model.Grade) model.GradeStat {
+	var totalCredits float64
+	var weightedSum float64
+	var validCourseCount int
+
+	for _, g := range grades {
+		credit, err := strconv.ParseFloat(g.Credit, 64)
+		if err != nil || credit <= 0 {
+			continue
+		}
+		totalCredits += credit
+
+		gpa, err := strconv.ParseFloat(g.GPA, 64)
+		if err != nil || gpa < 0 {
+			continue
+		}
+		weightedSum += gpa * credit
+		validCourseCount++
+	}
+
+	var weightedGPA float64
+	if totalCredits > 0 {
+		weightedGPA = weightedSum / totalCredits
+	}
+
+	return model.GradeStat{
+		WeightedGPA:  round2(weightedGPA),
+		TotalCredits: round2(totalCredits),
+		CourseCount:  len(grades),
+	}
+}
+
+// round2 保留两位小数
+func round2(f float64) float64 {
+	return float64(int(f*100+0.5)) / 100
 }
 
 // parseHtml 是私有函数(小写p)，只在这个文件内部使用，外部不需要知道解析细节

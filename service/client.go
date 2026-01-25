@@ -12,11 +12,11 @@ import (
 var ErrCookieExpired = errors.New("cookie_expired_or_invalid")
 
 // NewJwcClient 创建一个配置好“自动检查机制”的 Resty 客户端
-func NewJwcClient(token string) *resty.Client {
+func NewJwcClient(Authorization string) *resty.Client {
 	client := resty.New()
 
 	// 1. 统一设置 Header (避免在每个请求里重复写)
-	client.SetHeader("Cookie", token)
+	client.SetHeader("Cookie", Authorization)
 	client.SetHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
 	client.SetHeader("Content-Type", "application/x-www-form-urlencoded")
 

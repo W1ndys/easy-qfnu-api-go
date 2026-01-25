@@ -5,7 +5,7 @@ const (
 	CodeSuccess      = 0    // 成功
 	CodeServerBusy   = 1    // 系统繁忙/通用错误
 	CodeInvalidParam = 1001 // 参数错误
-	CodeAuthExpired  = 401  // Token 过期
+	CodeAuthExpired  = 401  // Authorization 过期
 	CodeTargetError  = 502  // 教务系统挂了
 )
 

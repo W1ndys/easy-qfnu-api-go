@@ -38,7 +38,7 @@ func main() {
 	apiGroup.Use(middleware.AuthRequired())
 
 	{
-		// 这里的 Handler 不需要再写检查 Token 的代码了
+		// 这里的 Handler 不需要再写检查 Authorization 的代码了
 		apiGroup.GET("/grades", v1.GetGradeList)
 		// 以后加的新接口也不用写：
 		// apiGroup.GET("/schedule", v1.GetSchedule)

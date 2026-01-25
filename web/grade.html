@@ -4,33 +4,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>曲奇API测试台</title>
+    <title>成绩查询 - 曲奇API</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
 </head>
 
-<body class="bg-slate-100 min-h-screen py-10">
+<body class="bg-gradient-to-br from-slate-100 to-slate-200 min-h-screen py-8">
 
-    <div id="app" class="max-w-3xl mx-auto px-4">
+    <div id="app" v-cloak class="max-w-4xl mx-auto px-4">
+        <!-- 标题 -->
         <header class="mb-8 text-center">
-            <h1 class="text-3xl font-bold text-slate-800">🍪曲奇 API 聚合测试</h1>
-            <p class="text-slate-500 mt-2">Go + Gin + Resty + Goquery</p>
+            <h1 class="text-3xl font-bold text-slate-800">成绩查询</h1>
+            <p class="text-slate-500 mt-2">QFNU API</p>
         </header>
 
-        <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+        <!-- Cookie 输入区 -->
+        <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
             <label class="block text-sm font-medium text-slate-700 mb-2">
-                教务系统 Cookie (JSESSIONID)
+                教务系统 Cookie
             </label>
-            <textarea v-model="cookieStr" rows="3"
-                class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition font-mono text-sm"
-                placeholder="粘贴你的 Cookie，例如: JSESSIONID=abc123456..."></textarea>
+            <textarea v-model="cookieStr" rows="2"
+                class="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition font-mono text-sm bg-slate-50"
+                placeholder="粘贴 Cookie，例如: JSESSIONID=abc123..."></textarea>
+        </div>
 
-            <div class="mt-4 flex justify-end">
+        <!-- 筛选条件区 -->
+        <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-slate-700 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
+                        </path>
+                    </svg>
+                    筛选条件
+                </h2>
+                <button @click="showFilters = !showFilters" class="text-slate-400 hover:text-slate-600 transition">
+                    <svg :class="{'rotate-180': showFilters}" class="w-5 h-5 transition-transform" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <div v-show="showFilters" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- 学期选择 -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">学期</label>
+                    <select v-model="filters.term"
+                        class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition bg-slate-50">
+                        <option value="">全部学期</option>
+                        <option v-for="t in termOptions" :key="t.value" :value="t.value">{{ t.label }}</option>
+                    </select>
+                </div>
+
+                <!-- 课程性质 -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">课程性质</label>
+                    <select v-model="filters.courseType"
+                        class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition bg-slate-50">
+                        <option value="">全部类型</option>
+                        <option v-for="ct in courseTypeOptions" :key="ct.value" :value="ct.value">{{ ct.label }}
+                        </option>
+                    </select>
+                </div>
+
+                <!-- 课程名称 -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">课程名称</label>
+                    <input v-model="filters.courseName" type="text"
+                        class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition bg-slate-50"
+                        placeholder="输入课程名称关键词">
+                </div>
+
+                <!-- 显示方式 -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">显示方式</label>
+                    <select v-model="filters.displayType"
+                        class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition bg-slate-50">
+                        <option value="all">显示全部成绩</option>
+                        <option value="max">显示最好成绩</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 操作按钮 -->
+            <div class="mt-6 flex justify-between items-center">
+                <button @click="resetFilters"
+                    class="text-slate-500 hover:text-slate-700 text-sm flex items-center transition">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                        </path>
+                    </svg>
+                    重置
+                </button>
                 <button @click="fetchGrades" :disabled="loading"
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition flex items-center disabled:opacity-50 disabled:cursor-not-allowed">
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2.5 rounded-xl font-medium transition flex items-center disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-500/30">
                     <span v-if="loading" class="mr-2">
-                        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 24 24">
+                        <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
                             </circle>
                             <path class="opacity-75" fill="currentColor"
@@ -38,28 +115,146 @@
                             </path>
                         </svg>
                     </span>
-                    {{ loading ? '查询中...' : '获取成绩 JSON' }}
+                    <svg v-else class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    {{ loading ? '查询中...' : '查询成绩' }}
                 </button>
             </div>
         </div>
 
-        <div v-if="result" class="bg-slate-800 rounded-xl shadow-lg p-6 text-slate-200 overflow-hidden">
-            <div class="flex justify-between items-center mb-4 border-b border-slate-600 pb-2">
-                <span class="font-mono text-green-400">Response Status: 200 OK</span>
-                <span class="text-xs text-slate-400">共 {{ result.data?.count || 0 }} 条记录</span>
-            </div>
-            <div class="overflow-x-auto max-h-[600px]">
-                <pre class="font-mono text-xs leading-5">{{ formattedJson }}</pre>
+        <!-- 统计信息 -->
+        <div v-if="grades.length > 0" class="bg-white rounded-2xl shadow-sm p-6 mb-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="text-center p-4 bg-blue-50 rounded-xl">
+                    <div class="text-2xl font-bold text-blue-600">{{ grades.length }}</div>
+                    <div class="text-sm text-slate-500 mt-1">课程总数</div>
+                </div>
+                <div class="text-center p-4 bg-green-50 rounded-xl">
+                    <div class="text-2xl font-bold text-green-600">{{ totalCredits }}</div>
+                    <div class="text-sm text-slate-500 mt-1">总学分</div>
+                </div>
+                <div class="text-center p-4 bg-purple-50 rounded-xl">
+                    <div class="text-2xl font-bold text-purple-600">{{ avgGPA }}</div>
+                    <div class="text-sm text-slate-500 mt-1">平均绩点</div>
+                </div>
+                <div class="text-center p-4 bg-orange-50 rounded-xl">
+                    <div class="text-2xl font-bold text-orange-600">{{ passRate }}%</div>
+                    <div class="text-sm text-slate-500 mt-1">通过率</div>
+                </div>
             </div>
         </div>
 
-        <div v-if="errorMsg" class="bg-red-50 text-red-600 p-4 rounded-lg border border-red-200 mt-4">
-            ❌ {{ errorMsg }}
+        <!-- 成绩卡片列表 -->
+        <div v-if="grades.length > 0" class="space-y-4">
+            <!-- 操作栏 -->
+            <div class="flex justify-between items-center">
+                <h2 class="text-lg font-semibold text-slate-700">成绩列表</h2>
+                <button @click="showRawJson = true"
+                    class="text-sm text-slate-500 hover:text-blue-600 flex items-center transition">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                    </svg>
+                    查看原始数据
+                </button>
+            </div>
+
+            <!-- 卡片网格 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div v-for="(grade, index) in grades" :key="index"
+                    class="bg-white rounded-2xl shadow-sm p-5 hover:shadow-md transition-shadow border border-slate-100">
+                    <!-- 卡片头部 -->
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex-1 pr-4">
+                            <h3 class="font-semibold text-slate-800 leading-tight">{{ grade.course_name }}</h3>
+                            <p class="text-xs text-slate-400 mt-1">{{ grade.course_code }}</p>
+                        </div>
+                        <div :class="getScoreClass(grade.score)" class="text-2xl font-bold min-w-[60px] text-right">
+                            {{ grade.score || '--' }}
+                        </div>
+                    </div>
+
+                    <!-- 卡片内容 -->
+                    <div class="grid grid-cols-3 gap-3 text-sm">
+                        <div class="bg-slate-50 rounded-lg p-2 text-center">
+                            <div class="text-slate-400 text-xs">学分</div>
+                            <div class="font-medium text-slate-700">{{ grade.credit }}</div>
+                        </div>
+                        <div class="bg-slate-50 rounded-lg p-2 text-center">
+                            <div class="text-slate-400 text-xs">绩点</div>
+                            <div class="font-medium text-slate-700">{{ grade.gpa || '--' }}</div>
+                        </div>
+                        <div class="bg-slate-50 rounded-lg p-2 text-center">
+                            <div class="text-slate-400 text-xs">考试类型</div>
+                            <div class="font-medium text-slate-700">{{ grade.exam_type || '--' }}</div>
+                        </div>
+                    </div>
+
+                    <!-- 卡片底部 -->
+                    <div
+                        class="flex justify-between items-center mt-3 pt-3 border-t border-slate-100 text-xs text-slate-400">
+                        <span>{{ grade.semester }}</span>
+                        <span class="px-2 py-1 bg-slate-100 rounded-full">{{ grade.course_prop }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 空状态 -->
+        <div v-if="result && grades.length === 0" class="bg-white rounded-2xl shadow-sm p-12 text-center">
+            <svg class="w-16 h-16 mx-auto text-slate-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                </path>
+            </svg>
+            <p class="text-slate-500">暂无成绩数据</p>
+        </div>
+
+        <!-- 错误提示 -->
+        <div v-if="errorMsg" class="bg-red-50 text-red-600 p-4 rounded-2xl border border-red-100 mt-6 flex items-start">
+            <svg class="w-5 h-5 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                    clip-rule="evenodd"></path>
+            </svg>
+            <span>{{ errorMsg }}</span>
+        </div>
+
+        <!-- 原始 JSON 弹窗 -->
+        <div v-if="showRawJson" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+            @click.self="showRawJson = false">
+            <div class="bg-slate-900 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[80vh] flex flex-col">
+                <div class="flex justify-between items-center p-4 border-b border-slate-700">
+                    <span class="font-mono text-green-400 text-sm">原始 JSON 响应</span>
+                    <button @click="showRawJson = false" class="text-slate-400 hover:text-white transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="p-4 overflow-auto flex-1">
+                    <pre class="font-mono text-xs text-slate-300 leading-relaxed">{{ formattedJson }}</pre>
+                </div>
+                <div class="p-4 border-t border-slate-700 flex justify-end">
+                    <button @click="copyJson"
+                        class="text-sm text-slate-400 hover:text-white flex items-center transition">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                        复制 JSON
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        const { createApp, ref, computed } = Vue;
+        const { createApp, ref, reactive, computed } = Vue;
 
         createApp({
             setup() {
@@ -67,16 +262,113 @@
                 const result = ref(null);
                 const loading = ref(false);
                 const errorMsg = ref('');
+                const showRawJson = ref(false);
+                const showFilters = ref(true);
 
-                // 格式化 JSON 以便展示
+                // 筛选条件
+                const filters = reactive({
+                    term: '',
+                    courseType: '',
+                    courseName: '',
+                    displayType: 'all'
+                });
+
+                // 学期选项
+                const termOptions = generateTermOptions();
+
+                // 课程性质选项
+                const courseTypeOptions = [
+                    { value: '01', label: '公共课' },
+                    { value: '02', label: '公共基础课' },
+                    { value: '03', label: '专业基础课' },
+                    { value: '04', label: '专业课' },
+                    { value: '05', label: '专业选修课' },
+                    { value: '06', label: '公共选修课' },
+                    { value: '07', label: '专业任选课' },
+                    { value: '08', label: '实践教学环节' },
+                    { value: '09', label: '公共任选课' },
+                    { value: '10', label: '教师教育基础课程（必修）' },
+                    { value: '11', label: '专业必修课' },
+                    { value: '12', label: '学科基础必修课' },
+                    { value: '13', label: '专业方向限选课' },
+                    { value: '14', label: '考试报名虚拟课程' },
+                    { value: '15', label: '教师教育选修课程' },
+                    { value: '16', label: '公共必修课' }
+                ];
+
+                function generateTermOptions() {
+                    const options = [];
+                    const currentYear = new Date().getFullYear();
+                    for (let year = currentYear + 1; year >= 2020; year--) {
+                        options.push({ value: `${year - 1}-${year}-3`, label: `${year - 1}-${year}-3` });
+                        options.push({ value: `${year - 1}-${year}-2`, label: `${year - 1}-${year}-2` });
+                        options.push({ value: `${year - 1}-${year}-1`, label: `${year - 1}-${year}-1` });
+                    }
+                    return options;
+                }
+
+                // 成绩列表
+                // 后端返回: { code: 0, msg: "success", data: [...] }
+                const grades = computed(() => result.value?.data || []);
+
+                // 格式化 JSON
                 const formattedJson = computed(() => {
                     if (!result.value) return '';
                     return JSON.stringify(result.value, null, 2);
                 });
 
+                // 统计：总学分
+                const totalCredits = computed(() => {
+                    return grades.value.reduce((sum, g) => sum + (parseFloat(g.credit) || 0), 0).toFixed(1);
+                });
+
+                // 统计：平均绩点
+                const avgGPA = computed(() => {
+                    const validGrades = grades.value.filter(g => g.gpa && parseFloat(g.gpa) > 0);
+                    if (validGrades.length === 0) return '--';
+                    const total = validGrades.reduce((sum, g) => sum + parseFloat(g.gpa), 0);
+                    return (total / validGrades.length).toFixed(2);
+                });
+
+                // 统计：通过率
+                const passRate = computed(() => {
+                    if (grades.value.length === 0) return 0;
+                    const passed = grades.value.filter(g => {
+                        const score = parseFloat(g.score);
+                        if (!isNaN(score)) return score >= 60;
+                        return ['优', '良', '中', '及格', '不及格'].some(s => g.score?.includes(s));
+                    }).length;
+                    return Math.round((passed / grades.value.length) * 100);
+                });
+
+                // 根据成绩返回颜色类
+                const getScoreClass = (score) => {
+                    const num = parseFloat(score);
+                    if (isNaN(num)) {
+                        if (['优', '良'].some(s => score?.includes(s))) return 'text-green-500';
+                        if (['中', '及格'].some(s => score?.includes(s))) return 'text-blue-500';
+                        if (['不及格'].some(s => score?.includes(s))) return 'text-red-500';
+                        return 'text-slate-600';
+                    }
+                    if (num >= 90) return 'text-green-500';
+                    if (num >= 80) return 'text-blue-500';
+                    if (num >= 70) return 'text-cyan-500';
+                    if (num >= 60) return 'text-yellow-500';
+                    return 'text-red-500';
+                };
+
+                // 重置筛选条件
+                const resetFilters = () => {
+                    filters.term = '';
+                    filters.courseType = '';
+                    filters.courseName = '';
+                    filters.displayType = 'all';
+                };
+
+                // 查询成绩
                 const fetchGrades = async () => {
                     if (!cookieStr.value) {
-                        alert('请先填写 Cookie');
+                        errorMsg.value = '请先填写 Cookie';
                         return;
                     }
 
@@ -85,18 +377,26 @@
                     result.value = null;
 
                     try {
-                        // 重点：Cookie 放在 Header 中发送，而不是 URL
-                        const response = await fetch('http://localhost:8080/api/grades', {
+                        const params = new URLSearchParams();
+                        if (filters.term) params.append('term', filters.term);
+                        if (filters.courseType) params.append('course_type', filters.courseType);
+                        if (filters.courseName) params.append('course_name', filters.courseName);
+                        if (filters.displayType) params.append('display_type', filters.displayType);
+
+                        const queryString = params.toString();
+                        // 使用当前页面的主机名，适配内网访问（前后端需部署在同一机器）
+                        const apiHost = window.location.hostname;
+                        const url = `http://${apiHost}:8080/api/grades${queryString ? '?' + queryString : ''}`;
+
+                        const response = await fetch(url, {
                             method: 'GET',
-                            headers: {
-                                'X-Token': cookieStr.value.trim() // 去除首尾空格
-                            }
+                            headers: { 'X-Token': cookieStr.value.trim() }
                         });
 
                         const data = await response.json();
 
                         if (!response.ok) {
-                            throw new Error(data.msg || '请求失败，响应状态码：' + response.status + '，响应内容：' + JSON.stringify(data));
+                            throw new Error(data.error || data.msg || '请求失败');
                         }
 
                         result.value = data;
@@ -107,13 +407,21 @@
                     }
                 };
 
+                // 复制 JSON
+                const copyJson = async () => {
+                    try {
+                        await navigator.clipboard.writeText(formattedJson.value);
+                        alert('已复制到剪贴板');
+                    } catch {
+                        alert('复制失败');
+                    }
+                };
+
                 return {
-                    cookieStr,
-                    result,
-                    loading,
-                    errorMsg,
-                    formattedJson,
-                    fetchGrades
+                    cookieStr, result, loading, errorMsg, showRawJson, showFilters,
+                    filters, termOptions, courseTypeOptions, grades,
+                    formattedJson, totalCredits, avgGPA, passRate,
+                    getScoreClass, resetFilters, fetchGrades, copyJson
                 };
             }
         }).mount('#app');

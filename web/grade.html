@@ -11,6 +11,44 @@
         [v-cloak] {
             display: none;
         }
+
+        /* Cookie 隐私保护 - 亚克力模糊效果 */
+        .cookie-blur {
+            filter: blur(6px);
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+
+        .cookie-blur:hover,
+        .cookie-blur:focus {
+            filter: blur(0);
+            opacity: 1;
+        }
+
+        .cookie-container {
+            position: relative;
+        }
+
+        .cookie-container::after {
+            content: '悬停或点击以查看';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #64748b;
+            font-size: 12px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .cookie-container.is-blurred::after {
+            opacity: 1;
+        }
+
+        .cookie-container.is-blurred:hover::after {
+            opacity: 0;
+        }
     </style>
 </head>
 
@@ -28,9 +66,14 @@
             <label class="block text-sm font-medium text-slate-700 mb-2">
                 教务系统 Cookie
             </label>
-            <textarea v-model="cookieStr" rows="2"
-                class="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition font-mono text-sm bg-slate-50"
-                placeholder="粘贴 Cookie，例如: JSESSIONID=abc123..."></textarea>
+            <div class="cookie-container" :class="{'is-blurred': cookieBlurred && cookieStr}">
+                <textarea v-model="cookieStr" rows="2"
+                    :class="{'cookie-blur': cookieBlurred && cookieStr}"
+                    @focus="cookieBlurred = false"
+                    @blur="cookieBlurred = true"
+                    class="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition font-mono text-sm bg-slate-50"
+                    placeholder="粘贴 Cookie，例如: JSESSIONID=abc123..."></textarea>
+            </div>
         </div>
 
         <!-- 筛选条件区 -->
@@ -126,23 +169,129 @@
 
         <!-- 统计信息 -->
         <div v-if="grades.length > 0" class="bg-white rounded-2xl shadow-sm p-6 mb-6">
+            <h2 class="text-lg font-semibold text-slate-700 mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                    </path>
+                </svg>
+                总体统计（加权）
+            </h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="text-center p-4 bg-blue-50 rounded-xl">
-                    <div class="text-2xl font-bold text-blue-600">{{ grades.length }}</div>
+                    <div class="text-2xl font-bold text-blue-600">{{ totalStat.course_count }}</div>
                     <div class="text-sm text-slate-500 mt-1">课程总数</div>
                 </div>
                 <div class="text-center p-4 bg-green-50 rounded-xl">
-                    <div class="text-2xl font-bold text-green-600">{{ totalCredits }}</div>
+                    <div class="text-2xl font-bold text-green-600">{{ totalStat.total_credits }}</div>
                     <div class="text-sm text-slate-500 mt-1">总学分</div>
                 </div>
                 <div class="text-center p-4 bg-purple-50 rounded-xl">
-                    <div class="text-2xl font-bold text-purple-600">{{ avgGPA }}</div>
-                    <div class="text-sm text-slate-500 mt-1">平均绩点</div>
+                    <div class="text-2xl font-bold text-purple-600">{{ totalStat.weighted_gpa }}</div>
+                    <div class="text-sm text-slate-500 mt-1">加权平均绩点</div>
                 </div>
                 <div class="text-center p-4 bg-orange-50 rounded-xl">
                     <div class="text-2xl font-bold text-orange-600">{{ passRate }}%</div>
                     <div class="text-sm text-slate-500 mt-1">通过率</div>
                 </div>
+            </div>
+        </div>
+
+        <!-- 学年/学期统计 -->
+        <div v-if="yearStats.length > 0" class="bg-white rounded-2xl shadow-sm p-6 mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-slate-700 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                        </path>
+                    </svg>
+                    分段统计
+                </h2>
+                <div class="flex space-x-2">
+                    <button @click="statView = 'year'" :class="statView === 'year' ? 'bg-cyan-500 text-white' : 'bg-slate-100 text-slate-600'"
+                        class="px-3 py-1 rounded-lg text-sm transition">学年</button>
+                    <button @click="statView = 'semester'" :class="statView === 'semester' ? 'bg-cyan-500 text-white' : 'bg-slate-100 text-slate-600'"
+                        class="px-3 py-1 rounded-lg text-sm transition">学期</button>
+                </div>
+            </div>
+            <!-- 学年统计 -->
+            <div v-if="statView === 'year'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div v-for="ys in yearStats" :key="ys.year" class="bg-slate-50 rounded-xl p-4">
+                    <div class="font-medium text-slate-700 mb-2">{{ ys.year }} 学年</div>
+                    <div class="grid grid-cols-3 gap-2 text-center text-sm">
+                        <div>
+                            <div class="text-lg font-bold text-purple-600">{{ ys.stat.weighted_gpa }}</div>
+                            <div class="text-slate-400">加权绩点</div>
+                        </div>
+                        <div>
+                            <div class="text-lg font-bold text-green-600">{{ ys.stat.total_credits }}</div>
+                            <div class="text-slate-400">学分</div>
+                        </div>
+                        <div>
+                            <div class="text-lg font-bold text-blue-600">{{ ys.stat.course_count }}</div>
+                            <div class="text-slate-400">门数</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 学期统计 -->
+            <div v-if="statView === 'semester'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div v-for="ss in semesterStats" :key="ss.semester" class="bg-slate-50 rounded-xl p-4">
+                    <div class="font-medium text-slate-700 mb-2">{{ ss.semester }}</div>
+                    <div class="grid grid-cols-3 gap-2 text-center text-sm">
+                        <div>
+                            <div class="text-lg font-bold text-purple-600">{{ ss.stat.weighted_gpa }}</div>
+                            <div class="text-slate-400">加权绩点</div>
+                        </div>
+                        <div>
+                            <div class="text-lg font-bold text-green-600">{{ ss.stat.total_credits }}</div>
+                            <div class="text-slate-400">学分</div>
+                        </div>
+                        <div>
+                            <div class="text-lg font-bold text-blue-600">{{ ss.stat.course_count }}</div>
+                            <div class="text-slate-400">门数</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 自定义计算区 -->
+        <div v-if="grades.length > 0" class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl shadow-sm p-6 mb-6 text-white">
+            <h2 class="text-lg font-semibold mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z">
+                    </path>
+                </svg>
+                自定义计算（勾选下方课程参与计算）
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="text-center p-4 bg-white/20 rounded-xl backdrop-blur">
+                    <div class="text-2xl font-bold">{{ customStat.courseCount }}</div>
+                    <div class="text-sm opacity-80 mt-1">已选课程</div>
+                </div>
+                <div class="text-center p-4 bg-white/20 rounded-xl backdrop-blur">
+                    <div class="text-2xl font-bold">{{ customStat.totalCredits }}</div>
+                    <div class="text-sm opacity-80 mt-1">总学分</div>
+                </div>
+                <div class="text-center p-4 bg-white/20 rounded-xl backdrop-blur">
+                    <div class="text-2xl font-bold">{{ customStat.weightedGPA }}</div>
+                    <div class="text-sm opacity-80 mt-1">加权平均绩点</div>
+                </div>
+                <div class="text-center p-4 bg-white/20 rounded-xl backdrop-blur">
+                    <div class="text-2xl font-bold">{{ customStat.avgScore }}</div>
+                    <div class="text-sm opacity-80 mt-1">加权平均分</div>
+                </div>
+            </div>
+            <div class="mt-4 flex justify-between items-center text-sm">
+                <div class="flex space-x-3">
+                    <button @click="selectAll" class="px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg transition">全选</button>
+                    <button @click="deselectAll" class="px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg transition">取消全选</button>
+                    <button @click="invertSelection" class="px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg transition">反选</button>
+                </div>
+                <span class="opacity-70">提示：点击卡片上的勾选框来选择/取消课程</span>
             </div>
         </div>
 
@@ -164,9 +313,15 @@
             <!-- 卡片网格 -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div v-for="(grade, index) in grades" :key="index"
-                    class="bg-white rounded-2xl shadow-sm p-5 hover:shadow-md transition-shadow border border-slate-100">
+                    class="bg-white rounded-2xl shadow-sm p-5 hover:shadow-md transition-shadow border border-slate-100"
+                    :class="{'ring-2 ring-indigo-500 ring-offset-2': selectedGrades[index]}">
                     <!-- 卡片头部 -->
                     <div class="flex justify-between items-start mb-3">
+                        <!-- 勾选框 -->
+                        <label class="flex items-center cursor-pointer mr-3">
+                            <input type="checkbox" v-model="selectedGrades[index]"
+                                class="w-5 h-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer">
+                        </label>
                         <div class="flex-1 pr-4">
                             <h3 class="font-semibold text-slate-800 leading-tight">{{ grade.course_name }}</h3>
                             <p class="text-xs text-slate-400 mt-1">{{ grade.course_code }}</p>
@@ -254,16 +409,19 @@
     </div>
 
     <script>
-        const { createApp, ref, reactive, computed } = Vue;
+        const { createApp, ref, reactive, computed, watch } = Vue;
 
         createApp({
             setup() {
                 const cookieStr = ref('');
+                const cookieBlurred = ref(true); // Cookie模糊状态
                 const result = ref(null);
                 const loading = ref(false);
                 const errorMsg = ref('');
                 const showRawJson = ref(false);
                 const showFilters = ref(true);
+                const statView = ref('year'); // 'year' or 'semester'
+                const selectedGrades = ref([]); // 勾选状态数组
 
                 // 筛选条件
                 const filters = reactive({
@@ -307,27 +465,73 @@
                     return options;
                 }
 
-                // 成绩列表
-                // 后端返回: { code: 0, msg: "success", data: [...] }
-                const grades = computed(() => result.value?.data || []);
+                // 成绩列表 - 适配新结构
+                const grades = computed(() => result.value?.data?.grades || []);
+
+                // 总体统计
+                const totalStat = computed(() => result.value?.data?.total_stat || { weighted_gpa: 0, total_credits: 0, course_count: 0 });
+
+                // 学年统计
+                const yearStats = computed(() => result.value?.data?.year_stats || []);
+
+                // 学期统计
+                const semesterStats = computed(() => result.value?.data?.semester_stats || []);
+
+                // 监听成绩变化，初始化勾选状态（默认全选）
+                watch(grades, (newGrades) => {
+                    selectedGrades.value = newGrades.map(() => true);
+                });
+
+                // 自定义计算统计
+                const customStat = computed(() => {
+                    const selected = grades.value.filter((_, i) => selectedGrades.value[i]);
+                    let totalCredits = 0;
+                    let weightedGPASum = 0;
+                    let weightedScoreSum = 0;
+                    let validGPACredits = 0;
+                    let validScoreCredits = 0;
+
+                    selected.forEach(g => {
+                        const credit = parseFloat(g.credit) || 0;
+                        const gpa = parseFloat(g.gpa);
+                        const score = parseFloat(g.score);
+
+                        totalCredits += credit;
+
+                        if (!isNaN(gpa) && gpa >= 0 && credit > 0) {
+                            weightedGPASum += gpa * credit;
+                            validGPACredits += credit;
+                        }
+
+                        if (!isNaN(score) && credit > 0) {
+                            weightedScoreSum += score * credit;
+                            validScoreCredits += credit;
+                        }
+                    });
+
+                    return {
+                        courseCount: selected.length,
+                        totalCredits: totalCredits.toFixed(1),
+                        weightedGPA: validGPACredits > 0 ? (weightedGPASum / validGPACredits).toFixed(2) : '--',
+                        avgScore: validScoreCredits > 0 ? (weightedScoreSum / validScoreCredits).toFixed(2) : '--'
+                    };
+                });
+
+                // 全选/取消全选/反选
+                const selectAll = () => {
+                    selectedGrades.value = grades.value.map(() => true);
+                };
+                const deselectAll = () => {
+                    selectedGrades.value = grades.value.map(() => false);
+                };
+                const invertSelection = () => {
+                    selectedGrades.value = selectedGrades.value.map(v => !v);
+                };
 
                 // 格式化 JSON
                 const formattedJson = computed(() => {
                     if (!result.value) return '';
                     return JSON.stringify(result.value, null, 2);
-                });
-
-                // 统计：总学分
-                const totalCredits = computed(() => {
-                    return grades.value.reduce((sum, g) => sum + (parseFloat(g.credit) || 0), 0).toFixed(1);
-                });
-
-                // 统计：平均绩点
-                const avgGPA = computed(() => {
-                    const validGrades = grades.value.filter(g => g.gpa && parseFloat(g.gpa) > 0);
-                    if (validGrades.length === 0) return '--';
-                    const total = validGrades.reduce((sum, g) => sum + parseFloat(g.gpa), 0);
-                    return (total / validGrades.length).toFixed(2);
                 });
 
                 // 统计：通过率
@@ -336,7 +540,7 @@
                     const passed = grades.value.filter(g => {
                         const score = parseFloat(g.score);
                         if (!isNaN(score)) return score >= 60;
-                        return ['优', '良', '中', '及格', '不及格'].some(s => g.score?.includes(s));
+                        return ['优', '良', '中', '及格'].some(s => g.score?.includes(s)) && !g.score?.includes('不及格');
                     }).length;
                     return Math.round((passed / grades.value.length) * 100);
                 });
@@ -418,10 +622,12 @@
                 };
 
                 return {
-                    cookieStr, result, loading, errorMsg, showRawJson, showFilters,
-                    filters, termOptions, courseTypeOptions, grades,
-                    formattedJson, totalCredits, avgGPA, passRate,
-                    getScoreClass, resetFilters, fetchGrades, copyJson
+                    cookieStr, cookieBlurred, result, loading, errorMsg, showRawJson, showFilters,
+                    filters, termOptions, courseTypeOptions, grades, selectedGrades,
+                    formattedJson, totalStat, yearStats, semesterStats, statView,
+                    passRate, customStat,
+                    getScoreClass, resetFilters, fetchGrades, copyJson,
+                    selectAll, deselectAll, invertSelection
                 };
             }
         }).mount('#app');

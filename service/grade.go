@@ -30,14 +30,14 @@ func FetchGrades(cookie string, term string, courseType string, courseName strin
 	// 发起 POST 请求
 	resp, err := client.R().
 		SetHeader("Cookie", cookie).
-		SetHeader("User-Agent", "Mozilla/5.0...").
+		SetHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3").
 		SetHeader("Content-Type", "application/x-www-form-urlencoded").
 		SetFormData(formData).
 		Post(targetURL)
 
 	// cookie失效检测，响应代码不是200或者包含“用户登录”视为失效
 	if err == nil && (resp.StatusCode() != 200 || strings.Contains(string(resp.Body()), "用户登录")) {
-		err = fmt.Errorf("Cookie 失效，请重新获取 Cookie")
+		err = fmt.Errorf("Cookie 失效，请重新获取 Cookie，获取方法见 https://mp.weixin.qq.com/s/zFK9c4ecpGdRwXSKzaVFnw")
 		return nil, err
 	}
 

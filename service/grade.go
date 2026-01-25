@@ -3,6 +3,7 @@ package service
 import (
 	"bytes"
 	"fmt"
+	"log/slog"
 	"sort"
 	"strconv"
 	"strings"
@@ -28,6 +29,12 @@ func FetchGrades(cookie string, term string, courseType string, courseName strin
 		"xsfs": strings.TrimSpace(displayType), // 显示方式
 	}
 
+	// 记录重要的业务行为
+	slog.Info("开始抓取成绩",
+		"term", term,
+		"course_name", courseName,
+		"cookie_len", len(cookie), // 不要记录完整 cookie，记录长度即可，保护隐私
+	)
 	// 发起 POST 请求
 	resp, err := client.R().
 		SetHeader("Cookie", cookie).

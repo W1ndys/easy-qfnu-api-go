@@ -28,12 +28,12 @@ func GetGradeList(c *gin.Context) {
 	// 这里的 FetchGrades 首字母是大写，所以能被跨包调用
 	data, err := service.FetchGrades(token, req.Term, req.CourseType, req.CourseName, req.DisplayType)
 	// 处理业务结果
+	// 如果有错误，返回错误信息
 	if err != nil {
-		response.Fail(c, err.Error())
+		response.Success(c, data)
 		return
+	} else {
+		response.Fail(c, err.Error())
 	}
-
-	// 返回 JSON
-	response.Success(c, data)
 
 }

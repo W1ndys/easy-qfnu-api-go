@@ -6,11 +6,11 @@ import (
 )
 
 // AuthRequired 鉴权中间件
-// 作用：强制要求请求必须带 X-Token，否则直接拦截
+// 作用：强制要求请求必须带 Authorization，否则直接拦截
 func AuthRequired() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 1. 获取 Token
-		token := c.GetHeader("X-Token")
+		token := c.GetHeader("Authorization")
 
 		// 2. 检查是否存在
 		if token == "" {

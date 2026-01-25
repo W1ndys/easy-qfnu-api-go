@@ -13,7 +13,7 @@ import (
 func GetGradeList(c *gin.Context) {
 
 	// 获取参数，能放行到这里，说明已经通过鉴权中间件检查
-	token := c.GetHeader("X-Token")
+	token := c.GetHeader("Authorization")
 
 	// 绑定查询参数到结构体
 	var req model.GradeRequest

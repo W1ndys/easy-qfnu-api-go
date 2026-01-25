@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+
 	// 假设这是你原本的包路径，保持不变
 
 	v1 "github.com/W1ndys/qfnu-api-go/api/v1"
@@ -23,7 +24,7 @@ var webFS embed.FS
 
 func main() {
 	// 初始化日志
-	logger.InitLogger("./logs", "qfnu-api.log", "info")
+	logger.InitLogger("./logs", "easy-qfnu-api", "info")
 
 	r := gin.Default()
 

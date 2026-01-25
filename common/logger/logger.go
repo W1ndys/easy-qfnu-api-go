@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"fmt"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -11,11 +12,22 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-func InitLogger(logDir, logName, level string) {
+// InitLogger 初始化全局日志配置
+// logName 建议只传前缀，例如 "qfnu-api" (不要带 .log)
+func InitLogger(logDir, logNamePrefix, level string) {
 	// 1. 确保日志目录存在
 	_ = os.MkdirAll(logDir, 0755)
 
-	// 2. 解析日志级别
+	// 2. 生成带时间戳的文件名
+	// Go 的时间格式化必须用固定的参考时间: 2006-01-02 15:04:05
+	// Windows文件名不支持冒号，所以用 15-04-05
+	timestamp := time.Now().Format("2006-01-02_15-04-05")
+
+	// 最终文件名: qfnu-api-2026-01-26_12-57-05.log
+	fullFileName := fmt.Sprintf("%s-%s.log", logNamePrefix, timestamp)
+	logPath := filepath.Join(logDir, fullFileName)
+
+	// 3. 解析日志级别
 	var logLevel slog.Level
 	switch level {
 	case "debug":
@@ -28,21 +40,21 @@ func InitLogger(logDir, logName, level string) {
 		logLevel = slog.LevelInfo
 	}
 
-	// ==========================================
-	// Handler 1: 控制台输出 (漂亮、彩色、文本格式)
-	// ==========================================
+	// 4. 配置 Handler
+
+	// A. 控制台输出
 	consoleHandler := tint.NewHandler(os.Stdout, &tint.Options{
 		Level:      logLevel,
-		TimeFormat: time.TimeOnly, // 控制台只显示时间 "15:04:05"，不需要日期，清爽
-		NoColor:    false,         // 强制开启颜色
+		TimeFormat: time.TimeOnly,
+		NoColor:    false,
 	})
 
-	// ==========================================
-	// Handler 2: 文件输出 (JSON 格式，保留所有细节)
-	// ==========================================
+	// B. 文件输出 (Lumberjack)
+	// 注意: 因为每次启动文件名都不同，Lumberjack 的 MaxBackups 对"历史运行"的清理可能失效
+	// 它只能负责切割"本次运行"产生的大文件。
 	fileWriter := &lumberjack.Logger{
-		Filename:   filepath.Join(logDir, logName),
-		MaxSize:    10,
+		Filename:   logPath,
+		MaxSize:    10, // 10MB 切割
 		MaxBackups: 5,
 		MaxAge:     30,
 		Compress:   true,
@@ -51,15 +63,11 @@ func InitLogger(logDir, logName, level string) {
 		Level: logLevel,
 	})
 
-	// ==========================================
-	// 3. 混合器: 同时分发给上面两个 Handler
-	// ==========================================
-	// Fanout 会把一条日志同时发给 Console 和 File，而且格式互不影响
+	// 5. 组合并设置默认
 	multiHandler := slogmulti.Fanout(consoleHandler, fileHandler)
-
-	// 4. 设置全局 Logger
 	logger := slog.New(multiHandler)
 	slog.SetDefault(logger)
 
-	slog.Info("日志系统已升级", "mode", "Console(Color)+File(JSON)")
+	// 打印一下日志文件的位置，方便你找
+	slog.Info("日志系统初始化完成", "file", logPath)
 }

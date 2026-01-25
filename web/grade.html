@@ -627,7 +627,7 @@
 
                         const response = await fetch(url, {
                             method: 'GET',
-                            headers: { 'X-Token': cookieStr.value.trim() }
+                            headers: { 'Authorization': cookieStr.value.trim() }
                         });
 
                         const data = await response.json();

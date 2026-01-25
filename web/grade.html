@@ -6,6 +6,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>成绩查询 - 曲奇API</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: '#885021',
+                            light: '#8B5A2B',
+                            lighter: '#A67C52',
+                            dark: '#5D3615',
+                        },
+                        cream: '#F5E6D3',
+                        caramel: '#C4956A',
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Helvetica Neue', 'PingFang SC', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'sm': '0 1px 3px rgba(0,0,0,0.06)',
+                        'md': '0 4px 12px rgba(0,0,0,0.08)',
+                        'lg': '0 8px 24px rgba(0,0,0,0.12)',
+                    },
+                    borderRadius: {
+                        'xl': '12px',
+                        '2xl': '16px',
+                        '3xl': '20px',
+                    },
+                }
+            }
+        }
+    </script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <style>
         [v-cloak] {
@@ -52,18 +84,18 @@
     </style>
 </head>
 
-<body class="bg-gradient-to-br from-slate-100 to-slate-200 min-h-screen py-8">
+<body class="bg-[#F2F2F7] min-h-screen py-8 font-sans">
 
     <div id="app" v-cloak class="max-w-4xl mx-auto px-4">
         <!-- 标题 -->
         <header class="mb-8 text-center">
-            <h1 class="text-3xl font-bold text-slate-800">成绩查询</h1>
-            <p class="text-slate-500 mt-2">QFNU API</p>
+            <h1 class="text-[28px] font-bold text-[#1C1C1E] leading-tight">成绩查询</h1>
+            <p class="text-[#8E8E93] mt-2 text-[15px]">QFNU API</p>
         </header>
 
         <!-- Cookie 输入区 -->
-        <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
-            <label class="block text-sm font-medium text-slate-700 mb-2">
+        <div class="bg-white rounded-2xl shadow-sm p-4 mb-4">
+            <label class="block text-[15px] font-medium text-[#1C1C1E] mb-2">
                 教务系统 Cookie
             </label>
             <div class="cookie-container" :class="{'is-blurred': cookieBlurred && cookieStr}">
@@ -71,36 +103,36 @@
                     :class="{'cookie-blur': cookieBlurred && cookieStr}"
                     @focus="cookieBlurred = false"
                     @blur="cookieBlurred = true"
-                    class="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition font-mono text-sm bg-slate-50"
+                    class="w-full p-3 bg-[#E5E5EA] border-none rounded-xl focus:ring-2 focus:ring-primary/20 focus:bg-white outline-none transition-all duration-200 font-mono text-[13px] text-[#1C1C1E] placeholder-[#C7C7CC]"
                     placeholder="粘贴 Cookie，例如: JSESSIONID=abc123..."></textarea>
             </div>
         </div>
 
         <!-- 筛选条件区 -->
-        <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
+        <div class="bg-white rounded-2xl shadow-sm p-4 mb-4">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-semibold text-slate-700 flex items-center">
-                    <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <h2 class="text-[17px] font-semibold text-[#1C1C1E] flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
                         </path>
                     </svg>
                     筛选条件
                 </h2>
-                <button @click="showFilters = !showFilters" class="text-slate-400 hover:text-slate-600 transition">
-                    <svg :class="{'rotate-180': showFilters}" class="w-5 h-5 transition-transform" fill="none"
+                <button @click="showFilters = !showFilters" class="text-[#8E8E93] hover:text-primary transition-colors duration-150">
+                    <svg :class="{'rotate-180': showFilters}" class="w-5 h-5 transition-transform duration-250" fill="none"
                         stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </button>
             </div>
 
-            <div v-show="showFilters" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div v-show="showFilters" class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <!-- 学期选择 -->
                 <div>
-                    <label class="block text-sm font-medium text-slate-600 mb-1">学期</label>
+                    <label class="block text-[13px] font-medium text-[#8E8E93] mb-1">学期</label>
                     <select v-model="filters.term"
-                        class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition bg-slate-50">
+                        class="w-full p-3 bg-[#E5E5EA] border-none rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-200 text-[15px] text-[#1C1C1E]">
                         <option value="">全部学期</option>
                         <option v-for="t in termOptions" :key="t.value" :value="t.value">{{ t.label }}</option>
                     </select>
@@ -108,9 +140,9 @@
 
                 <!-- 课程性质 -->
                 <div>
-                    <label class="block text-sm font-medium text-slate-600 mb-1">课程性质</label>
+                    <label class="block text-[13px] font-medium text-[#8E8E93] mb-1">课程性质</label>
                     <select v-model="filters.courseType"
-                        class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition bg-slate-50">
+                        class="w-full p-3 bg-[#E5E5EA] border-none rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-200 text-[15px] text-[#1C1C1E]">
                         <option value="">全部类型</option>
                         <option v-for="ct in courseTypeOptions" :key="ct.value" :value="ct.value">{{ ct.label }}
                         </option>
@@ -119,17 +151,17 @@
 
                 <!-- 课程名称 -->
                 <div>
-                    <label class="block text-sm font-medium text-slate-600 mb-1">课程名称</label>
+                    <label class="block text-[13px] font-medium text-[#8E8E93] mb-1">课程名称</label>
                     <input v-model="filters.courseName" type="text"
-                        class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition bg-slate-50"
+                        class="w-full p-3 bg-[#E5E5EA] border-none rounded-xl focus:ring-2 focus:ring-primary/20 focus:bg-white outline-none transition-all duration-200 text-[15px] text-[#1C1C1E] placeholder-[#C7C7CC]"
                         placeholder="输入课程名称关键词">
                 </div>
 
                 <!-- 显示方式 -->
                 <div>
-                    <label class="block text-sm font-medium text-slate-600 mb-1">显示方式</label>
+                    <label class="block text-[13px] font-medium text-[#8E8E93] mb-1">显示方式</label>
                     <select v-model="filters.displayType"
-                        class="w-full p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition bg-slate-50">
+                        class="w-full p-3 bg-[#E5E5EA] border-none rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-200 text-[15px] text-[#1C1C1E]">
                         <option value="all">显示全部成绩</option>
                         <option value="max">显示最好成绩</option>
                     </select>
@@ -137,9 +169,9 @@
             </div>
 
             <!-- 操作按钮 -->
-            <div class="mt-6 flex justify-between items-center">
+            <div class="mt-5 flex justify-between items-center">
                 <button @click="resetFilters"
-                    class="text-slate-500 hover:text-slate-700 text-sm flex items-center transition">
+                    class="text-[#8E8E93] hover:text-primary text-[13px] flex items-center transition-colors duration-150 active:scale-[0.98]">
                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
@@ -148,7 +180,7 @@
                     重置
                 </button>
                 <button @click="fetchGrades" :disabled="loading"
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2.5 rounded-xl font-medium transition flex items-center disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-500/30">
+                    class="bg-primary hover:bg-primary-light active:bg-primary-dark text-white px-6 py-3 rounded-xl font-semibold transition-all duration-150 flex items-center disabled:opacity-50 disabled:cursor-not-allowed shadow-md active:scale-[0.98]">
                     <span v-if="loading" class="mr-2">
                         <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
@@ -168,89 +200,89 @@
         </div>
 
         <!-- 统计信息 -->
-        <div v-if="grades.length > 0" class="bg-white rounded-2xl shadow-sm p-6 mb-6">
-            <h2 class="text-lg font-semibold text-slate-700 mb-4 flex items-center">
-                <svg class="w-5 h-5 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div v-if="grades.length > 0" class="bg-white rounded-2xl shadow-sm p-4 mb-4">
+            <h2 class="text-[17px] font-semibold text-[#1C1C1E] mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
                     </path>
                 </svg>
                 总体统计（加权）
             </h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="text-center p-4 bg-blue-50 rounded-xl">
-                    <div class="text-2xl font-bold text-blue-600">{{ totalStat.course_count }}</div>
-                    <div class="text-sm text-slate-500 mt-1">课程总数</div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="text-center p-4 bg-primary/10 rounded-2xl">
+                    <div class="text-[22px] font-bold text-primary">{{ totalStat.course_count }}</div>
+                    <div class="text-[13px] text-[#8E8E93] mt-1">课程总数</div>
                 </div>
-                <div class="text-center p-4 bg-green-50 rounded-xl">
-                    <div class="text-2xl font-bold text-green-600">{{ totalStat.total_credits }}</div>
-                    <div class="text-sm text-slate-500 mt-1">总学分</div>
+                <div class="text-center p-4 bg-[#34C759]/10 rounded-2xl">
+                    <div class="text-[22px] font-bold text-[#34C759]">{{ totalStat.total_credits }}</div>
+                    <div class="text-[13px] text-[#8E8E93] mt-1">总学分</div>
                 </div>
-                <div class="text-center p-4 bg-purple-50 rounded-xl">
-                    <div class="text-2xl font-bold text-purple-600">{{ totalStat.weighted_gpa }}</div>
-                    <div class="text-sm text-slate-500 mt-1">加权平均绩点</div>
+                <div class="text-center p-4 bg-caramel/20 rounded-2xl">
+                    <div class="text-[22px] font-bold text-primary-dark">{{ totalStat.weighted_gpa }}</div>
+                    <div class="text-[13px] text-[#8E8E93] mt-1">加权平均绩点</div>
                 </div>
-                <div class="text-center p-4 bg-orange-50 rounded-xl">
-                    <div class="text-2xl font-bold text-orange-600">{{ passRate }}%</div>
-                    <div class="text-sm text-slate-500 mt-1">通过率</div>
+                <div class="text-center p-4 bg-[#FF9500]/10 rounded-2xl">
+                    <div class="text-[22px] font-bold text-[#FF9500]">{{ passRate }}%</div>
+                    <div class="text-[13px] text-[#8E8E93] mt-1">通过率</div>
                 </div>
             </div>
         </div>
 
         <!-- 学年/学期统计 -->
-        <div v-if="yearStats.length > 0" class="bg-white rounded-2xl shadow-sm p-6 mb-6">
+        <div v-if="yearStats.length > 0" class="bg-white rounded-2xl shadow-sm p-4 mb-4">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-semibold text-slate-700 flex items-center">
-                    <svg class="w-5 h-5 mr-2 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <h2 class="text-[17px] font-semibold text-[#1C1C1E] flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
                         </path>
                     </svg>
                     分段统计
                 </h2>
-                <div class="flex space-x-2">
-                    <button @click="statView = 'year'" :class="statView === 'year' ? 'bg-cyan-500 text-white' : 'bg-slate-100 text-slate-600'"
-                        class="px-3 py-1 rounded-lg text-sm transition">学年</button>
-                    <button @click="statView = 'semester'" :class="statView === 'semester' ? 'bg-cyan-500 text-white' : 'bg-slate-100 text-slate-600'"
-                        class="px-3 py-1 rounded-lg text-sm transition">学期</button>
+                <div class="flex bg-[#E5E5EA] rounded-lg p-0.5">
+                    <button @click="statView = 'year'" :class="statView === 'year' ? 'bg-white text-[#1C1C1E] shadow-sm' : 'text-[#8E8E93]'"
+                        class="px-3 py-1.5 rounded-md text-[13px] font-medium transition-all duration-200">学年</button>
+                    <button @click="statView = 'semester'" :class="statView === 'semester' ? 'bg-white text-[#1C1C1E] shadow-sm' : 'text-[#8E8E93]'"
+                        class="px-3 py-1.5 rounded-md text-[13px] font-medium transition-all duration-200">学期</button>
                 </div>
             </div>
             <!-- 学年统计 -->
             <div v-if="statView === 'year'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                <div v-for="ys in yearStats" :key="ys.year" class="bg-slate-50 rounded-xl p-4">
-                    <div class="font-medium text-slate-700 mb-2">{{ ys.year }} 学年</div>
-                    <div class="grid grid-cols-3 gap-2 text-center text-sm">
+                <div v-for="ys in yearStats" :key="ys.year" class="bg-cream/50 rounded-2xl p-4">
+                    <div class="font-semibold text-[#1C1C1E] mb-3 text-[15px]">{{ ys.year }} 学年</div>
+                    <div class="grid grid-cols-3 gap-2 text-center text-[13px]">
                         <div>
-                            <div class="text-lg font-bold text-purple-600">{{ ys.stat.weighted_gpa }}</div>
-                            <div class="text-slate-400">加权绩点</div>
+                            <div class="text-[17px] font-bold text-primary">{{ ys.stat.weighted_gpa }}</div>
+                            <div class="text-[#8E8E93]">加权绩点</div>
                         </div>
                         <div>
-                            <div class="text-lg font-bold text-green-600">{{ ys.stat.total_credits }}</div>
-                            <div class="text-slate-400">学分</div>
+                            <div class="text-[17px] font-bold text-[#34C759]">{{ ys.stat.total_credits }}</div>
+                            <div class="text-[#8E8E93]">学分</div>
                         </div>
                         <div>
-                            <div class="text-lg font-bold text-blue-600">{{ ys.stat.course_count }}</div>
-                            <div class="text-slate-400">门数</div>
+                            <div class="text-[17px] font-bold text-primary-lighter">{{ ys.stat.course_count }}</div>
+                            <div class="text-[#8E8E93]">门数</div>
                         </div>
                     </div>
                 </div>
             </div>
             <!-- 学期统计 -->
             <div v-if="statView === 'semester'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                <div v-for="ss in semesterStats" :key="ss.semester" class="bg-slate-50 rounded-xl p-4">
-                    <div class="font-medium text-slate-700 mb-2">{{ ss.semester }}</div>
-                    <div class="grid grid-cols-3 gap-2 text-center text-sm">
+                <div v-for="ss in semesterStats" :key="ss.semester" class="bg-cream/50 rounded-2xl p-4">
+                    <div class="font-semibold text-[#1C1C1E] mb-3 text-[15px]">{{ ss.semester }}</div>
+                    <div class="grid grid-cols-3 gap-2 text-center text-[13px]">
                         <div>
-                            <div class="text-lg font-bold text-purple-600">{{ ss.stat.weighted_gpa }}</div>
-                            <div class="text-slate-400">加权绩点</div>
+                            <div class="text-[17px] font-bold text-primary">{{ ss.stat.weighted_gpa }}</div>
+                            <div class="text-[#8E8E93]">加权绩点</div>
                         </div>
                         <div>
-                            <div class="text-lg font-bold text-green-600">{{ ss.stat.total_credits }}</div>
-                            <div class="text-slate-400">学分</div>
+                            <div class="text-[17px] font-bold text-[#34C759]">{{ ss.stat.total_credits }}</div>
+                            <div class="text-[#8E8E93]">学分</div>
                         </div>
                         <div>
-                            <div class="text-lg font-bold text-blue-600">{{ ss.stat.course_count }}</div>
-                            <div class="text-slate-400">门数</div>
+                            <div class="text-[17px] font-bold text-primary-lighter">{{ ss.stat.course_count }}</div>
+                            <div class="text-[#8E8E93]">门数</div>
                         </div>
                     </div>
                 </div>
@@ -258,8 +290,8 @@
         </div>
 
         <!-- 自定义计算区 -->
-        <div v-if="grades.length > 0" class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl shadow-sm p-6 mb-6 text-white">
-            <h2 class="text-lg font-semibold mb-4 flex items-center">
+        <div v-if="grades.length > 0" class="bg-gradient-to-r from-primary to-primary-lighter rounded-2xl shadow-md p-4 mb-4 text-white">
+            <h2 class="text-[17px] font-semibold mb-4 flex items-center">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z">
@@ -267,41 +299,41 @@
                 </svg>
                 自定义计算（勾选下方课程参与计算）
             </h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="text-center p-4 bg-white/20 rounded-xl backdrop-blur">
-                    <div class="text-2xl font-bold">{{ customStat.courseCount }}</div>
-                    <div class="text-sm opacity-80 mt-1">已选课程</div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="text-center p-4 bg-white/20 rounded-2xl backdrop-blur">
+                    <div class="text-[22px] font-bold">{{ customStat.courseCount }}</div>
+                    <div class="text-[13px] opacity-80 mt-1">已选课程</div>
                 </div>
-                <div class="text-center p-4 bg-white/20 rounded-xl backdrop-blur">
-                    <div class="text-2xl font-bold">{{ customStat.totalCredits }}</div>
-                    <div class="text-sm opacity-80 mt-1">总学分</div>
+                <div class="text-center p-4 bg-white/20 rounded-2xl backdrop-blur">
+                    <div class="text-[22px] font-bold">{{ customStat.totalCredits }}</div>
+                    <div class="text-[13px] opacity-80 mt-1">总学分</div>
                 </div>
-                <div class="text-center p-4 bg-white/20 rounded-xl backdrop-blur">
-                    <div class="text-2xl font-bold">{{ customStat.weightedGPA }}</div>
-                    <div class="text-sm opacity-80 mt-1">加权平均绩点</div>
+                <div class="text-center p-4 bg-white/20 rounded-2xl backdrop-blur">
+                    <div class="text-[22px] font-bold">{{ customStat.weightedGPA }}</div>
+                    <div class="text-[13px] opacity-80 mt-1">加权平均绩点</div>
                 </div>
-                <div class="text-center p-4 bg-white/20 rounded-xl backdrop-blur">
-                    <div class="text-2xl font-bold">{{ customStat.avgScore }}</div>
-                    <div class="text-sm opacity-80 mt-1">加权平均分</div>
+                <div class="text-center p-4 bg-white/20 rounded-2xl backdrop-blur">
+                    <div class="text-[22px] font-bold">{{ customStat.avgScore }}</div>
+                    <div class="text-[13px] opacity-80 mt-1">加权平均分</div>
                 </div>
             </div>
-            <div class="mt-4 flex justify-between items-center text-sm">
-                <div class="flex space-x-3">
-                    <button @click="selectAll" class="px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg transition">全选</button>
-                    <button @click="deselectAll" class="px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg transition">取消全选</button>
-                    <button @click="invertSelection" class="px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg transition">反选</button>
+            <div class="mt-4 flex justify-between items-center text-[13px]">
+                <div class="flex space-x-2">
+                    <button @click="selectAll" class="px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg transition-colors duration-150 active:scale-[0.98]">全选</button>
+                    <button @click="deselectAll" class="px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg transition-colors duration-150 active:scale-[0.98]">取消全选</button>
+                    <button @click="invertSelection" class="px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg transition-colors duration-150 active:scale-[0.98]">反选</button>
                 </div>
-                <span class="opacity-70">提示：点击卡片上的勾选框来选择/取消课程</span>
+                <span class="opacity-70 hidden md:inline">提示：点击卡片上的勾选框来选择/取消课程</span>
             </div>
         </div>
 
         <!-- 成绩卡片列表 -->
-        <div v-if="grades.length > 0" class="space-y-4">
+        <div v-if="grades.length > 0" class="space-y-3">
             <!-- 操作栏 -->
             <div class="flex justify-between items-center">
-                <h2 class="text-lg font-semibold text-slate-700">成绩列表</h2>
+                <h2 class="text-[17px] font-semibold text-[#1C1C1E]">成绩列表</h2>
                 <button @click="showRawJson = true"
-                    class="text-sm text-slate-500 hover:text-blue-600 flex items-center transition">
+                    class="text-[13px] text-[#8E8E93] hover:text-primary flex items-center transition-colors duration-150">
                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
@@ -311,79 +343,80 @@
             </div>
 
             <!-- 卡片网格 -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div v-for="(grade, index) in grades" :key="index"
-                    class="bg-white rounded-2xl shadow-sm p-5 hover:shadow-md transition-shadow border border-slate-100"
-                    :class="{'ring-2 ring-indigo-500 ring-offset-2': selectedGrades[index]}">
+                    class="bg-white rounded-2xl shadow-sm p-4 hover:shadow-md transition-all duration-250 border border-[#E5E5EA]"
+                    :class="{'ring-2 ring-primary ring-offset-2': selectedGrades[index]}">
                     <!-- 卡片头部 -->
                     <div class="flex justify-between items-start mb-3">
                         <!-- 勾选框 -->
                         <label class="flex items-center cursor-pointer mr-3">
                             <input type="checkbox" v-model="selectedGrades[index]"
-                                class="w-5 h-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer">
+                                class="w-5 h-5 rounded border-[#C7C7CC] text-primary focus:ring-primary/20 cursor-pointer">
                         </label>
                         <div class="flex-1 pr-4">
-                            <h3 class="font-semibold text-slate-800 leading-tight">{{ grade.course_name }}</h3>
-                            <p class="text-xs text-slate-400 mt-1">{{ grade.course_code }}</p>
+                            <h3 class="font-semibold text-[#1C1C1E] leading-tight text-[15px]">{{ grade.course_name }}</h3>
+                            <p class="text-[11px] text-[#8E8E93] mt-1">{{ grade.course_code }}</p>
                         </div>
-                        <div :class="getScoreClass(grade.score)" class="text-2xl font-bold min-w-[60px] text-right">
+                        <div :class="getScoreClass(grade.score)" class="text-[22px] font-bold min-w-[60px] text-right">
                             {{ grade.score || '--' }}
                         </div>
                     </div>
 
                     <!-- 卡片内容 -->
-                    <div class="grid grid-cols-3 gap-3 text-sm">
-                        <div class="bg-slate-50 rounded-lg p-2 text-center">
-                            <div class="text-slate-400 text-xs">学分</div>
-                            <div class="font-medium text-slate-700">{{ grade.credit }}</div>
+                    <div class="grid grid-cols-3 gap-2 text-[13px]">
+                        <div class="bg-[#F2F2F7] rounded-xl p-2 text-center">
+                            <div class="text-[#8E8E93] text-[11px]">学分</div>
+                            <div class="font-medium text-[#1C1C1E]">{{ grade.credit }}</div>
                         </div>
-                        <div class="bg-slate-50 rounded-lg p-2 text-center">
-                            <div class="text-slate-400 text-xs">绩点</div>
-                            <div class="font-medium text-slate-700">{{ grade.gpa || '--' }}</div>
+                        <div class="bg-[#F2F2F7] rounded-xl p-2 text-center">
+                            <div class="text-[#8E8E93] text-[11px]">绩点</div>
+                            <div class="font-medium text-[#1C1C1E]">{{ grade.gpa || '--' }}</div>
                         </div>
-                        <div class="bg-slate-50 rounded-lg p-2 text-center">
-                            <div class="text-slate-400 text-xs">考试类型</div>
-                            <div class="font-medium text-slate-700">{{ grade.exam_type || '--' }}</div>
+                        <div class="bg-[#F2F2F7] rounded-xl p-2 text-center">
+                            <div class="text-[#8E8E93] text-[11px]">考试类型</div>
+                            <div class="font-medium text-[#1C1C1E]">{{ grade.exam_type || '--' }}</div>
                         </div>
                     </div>
 
                     <!-- 卡片底部 -->
                     <div
-                        class="flex justify-between items-center mt-3 pt-3 border-t border-slate-100 text-xs text-slate-400">
+                        class="flex justify-between items-center mt-3 pt-3 border-t border-[#E5E5EA] text-[11px] text-[#8E8E93]">
                         <span>{{ grade.semester }}</span>
-                        <span class="px-2 py-1 bg-slate-100 rounded-full">{{ grade.course_prop }}</span>
+                        <span class="px-2 py-1 bg-primary/10 text-primary rounded-full font-medium">{{ grade.course_prop }}</span>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- 空状态 -->
-        <div v-if="result && grades.length === 0" class="bg-white rounded-2xl shadow-sm p-12 text-center">
-            <svg class="w-16 h-16 mx-auto text-slate-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div v-if="result && grades.length === 0" class="bg-white rounded-2xl shadow-sm p-16 text-center">
+            <svg class="w-[120px] h-[120px] mx-auto text-[#C7C7CC] mb-5 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                     d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
                 </path>
             </svg>
-            <p class="text-slate-500">暂无成绩数据</p>
+            <h3 class="text-[17px] font-semibold text-[#1C1C1E] mb-2">暂无成绩数据</h3>
+            <p class="text-[15px] text-[#8E8E93]">请调整筛选条件或稍后再试</p>
         </div>
 
         <!-- 错误提示 -->
-        <div v-if="errorMsg" class="bg-red-50 text-red-600 p-4 rounded-2xl border border-red-100 mt-6 flex items-start">
+        <div v-if="errorMsg" class="bg-[#FF3B30]/10 text-[#FF3B30] p-4 rounded-2xl border border-[#FF3B30]/20 mt-4 flex items-start">
             <svg class="w-5 h-5 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd"
                     d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
                     clip-rule="evenodd"></path>
             </svg>
-            <span>{{ errorMsg }}</span>
+            <span class="text-[15px]">{{ errorMsg }}</span>
         </div>
 
         <!-- 原始 JSON 弹窗 -->
-        <div v-if="showRawJson" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+        <div v-if="showRawJson" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
             @click.self="showRawJson = false">
-            <div class="bg-slate-900 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[80vh] flex flex-col">
-                <div class="flex justify-between items-center p-4 border-b border-slate-700">
-                    <span class="font-mono text-green-400 text-sm">原始 JSON 响应</span>
-                    <button @click="showRawJson = false" class="text-slate-400 hover:text-white transition">
+            <div class="bg-[#1C1C1E] rounded-3xl shadow-lg max-w-3xl w-full max-h-[80vh] flex flex-col">
+                <div class="flex justify-between items-center p-4 border-b border-[#38383A]">
+                    <span class="font-mono text-[#34C759] text-[13px]">原始 JSON 响应</span>
+                    <button @click="showRawJson = false" class="text-[#8E8E93] hover:text-white transition-colors duration-150 p-1">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M6 18L18 6M6 6l12 12"></path>
@@ -391,11 +424,11 @@
                     </button>
                 </div>
                 <div class="p-4 overflow-auto flex-1">
-                    <pre class="font-mono text-xs text-slate-300 leading-relaxed">{{ formattedJson }}</pre>
+                    <pre class="font-mono text-[11px] text-[#98989D] leading-relaxed">{{ formattedJson }}</pre>
                 </div>
-                <div class="p-4 border-t border-slate-700 flex justify-end">
+                <div class="p-4 border-t border-[#38383A] flex justify-end">
                     <button @click="copyJson"
-                        class="text-sm text-slate-400 hover:text-white flex items-center transition">
+                        class="text-[13px] text-[#8E8E93] hover:text-white flex items-center transition-colors duration-150 active:scale-[0.98]">
                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z">

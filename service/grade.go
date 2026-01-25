@@ -17,6 +17,9 @@ func FetchGrades(cookie string) ([]model.Grade, error) {
 	client := resty.New()
 	targetURL := "http://zhjw.qfnu.edu.cn/jsxsd/kscj/cjcx_list"
 	formData := map[string]string{
+		"kksj": "",    // 开课时间
+		"kcxz": "",    // 课程性质
+		"kcmc": "",    // 课程名称
 		"xsfs": "all", // 显示全部
 	}
 

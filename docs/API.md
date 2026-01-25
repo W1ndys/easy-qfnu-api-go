@@ -12,7 +12,7 @@
 - URL: `/api/v1/grades`
 - 请求头:
   - `Content-Type: application/json`
-  - `X-Token: <用户的 Cookie>`
+  - `Authorization: <用户的 Cookie>`
 
 ### 请求参数
 

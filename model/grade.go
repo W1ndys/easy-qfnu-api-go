@@ -22,7 +22,7 @@ type GradeRequest struct {
 	DisplayType string `form:"display_type"` // 显示方式，对应 upstream: xsfs
 }
 
-// 课程性质 常量定义，类型名字与ID的映射
+// 课程性质 类型名字与ID的对应
 // <option value="01">公共课</option>
 // <option value="02">公共基础课</option>
 // <option value="03">专业基础课</option>
@@ -60,12 +60,40 @@ const (
 	CourseTypePublicRequired  CourseType = "16" // 公共必修课
 )
 
-// 显示方式 常量定义
+// 显示方式 与 value 的对应
 // <option value="all">显示全部成绩</option>
 // <option value="max">显示最好成绩</option>
-type DisplayType string
 
-const (
-	DisplayTypeAll DisplayType = "all" // 显示全部成绩
-	DisplayTypeMax DisplayType = "max" // 显示最好成绩
-)
+// CourseTypeNameToID 中文名称到ID的映射表
+var CourseTypeNameToID = map[string]string{
+	"公共课":          "01",
+	"公共基础课":        "02",
+	"专业基础课":        "03",
+	"专业课":          "04",
+	"专业选修课":        "05",
+	"公共选修课":        "06",
+	"专业任选课":        "07",
+	"实践教学环节":       "08",
+	"公共任选课":        "09",
+	"教师教育基础课程（必修）": "10",
+	"专业必修课":        "11",
+	"学科基础必修课":      "12",
+	"专业方向限选课":      "13",
+	"考试报名虚拟课程":     "14",
+	"教师教育选修课程":     "15",
+	"公共必修课":        "16",
+}
+
+// GetCourseTypeID 根据输入返回课程类型ID
+// 如果输入是中文名称则转换为ID，如果已经是ID则直接返回
+func GetCourseTypeID(input string) string {
+	if input == "" {
+		return ""
+	}
+	// 尝试从映射表查找
+	if id, ok := CourseTypeNameToID[input]; ok {
+		return id
+	}
+	// 如果不在映射表中，假设已经是ID，直接返回，不做额外限制，防止后续教务系统更新新增类型而本系统未更新
+	return input
+}

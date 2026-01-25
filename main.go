@@ -31,15 +31,19 @@ func main() {
 	r.Use(middleware.RequestLogger())
 	r.Use(middleware.Cors())
 
-	// ---------------------------------------------------------
-	// 2. 注册 API 路由 (优先匹配)
-	// ---------------------------------------------------------
-	// 凡是 /api 开头的请求，都会先被这里捕获
-	r.GET("/api/grades", v1.GetGradeList)
+	// 注册 API 路由 (优先匹配)
+	// 创建一个带鉴权中间件的路由组
+	apiGroup := r.Group("/api")
+	apiGroup.Use(middleware.AuthRequired())
 
-	// ---------------------------------------------------------
-	// 3. 核心：实现根目录挂载静态资源 (作为兜底逻辑)
-	// ---------------------------------------------------------
+	{
+		// 这里的 Handler 不需要再写检查 Token 的代码了
+		apiGroup.GET("/grades", v1.GetGradeList)
+		// 以后加的新接口也不用写：
+		// apiGroup.GET("/schedule", v1.GetSchedule)
+	}
+
+	//  核心：实现根目录挂载静态资源 (作为兜底逻辑)
 	// 第一步：剥离 "web" 这一层目录
 	// 这样访问时不需要带 /web 前缀，直接对应 web 目录内部结构
 	staticFiles, _ := fs.Sub(webFS, "web")

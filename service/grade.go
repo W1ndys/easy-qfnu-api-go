@@ -13,6 +13,10 @@ import (
 // FetchGrades 抓取并解析成绩
 // 返回值：([]model.Grade, error) -> Go 函数支持多返回值
 func FetchGrades(cookie string, term string, courseType string, courseName string, displayType string) ([]model.Grade, error) {
+
+	// 课程类型：支持中文名称或ID，统一转换为ID
+	courseType = model.GetCourseTypeID(courseType)
+
 	// 准备请求
 	client := resty.New()
 	targetURL := "http://zhjw.qfnu.edu.cn/jsxsd/kscj/cjcx_list"

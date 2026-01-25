@@ -14,7 +14,7 @@ var MsgFlags = map[int]string{
 	CodeSuccess:      "success",
 	CodeServerBusy:   "系统繁忙，请稍后再试",
 	CodeInvalidParam: "请求参数错误",
-	CodeAuthExpired:  "身份认证已过期，请重新登录",
+	CodeAuthExpired:  "Cookie已过期，请重新获取cookie，获取方法参考 https://mp.weixin.qq.com/s/zFK9c4ecpGdRwXSKzaVFnw",
 	CodeTargetError:  "目标系统无响应",
 }
 

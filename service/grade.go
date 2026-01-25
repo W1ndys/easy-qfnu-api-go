@@ -12,24 +12,30 @@ import (
 
 // FetchGrades 抓取并解析成绩
 // 返回值：([]model.Grade, error) -> Go 函数支持多返回值
-func FetchGrades(cookie string) ([]model.Grade, error) {
-	// 1. 准备请求
+func FetchGrades(cookie string, term string, courseType string, courseName string, displayType string) ([]model.Grade, error) {
+	// 准备请求
 	client := resty.New()
 	targetURL := "http://zhjw.qfnu.edu.cn/jsxsd/kscj/cjcx_list"
 	formData := map[string]string{
-		"kksj": "",    // 开课时间
-		"kcxz": "",    // 课程性质
-		"kcmc": "",    // 课程名称
-		"xsfs": "all", // 显示全部
+		"kksj": strings.TrimSpace(term),        // 开课时间
+		"kcxz": strings.TrimSpace(courseType),  // 课程性质
+		"kcmc": strings.TrimSpace(courseName),  // 课程名称
+		"xsfs": strings.TrimSpace(displayType), // 显示方式
 	}
 
-	// 2. 发起 POST 请求
+	// 发起 POST 请求
 	resp, err := client.R().
 		SetHeader("Cookie", cookie).
 		SetHeader("User-Agent", "Mozilla/5.0...").
 		SetHeader("Content-Type", "application/x-www-form-urlencoded").
 		SetFormData(formData).
 		Post(targetURL)
+
+	// cookie失效检测，响应代码不是200或者包含“用户登录”视为失效
+	if err == nil && (resp.StatusCode() != 200 || strings.Contains(string(resp.Body()), "用户登录")) {
+		err = fmt.Errorf("Cookie 失效，请重新获取 Cookie")
+		return nil, err
+	}
 
 	// 语法点 3: 错误处理习惯
 	if err != nil {
@@ -71,6 +77,11 @@ func parseHtml(htmlBody []byte) ([]model.Grade, error) {
 		}
 		grades = append(grades, g)
 	})
+
+	// 如果包含"未查询到数据"字样，说明结果为空
+	if strings.Contains(string(htmlBody), "未查询到数据") {
+		return nil, fmt.Errorf("未查询到数据，请检查查询条件")
+	}
 
 	if len(grades) == 0 {
 		// 语法点 4: 自定义错误

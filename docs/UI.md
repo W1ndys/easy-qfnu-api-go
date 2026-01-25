@@ -102,10 +102,25 @@
 
 ### 2.1 字体
 
-```css
-font-family:
-  -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue",
-  "PingFang SC", sans-serif;
+使用 Tailwind CSS CDN 配置自定义字体：
+
+```html
+<!-- 在 head 中引入 Tailwind CDN 并配置 -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Helvetica Neue', 'PingFang SC', 'sans-serif'],
+        },
+      },
+    },
+  }
+</script>
+
+<!-- 使用方式 -->
+<div class="font-sans">文本内容</div>
 ```
 
 ### 2.2 字号
@@ -189,117 +204,144 @@ font-family:
 
 #### 淡入淡出
 
-```css
-.fade-enter {
-  opacity: 0;
-}
-.fade-enter-active {
-  transition: opacity 250ms ease-out;
-}
-.fade-leave-active {
-  transition: opacity 200ms ease-in;
-}
-.fade-leave-to {
-  opacity: 0;
-}
+```html
+<!-- 基础淡入效果 -->
+<div class="transition-opacity duration-[250ms] ease-out opacity-100">
+  淡入内容
+</div>
+
+<!-- 配合 JavaScript 控制显示/隐藏 -->
+<div id="fadeElement" class="transition-opacity duration-[250ms] ease-out opacity-0">
+  内容
+</div>
+<script>
+  // 淡入
+  document.getElementById('fadeElement').classList.replace('opacity-0', 'opacity-100');
+  // 淡出
+  document.getElementById('fadeElement').classList.replace('opacity-100', 'opacity-0');
+</script>
 ```
 
 #### 滑入滑出（从下往上）
 
-```css
-.slide-up-enter {
-  transform: translateY(16px);
-  opacity: 0;
-}
-.slide-up-enter-active {
-  transition: all 300ms ease-out;
-}
-.slide-up-leave-active {
-  transition: all 200ms ease-in;
-}
-.slide-up-leave-to {
-  transform: translateY(8px);
-  opacity: 0;
-}
+```html
+<!-- 滑入效果 -->
+<div class="transition-all duration-300 ease-out transform translate-y-0 opacity-100">
+  内容
+</div>
+
+<!-- 初始隐藏状态 -->
+<div class="transition-all duration-300 ease-out transform translate-y-4 opacity-0">
+  内容
+</div>
+
+<!-- 配合 JavaScript 控制 -->
+<script>
+  // 滑入：移除 translate-y-4 opacity-0，添加 translate-y-0 opacity-100
+  // 滑出：移除 translate-y-0 opacity-100，添加 translate-y-2 opacity-0
+</script>
 ```
 
 #### 展开收起
 
-```css
-.expand-enter {
-  max-height: 0;
-  opacity: 0;
-}
-.expand-enter-active {
-  transition: all 350ms ease-out;
-  overflow: hidden;
-}
-.expand-leave-active {
-  transition: all 250ms ease-in;
-  overflow: hidden;
-}
-.expand-leave-to {
-  max-height: 0;
-  opacity: 0;
-}
+```html
+<!-- 展开状态 -->
+<div class="transition-all duration-[350ms] ease-out overflow-hidden max-h-96 opacity-100">
+  展开内容
+</div>
+
+<!-- 收起状态 -->
+<div class="transition-all duration-[250ms] ease-in overflow-hidden max-h-0 opacity-0">
+  收起内容
+</div>
+
+<!-- 配合 JavaScript 控制 -->
+<script>
+  function toggleExpand(el) {
+    el.classList.toggle('max-h-0');
+    el.classList.toggle('max-h-96');
+    el.classList.toggle('opacity-0');
+    el.classList.toggle('opacity-100');
+  }
+</script>
 ```
 
 #### 按下反馈
 
-```css
-.pressable:active {
-  transform: scale(0.98);
-  transition: transform 100ms ease-out;
-}
+```html
+<!-- 可按压元素 -->
+<button class="transition-transform duration-100 ease-out active:scale-[0.98]">
+  可按压按钮
+</button>
 ```
 
 #### 弹性弹出 (Spring Pop)
 
-```css
-.spring-pop-enter {
-  transform: scale(0.8);
-  opacity: 0;
-}
-.spring-pop-enter-active {
-  transition: all 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.spring-pop-enter-to {
-  transform: scale(1);
-  opacity: 1;
-}
+```html
+<!-- 在 Tailwind CDN 配置中添加弹性缓动 -->
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        transitionTimingFunction: {
+          'spring': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+        },
+      },
+    },
+  }
+</script>
+
+<!-- 弹性弹出效果 -->
+<div class="transition-all duration-[400ms] ease-spring transform scale-100 opacity-100">
+  弹出内容
+</div>
+
+<!-- 初始隐藏状态 -->
+<div class="transition-all duration-[400ms] ease-spring transform scale-75 opacity-0">
+  隐藏内容
+</div>
 ```
 
 #### 旋转加载
 
-```css
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-.loading-spinner {
-  animation: spin 1000ms linear infinite;
-}
+```html
+<!-- Tailwind 内置 animate-spin -->
+<div class="animate-spin w-5 h-5 border-2 border-gray-300 border-t-[#885021] rounded-full"></div>
+
+<!-- 或使用 SVG 图标 -->
+<svg class="animate-spin h-5 w-5 text-[#885021]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+</svg>
 ```
 
 #### 呼吸动画
 
-```css
-@keyframes breathe {
-  0%,
-  100% {
-    opacity: 1;
+```html
+<!-- 在 Tailwind CDN 配置中添加呼吸动画 -->
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        animation: {
+          'breathe': 'breathe 2s ease-in-out infinite',
+        },
+        keyframes: {
+          breathe: {
+            '0%, 100%': { opacity: '1' },
+            '50%': { opacity: '0.6' },
+          },
+        },
+      },
+    },
   }
-  50% {
-    opacity: 0.6;
-  }
-}
-.breathe {
-  animation: breathe 2000ms ease-in-out infinite;
-}
+</script>
+
+<!-- 使用呼吸动画 -->
+<div class="animate-breathe">呼吸效果内容</div>
+
+<!-- 或使用内置的 animate-pulse（效果类似） -->
+<div class="animate-pulse">脉冲效果</div>
 ```
 
 ---
@@ -308,305 +350,201 @@ font-family:
 
 ### 7.1 卡片
 
-```css
-.card {
-  background: var(--bg-secondary);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-lg);
-  /* 无阴影或极淡阴影 */
-}
+```html
+<div class="bg-white rounded-2xl p-4">
+  卡片内容
+</div>
+
+<!-- 深色模式支持 -->
+<div class="bg-white dark:bg-[#1C1C1E] rounded-2xl p-4">
+  卡片内容
+</div>
 ```
 
 ### 7.2 列表项
 
-```css
-.list-item {
-  padding: var(--spacing-md) var(--spacing-lg);
-  background: var(--bg-secondary);
-  border-bottom: 0.5px solid var(--bg-tertiary);
-}
+```html
+<div class="px-4 py-3 bg-white border-b border-[#E5E5EA] active:bg-[#E5E5EA] transition-colors">
+  列表项内容
+</div>
 
-.list-item:active {
-  background: var(--bg-tertiary);
-}
+<!-- 深色模式支持 -->
+<div class="px-4 py-3 bg-white dark:bg-[#1C1C1E] border-b border-[#E5E5EA] dark:border-[#38383A] active:bg-[#E5E5EA] dark:active:bg-[#2C2C2E] transition-colors">
+  列表项内容
+</div>
 ```
 
 ### 7.3 按钮
 
 **主按钮**
 
-```css
-.btn-primary {
-  background: var(--primary-color);
-  color: white;
-  border-radius: var(--radius-md);
-  padding: 12px 24px;
-  font-weight: 600;
-}
-
-.btn-primary:active {
-  background: var(--primary-color-dark);
-  transform: scale(0.98);
-}
+```html
+<button class="bg-[#885021] text-white rounded-xl px-6 py-3 font-semibold transition-all active:bg-[#5D3615] active:scale-[0.98]">
+  主按钮
+</button>
 ```
 
 **次按钮**
 
-```css
-.btn-secondary {
-  background: var(--primary-color-opacity-10);
-  color: var(--primary-color);
-  border-radius: var(--radius-md);
-}
+```html
+<button class="bg-[#885021]/10 text-[#885021] rounded-xl px-6 py-3 font-semibold transition-all active:bg-[#885021]/20">
+  次按钮
+</button>
 ```
 
 ### 7.4 标签
 
-```css
-.tag {
-  font-size: 11px;
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-weight: 500;
-}
+```html
+<!-- 主色标签 -->
+<span class="text-[11px] px-2 py-0.5 rounded-[10px] font-medium bg-[#885021]/10 text-[#885021]">
+  主色标签
+</span>
 
-.tag-primary {
-  background: var(--primary-color-opacity-10);
-  color: var(--primary-color);
-}
+<!-- 成功标签 -->
+<span class="text-[11px] px-2 py-0.5 rounded-[10px] font-medium bg-[#34C759]/10 text-[#34C759]">
+  成功标签
+</span>
 
-.tag-success {
-  background: rgba(52, 199, 89, 0.12);
-  color: #34c759;
-}
-
-.tag-warning {
-  background: rgba(255, 149, 0, 0.12);
-  color: #ff9500;
-}
+<!-- 警告标签 -->
+<span class="text-[11px] px-2 py-0.5 rounded-[10px] font-medium bg-[#FF9500]/10 text-[#FF9500]">
+  警告标签
+</span>
 ```
 
 ### 7.5 导航栏
 
-```css
-.nav-bar {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(20px);
-  border-bottom: 0.5px solid var(--bg-tertiary);
-}
+```html
+<nav class="bg-white/85 dark:bg-[#1C1C1E]/85 backdrop-blur-xl border-b border-[#E5E5EA] dark:border-[#38383A]">
+  导航内容
+</nav>
 ```
 
 ### 7.6 输入框
 
 **标准输入框**
 
-```css
-.input {
-  background: var(--bg-tertiary);
-  border: none;
-  border-radius: var(--radius-md);
-  padding: 12px 16px;
-  font-size: 15px;
-  transition: all 200ms ease-out;
-}
-
-.input:focus {
-  background: var(--bg-secondary);
-  box-shadow: 0 0 0 2px var(--primary-color-opacity-10);
-  outline: none;
-}
-
-.input::placeholder {
-  color: var(--text-tertiary);
-}
+```html
+<input
+  type="text"
+  class="w-full bg-[#E5E5EA] dark:bg-[#2C2C2E] border-none rounded-xl px-4 py-3 text-[15px] text-[#1C1C1E] dark:text-white placeholder-[#C7C7CC] dark:placeholder-[#48484A] transition-all duration-200 focus:bg-white dark:focus:bg-[#1C1C1E] focus:ring-2 focus:ring-[#885021]/10 focus:outline-none"
+  placeholder="请输入..."
+/>
 ```
 
 **搜索框**
 
-```css
-.search-input {
-  background: var(--bg-tertiary);
-  border-radius: var(--radius-md);
-  padding: 8px 12px 8px 36px;
-  position: relative;
-}
-
-.search-input::before {
-  content: "";
-  position: absolute;
-  left: 12px;
-  /* 搜索图标 */
-}
+```html
+<div class="relative">
+  <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8E8E93]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+  </svg>
+  <input
+    type="text"
+    class="w-full bg-[#E5E5EA] dark:bg-[#2C2C2E] rounded-xl py-2 pl-9 pr-3 text-[15px] placeholder-[#8E8E93] focus:outline-none"
+    placeholder="搜索..."
+  />
+</div>
 ```
 
 ### 7.7 开关 (Switch)
 
-```css
-.switch {
-  width: 51px;
-  height: 31px;
-  background: var(--bg-tertiary);
-  border-radius: 16px;
-  position: relative;
-  transition: background 250ms ease-out;
-}
+```html
+<!-- 关闭状态 -->
+<div class="w-[51px] h-[31px] bg-[#E5E5EA] dark:bg-[#2C2C2E] rounded-2xl relative transition-colors duration-[250ms] cursor-pointer" onclick="this.classList.toggle('bg-[#885021]')">
+  <div class="w-[27px] h-[27px] bg-white rounded-full absolute top-[2px] left-[2px] shadow transition-transform duration-[250ms]"></div>
+</div>
 
-.switch.active {
-  background: var(--primary-color);
-}
-
-.switch-thumb {
-  width: 27px;
-  height: 27px;
-  background: white;
-  border-radius: 50%;
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-}
-
-.switch.active .switch-thumb {
-  transform: translateX(20px);
-}
+<!-- 开启状态 -->
+<div class="w-[51px] h-[31px] bg-[#885021] rounded-2xl relative transition-colors duration-[250ms] cursor-pointer">
+  <div class="w-[27px] h-[27px] bg-white rounded-full absolute top-[2px] left-[2px] shadow transition-transform duration-[250ms] translate-x-5"></div>
+</div>
 ```
 
 ### 7.8 分段控制器 (Segmented Control)
 
-```css
-.segmented-control {
-  background: var(--bg-tertiary);
-  border-radius: var(--radius-md);
-  padding: 2px;
-  display: flex;
-  position: relative;
-}
+```html
+<div class="bg-[#E5E5EA] dark:bg-[#2C2C2E] rounded-xl p-0.5 flex relative">
+  <!-- 背景指示器 -->
+  <div class="absolute bg-white dark:bg-[#1C1C1E] rounded-lg shadow-sm transition-transform duration-[250ms] h-[calc(100%-4px)] w-1/3 top-0.5 left-0.5"></div>
 
-.segment {
-  flex: 1;
-  padding: 6px 12px;
-  text-align: center;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-primary);
-  transition: color 200ms ease-out;
-  z-index: 1;
-}
-
-.segment.active {
-  color: var(--text-primary);
-}
-
-.segment-indicator {
-  position: absolute;
-  background: var(--bg-secondary);
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
-}
+  <!-- 分段选项 -->
+  <button class="flex-1 py-1.5 px-3 text-center text-[13px] font-medium text-[#1C1C1E] dark:text-white relative z-10 transition-colors duration-200">
+    选项一
+  </button>
+  <button class="flex-1 py-1.5 px-3 text-center text-[13px] font-medium text-[#8E8E93] relative z-10 transition-colors duration-200">
+    选项二
+  </button>
+  <button class="flex-1 py-1.5 px-3 text-center text-[13px] font-medium text-[#8E8E93] relative z-10 transition-colors duration-200">
+    选项三
+  </button>
+</div>
 ```
 
 ### 7.9 底部操作栏 (Action Sheet)
 
-```css
-.action-sheet {
-  background: var(--bg-secondary);
-  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-  padding: 8px;
-  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.12);
-}
-
-.action-sheet-item {
-  padding: 16px;
-  text-align: center;
-  font-size: 17px;
-  color: var(--primary-color);
-  border-radius: var(--radius-md);
-  transition: background 150ms ease-out;
-}
-
-.action-sheet-item:active {
-  background: var(--bg-tertiary);
-}
-
-.action-sheet-item.destructive {
-  color: var(--danger-color);
-}
-
-.action-sheet-cancel {
-  margin-top: 8px;
-  background: var(--bg-secondary);
-  border-radius: var(--radius-md);
-}
+```html
+<div class="bg-white dark:bg-[#1C1C1E] rounded-t-[20px] p-2 shadow-[0_-4px_24px_rgba(0,0,0,0.12)]">
+  <button class="w-full p-4 text-center text-[17px] text-[#885021] rounded-xl transition-colors duration-150 active:bg-[#E5E5EA] dark:active:bg-[#2C2C2E]">
+    操作选项
+  </button>
+  <button class="w-full p-4 text-center text-[17px] text-[#FF3B30] rounded-xl transition-colors duration-150 active:bg-[#E5E5EA] dark:active:bg-[#2C2C2E]">
+    删除
+  </button>
+  <button class="w-full p-4 mt-2 text-center text-[17px] text-[#885021] font-semibold bg-white dark:bg-[#1C1C1E] rounded-xl">
+    取消
+  </button>
+</div>
 ```
 
 ### 7.10 Toast 提示
 
-```css
-.toast {
-  background: rgba(28, 28, 30, 0.92);
-  backdrop-filter: blur(20px);
-  color: white;
-  padding: 12px 20px;
-  border-radius: var(--radius-lg);
-  font-size: 15px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  max-width: 80%;
-  text-align: center;
-}
+```html
+<div class="bg-[#1C1C1E]/90 backdrop-blur-xl text-white px-5 py-3 rounded-2xl text-[15px] shadow-lg max-w-[80%] text-center">
+  提示消息
+</div>
 
-.toast.success::before {
-  content: "✓";
-  margin-right: 8px;
-  color: var(--success-color);
-}
+<!-- 成功 Toast -->
+<div class="bg-[#1C1C1E]/90 backdrop-blur-xl text-white px-5 py-3 rounded-2xl text-[15px] shadow-lg max-w-[80%] text-center flex items-center justify-center gap-2">
+  <span class="text-[#34C759]">✓</span>
+  <span>操作成功</span>
+</div>
 ```
 
 ### 7.11 骨架屏 (Skeleton)
 
-```css
-.skeleton {
-  background: linear-gradient(
-    90deg,
-    var(--bg-tertiary) 25%,
-    var(--bg-secondary) 50%,
-    var(--bg-tertiary) 75%
-  );
-  background-size: 200% 100%;
-  animation: skeleton-loading 1.5s ease-in-out infinite;
-  border-radius: var(--radius-md);
-}
+```html
+<!-- 在 Tailwind CDN 配置中添加骨架屏动画 -->
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        animation: {
+          'skeleton': 'skeleton 1.5s ease-in-out infinite',
+        },
+        keyframes: {
+          skeleton: {
+            '0%': { backgroundPosition: '200% 0' },
+            '100%': { backgroundPosition: '-200% 0' },
+          },
+        },
+      },
+    },
+  }
+</script>
 
-@keyframes skeleton-loading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
+<!-- 骨架屏元素 -->
+<div class="h-4 rounded-xl bg-gradient-to-r from-[#E5E5EA] via-white to-[#E5E5EA] bg-[length:200%_100%] animate-skeleton"></div>
+
+<!-- 或使用 Tailwind 内置的 animate-pulse -->
+<div class="h-4 rounded-xl bg-[#E5E5EA] animate-pulse"></div>
 ```
 
 ### 7.12 下拉刷新指示器
 
-```css
-.pull-refresh-indicator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 60px;
-  color: var(--text-secondary);
-}
-
-.pull-refresh-spinner {
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--bg-tertiary);
-  border-top-color: var(--primary-color);
-  border-radius: 50%;
-  animation: spin 800ms linear infinite;
-}
+```html
+<div class="flex items-center justify-center h-[60px] text-[#8E8E93]">
+  <div class="w-5 h-5 border-2 border-[#E5E5EA] border-t-[#885021] rounded-full animate-spin"></div>
+</div>
 ```
 
 ---
@@ -638,36 +576,32 @@ font-family:
 
 遵循 iOS 安全区域规范，适配刘海屏和底部指示器：
 
-```css
-.page {
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
-}
+```html
+<div class="pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
+  页面内容
+</div>
+
+<!-- 或使用 style 属性 -->
+<div style="padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right);">
+  页面内容
+</div>
 ```
 
 ### 8.4 大标题布局 (Large Title)
 
-```css
-.large-title-header {
-  padding: 20px 16px 12px;
-  background: var(--bg-primary);
-}
+```html
+<header class="px-4 pt-5 pb-3 bg-[#F2F2F7] dark:bg-black">
+  <h1 class="text-[34px] font-bold leading-tight tracking-tight text-[#1C1C1E] dark:text-white transition-all duration-300">
+    大标题
+  </h1>
+</header>
 
-.large-title {
-  font-size: 34px;
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.5px;
-  transition: all 300ms ease-out;
-}
-
-/* 滚动时收缩 */
-.large-title.collapsed {
-  font-size: 17px;
-  font-weight: 600;
-}
+<!-- 滚动时收缩的标题 -->
+<header class="px-4 py-3 bg-[#F2F2F7] dark:bg-black">
+  <h1 class="text-[17px] font-semibold text-[#1C1C1E] dark:text-white transition-all duration-300">
+    收缩标题
+  </h1>
+</header>
 ```
 
 ---
@@ -785,35 +719,17 @@ navigator.vibrate([50, 100, 50]);
 
 ### 11.5 空状态设计
 
-```css
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 40px;
-  text-align: center;
-}
-
-.empty-icon {
-  width: 120px;
-  height: 120px;
-  margin-bottom: 20px;
-  opacity: 0.3;
-}
-
-.empty-title {
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 8px;
-}
-
-.empty-description {
-  font-size: 15px;
-  color: var(--text-secondary);
-  line-height: 1.5;
-}
+```html
+<div class="flex flex-col items-center justify-center px-10 py-16 text-center">
+  <div class="w-[120px] h-[120px] mb-5 opacity-30">
+    <!-- 空状态图标 -->
+    <svg class="w-full h-full text-[#8E8E93]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+    </svg>
+  </div>
+  <h3 class="text-[17px] font-semibold text-[#1C1C1E] dark:text-white mb-2">暂无内容</h3>
+  <p class="text-[15px] text-[#8E8E93] leading-relaxed">这里还没有任何内容，快去添加吧</p>
+</div>
 ```
 
 **空状态原则**
@@ -827,17 +743,13 @@ navigator.vibrate([50, 100, 50]);
 
 **内联错误**
 
-```css
-.input-error {
-  border: 1px solid var(--danger-color);
-  background: rgba(255, 59, 48, 0.05);
-}
-
-.error-message {
-  color: var(--danger-color);
-  font-size: 13px;
-  margin-top: 4px;
-}
+```html
+<input
+  type="text"
+  class="w-full border border-[#FF3B30] bg-[#FF3B30]/5 rounded-xl px-4 py-3 text-[15px] focus:outline-none"
+  placeholder="请输入..."
+/>
+<p class="text-[#FF3B30] text-[13px] mt-1">请输入有效的内容</p>
 ```
 
 **错误页面**
@@ -853,19 +765,16 @@ navigator.vibrate([50, 100, 50]);
 
 iOS 标志性的毛玻璃效果，用于创建层次感：
 
-```css
-.frosted-glass {
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-}
+```html
+<!-- 浅色模式毛玻璃 -->
+<div class="bg-white/70 backdrop-blur-xl backdrop-saturate-[180%]">
+  毛玻璃内容
+</div>
 
-/* 深色模式 */
-@media (prefers-color-scheme: dark) {
-  .frosted-glass {
-    background: rgba(28, 28, 30, 0.72);
-  }
-}
+<!-- 深色模式毛玻璃 -->
+<div class="bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-xl backdrop-saturate-[180%]">
+  毛玻璃内容
+</div>
 ```
 
 **使用场景**
@@ -899,67 +808,48 @@ iOS 标志性的毛玻璃效果，用于创建层次感：
 
 ### 14.1 按钮点击
 
-```css
-.button {
-  transition: all 150ms ease-out;
-}
-
-.button:active {
-  transform: scale(0.98);
-  opacity: 0.8;
-}
+```html
+<button class="transition-all duration-150 ease-out active:scale-[0.98] active:opacity-80">
+  可点击按钮
+</button>
 ```
 
 ### 14.2 卡片悬停
 
-```css
-.card {
-  transition: all 250ms ease-out;
-}
-
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
+```html
+<div class="bg-white rounded-2xl p-4 transition-all duration-[250ms] ease-out hover:-translate-y-0.5 hover:shadow-md">
+  卡片内容
+</div>
 ```
 
 ### 14.3 输入框聚焦
 
-```css
-.input {
-  transition: all 200ms ease-out;
-}
-
-.input:focus {
-  transform: scale(1.02);
-  box-shadow: 0 0 0 4px var(--primary-color-opacity-10);
-}
+```html
+<input
+  type="text"
+  class="transition-all duration-200 ease-out focus:scale-[1.02] focus:ring-4 focus:ring-[#885021]/10 focus:outline-none"
+  placeholder="请输入..."
+/>
 ```
 
 ### 14.4 列表项滑动删除
 
-```css
-.list-item {
-  position: relative;
-  transition: transform 250ms ease-out;
-}
+```html
+<div class="relative">
+  <!-- 列表项 -->
+  <div class="relative bg-white transition-transform duration-[250ms] ease-out" id="listItem">
+    列表项内容
+  </div>
+  <!-- 删除按钮 -->
+  <div class="absolute right-0 top-0 bottom-0 w-20 bg-[#FF3B30] flex items-center justify-center text-white">
+    删除
+  </div>
+</div>
 
-.list-item.swiping {
-  transform: translateX(-80px);
-}
-
-.delete-action {
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 80px;
-  background: var(--danger-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-}
+<script>
+  // 滑动时添加 -translate-x-20 类
+  document.getElementById('listItem').classList.add('-translate-x-20');
+</script>
 ```
 
 ---
@@ -983,20 +873,18 @@ iOS 标志性的毛玻璃效果，用于创建层次感：
 - **弹性图片**: 图片自适应容器大小
 - **触摸友好**: 保持足够的触摸区域
 
-```css
-/* 移动优先 */
-.container {
-  padding: 16px;
-}
+```html
+<!-- 移动优先的响应式容器 -->
+<div class="p-4 md:p-6 md:max-w-5xl md:mx-auto">
+  内容区域
+</div>
 
-/* 平板及以上 */
-@media (min-width: 768px) {
-  .container {
-    padding: 24px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-}
+<!-- 响应式网格布局 -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+  <div>卡片 1</div>
+  <div>卡片 2</div>
+  <div>卡片 3</div>
+</div>
 ```
 
 ---
@@ -1031,11 +919,10 @@ iOS 标志性的毛玻璃效果，用于创建层次感：
 - 使用 Esc 关闭弹窗
 - 显示清晰的焦点状态
 
-```css
-.button:focus-visible {
-  outline: 2px solid var(--primary-color);
-  outline-offset: 2px;
-}
+```html
+<button class="focus-visible:outline-2 focus-visible:outline focus-visible:outline-[#885021] focus-visible:outline-offset-2">
+  可聚焦按钮
+</button>
 ```
 
 ### 16.4 屏幕阅读器支持
@@ -1055,11 +942,11 @@ iOS 标志性的毛玻璃效果，用于创建层次感：
 - 避免动画 `width`、`height`、`margin` 等触发重排的属性
 - 使用 `will-change` 提示浏览器优化
 
-```css
-.optimized-animation {
-  will-change: transform, opacity;
-  transform: translateZ(0); /* 开启硬件加速 */
-}
+```html
+<!-- 优化动画性能 -->
+<div class="will-change-transform transform-gpu transition-transform duration-300">
+  高性能动画元素
+</div>
 ```
 
 ### 17.2 图片优化

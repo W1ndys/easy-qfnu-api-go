@@ -18,5 +18,5 @@ func main() {
 	// 我们把处理函数委托给了 v1 包里的 GetGradeList
 	r.GET("/api/grades", v1.GetGradeList)
 
-	r.Run(":8080")
+	r.Run("0.0.0.0:8080")
 }

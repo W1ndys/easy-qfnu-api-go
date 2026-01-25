@@ -5,7 +5,7 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
-	"strings"
+	// 假设这是你原本的包路径，保持不变
 
 	v1 "github.com/W1ndys/qfnu-api-go/api/v1"
 	"github.com/W1ndys/qfnu-api-go/common/logger"
@@ -14,66 +14,67 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// ---------------------------------------------------------
+// 1. 嵌入 web 目录下的所有文件
+// ---------------------------------------------------------
+//
 //go:embed web
 var webFS embed.FS
 
 func main() {
-	// 初始化日志 (放在最前面)
-	// 日志会保存在 ./logs/app.log
+	// 初始化日志
 	logger.InitLogger("./logs", "qfnu-api.log", "info")
 
-	r := gin.Default() // Default 默认带了 Logger 和 Recovery，你可以改用 gin.New() 手动添加
+	r := gin.Default()
 
-	// 注册自定义日志中间件 (它会打印漂亮的 JSON 请求日志)
+	// 注册中间件
 	r.Use(middleware.RequestLogger())
-
-	// 注册 CORS
 	r.Use(middleware.Cors())
-	// 注册 API 路由 (优先匹配)
+
+	// ---------------------------------------------------------
+	// 2. 注册 API 路由 (优先匹配)
+	// ---------------------------------------------------------
+	// 凡是 /api 开头的请求，都会先被这里捕获
 	r.GET("/api/grades", v1.GetGradeList)
 
-	// 处理静态资源 (解决路由冲突 + 支持 Vue History 模式)
-	// 从 embed 中剥离 "web" 前缀
-	staticFiles, err := fs.Sub(webFS, "web")
-	if err != nil {
-		log.Fatal(err)
-	}
+	// ---------------------------------------------------------
+	// 3. 核心：实现根目录挂载静态资源 (作为兜底逻辑)
+	// ---------------------------------------------------------
+	// 第一步：剥离 "web" 这一层目录
+	// 这样访问时不需要带 /web 前缀，直接对应 web 目录内部结构
+	staticFiles, _ := fs.Sub(webFS, "web")
 
-	// 创建文件服务器
+	// 第二步：创建标准的文件服务器
+	// http.FileServer 具备以下自动功能：
+	// 1. 访问 / -> 自动寻找 index.html
+	// 2. 访问 /about.html -> 寻找 about.html
+	// 3. 访问 /css/style.css -> 寻找 css/style.css
 	fileServer := http.FileServer(http.FS(staticFiles))
 
-	// 使用 NoRoute 接管所有未定义的路由
+	// 第三步：使用 NoRoute 作为静态资源入口
+	// 逻辑：如果请求没有命中上面的 /api 路由，就会进入这里
 	r.NoRoute(func(c *gin.Context) {
-		path := c.Request.URL.Path
-
-		// A. 如果是 API 请求但没匹配到路由，返回 JSON 404 (而不是 HTML)
-		if strings.HasPrefix(path, "/api") {
-			c.JSON(404, gin.H{"code": 404, "msg": "API Not Found"})
+		// 出于安全考虑，可以拦截一下非 GET/HEAD 请求
+		if c.Request.Method != http.MethodGet && c.Request.Method != http.MethodHead {
+			c.Status(http.StatusMethodNotAllowed)
 			return
 		}
 
-		// B. 处理静态文件
-		// 尝试打开请求的文件，检查是否存在
-		file, err := staticFiles.Open(strings.TrimPrefix(path, "/"))
-		if err != nil {
-			// 文件不存在 (说明是 Vue 的前端路由，比如 /grades)
-			// 直接返回 index.html，让前端 Vue Router 去处理页面显示
-			c.FileFromFS("index.html", http.FS(staticFiles))
-			return
-		}
-		// 记得关闭文件句柄，避免资源泄露
-		file.Close()
-
-		// 文件存在 (比如 /static/js/app.js)，直接服务该文件
+		// 将请求转交给 Go 原生的文件服务器处理
+		// 它会自动处理 Content-Type、Content-Length 和 404
 		fileServer.ServeHTTP(c.Writer, c.Request)
 	})
 
+	// ---------------------------------------------------------
+	// 启动提示
+	// ---------------------------------------------------------
 	green := color.New(color.FgGreen).SprintFunc()
 	red := color.New(color.FgRed).SprintFunc()
 	cyan := color.New(color.FgCyan).SprintFunc()
 
 	log.Println(green("√ 服务器启动成功！"))
-	log.Println(cyan("➜ 前端地址: http://localhost:8080/"))
+	log.Println(cyan("➜ 接口地址: http://localhost:8080/api/grades"))
+	log.Println(cyan("➜ 网页首页: http://localhost:8080/")) // 直接访问根路径
 	log.Println(red("! 注意: 请勿关闭此窗口"))
 
 	r.Run("0.0.0.0:8080")

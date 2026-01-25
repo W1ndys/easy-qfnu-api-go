@@ -15,11 +15,14 @@ func GetGradeList(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"msg": "缺少 Token"})
 		return
 	}
+	term := c.DefaultQuery("term", "")
+	courseType := c.DefaultQuery("course_type", "")
+	courseName := c.DefaultQuery("course_name", "")
+	displayType := c.DefaultQuery("display_type", "all")
 
 	// 2. 调用业务逻辑 (Service 层)
 	// 这里的 FetchGrades 首字母是大写，所以能被跨包调用
-	data, err := service.FetchGrades(token)
-
+	data, err := service.FetchGrades(token, term, courseType, courseName, displayType)
 	// 3. 处理业务结果
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

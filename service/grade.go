@@ -10,7 +10,6 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/W1ndys/qfnu-api-go/model"
-	"github.com/go-resty/resty/v2"
 )
 
 // FetchGrades 抓取并解析成绩，返回包含统计信息的响应
@@ -19,8 +18,9 @@ func FetchGrades(cookie string, term string, courseType string, courseName strin
 	// 课程类型：支持中文名称或ID，统一转换为ID
 	courseType = model.GetCourseTypeID(courseType)
 
-	// 准备请求
-	client := resty.New()
+	// 使用工厂函数创建 Client (自带检查功能)
+	client := NewJwcClient(cookie)
+
 	targetURL := "http://zhjw.qfnu.edu.cn/jsxsd/kscj/cjcx_list"
 	formData := map[string]string{
 		"kksj": strings.TrimSpace(term),        // 开课时间
@@ -37,19 +37,10 @@ func FetchGrades(cookie string, term string, courseType string, courseName strin
 	)
 	// 发起 POST 请求
 	resp, err := client.R().
-		SetHeader("Cookie", cookie).
-		SetHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3").
-		SetHeader("Content-Type", "application/x-www-form-urlencoded").
 		SetFormData(formData).
 		Post(targetURL)
 
-	// cookie失效检测，响应代码不是200或者包含“用户登录”视为失效
-	if err == nil && (resp.StatusCode() != 200 || strings.Contains(string(resp.Body()), "用户登录")) {
-		err = fmt.Errorf("Cookie 失效，请重新获取 Cookie，获取方法见 https://mp.weixin.qq.com/s/zFK9c4ecpGdRwXSKzaVFnw")
-		return nil, err
-	}
-
-	// 错误处理习惯
+	// 错误处理
 	if err != nil {
 		return nil, err // 遇到错误立刻返回
 	}

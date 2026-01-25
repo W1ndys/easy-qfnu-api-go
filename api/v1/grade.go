@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/W1ndys/qfnu-api-go/common/response"
@@ -29,11 +30,14 @@ func GetGradeList(c *gin.Context) {
 	data, err := service.FetchGrades(token, req.Term, req.CourseType, req.CourseName, req.DisplayType)
 	// 处理业务结果
 	// 如果有错误，返回错误信息
-	if err != nil {
-		response.Success(c, data)
+	if errors.Is(err, service.ErrCookieExpired) {
+		response.CookieExpired(c)
 		return
-	} else {
-		response.Fail(c, err.Error())
 	}
+	if err != nil {
+		response.FailWithCode(c, 1, "获取成绩失败: "+err.Error())
+		return
+	}
+	response.Success(c, data)
 
 }

@@ -34,6 +34,11 @@ func Fail(c *gin.Context, msg string) {
 	Result[any](c, http.StatusOK, 1, msg, nil)
 }
 
+// Cookie 过期响应
+func CookieExpired(c *gin.Context) {
+	Result[any](c, http.StatusUnauthorized, CodeAuthExpired, GetMsg(CodeAuthExpired), nil)
+}
+
 // FailWithCode 自定义错误码响应
 // 修复点：显式指定泛型类型为 [any]
 func FailWithCode(c *gin.Context, code int, msg string) {

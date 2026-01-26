@@ -1,4 +1,4 @@
-package service
+package zhjw
 
 import (
 	"errors"
@@ -12,7 +12,7 @@ import (
 var ErrCookieExpired = errors.New("cookie_expired_or_invalid")
 
 // NewJwcClient 创建一个配置好“自动检查机制”的 Resty 客户端
-func NewJwcClient(Authorization string) *resty.Client {
+func NewClient(Authorization string) *resty.Client {
 	client := resty.New()
 
 	// 1. 统一设置 Header (避免在每个请求里重复写)

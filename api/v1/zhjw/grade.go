@@ -6,7 +6,7 @@ import (
 	"github.com/W1ndys/qfnu-api-go/common/request"
 	"github.com/W1ndys/qfnu-api-go/common/response"
 	"github.com/W1ndys/qfnu-api-go/model"
-	"github.com/W1ndys/qfnu-api-go/service"
+	zhjwService "github.com/W1ndys/qfnu-api-go/services/zhjw"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,10 +25,10 @@ func GetGradeList(c *gin.Context) {
 
 	// 调用业务逻辑 (Service 层)
 	// 这里的 FetchGrades 首字母是大写，所以能被跨包调用
-	data, err := service.FetchGrades(Authorization, req.Term, req.CourseType, req.CourseName, req.DisplayType)
+	data, err := zhjwService.FetchGrades(Authorization, req.Term, req.CourseType, req.CourseName, req.DisplayType)
 	// 处理业务结果
 	// 如果有错误，返回错误信息
-	if errors.Is(err, service.ErrCookieExpired) {
+	if errors.Is(err, zhjwService.ErrCookieExpired) {
 		response.CookieExpired(c)
 		return
 	}

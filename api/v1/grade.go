@@ -3,6 +3,7 @@ package v1
 import (
 	"errors"
 
+	"github.com/W1ndys/qfnu-api-go/common/request"
 	"github.com/W1ndys/qfnu-api-go/common/response"
 	"github.com/W1ndys/qfnu-api-go/model"
 	"github.com/W1ndys/qfnu-api-go/service"
@@ -13,7 +14,7 @@ import (
 func GetGradeList(c *gin.Context) {
 
 	// 获取参数，能放行到这里，说明已经通过鉴权中间件检查
-	Authorization := c.GetHeader("Authorization")
+	Authorization := request.GetCurrentUserAuthorization(c)
 
 	// 绑定查询参数到结构体
 	var req model.GradeRequest

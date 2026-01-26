@@ -5,7 +5,7 @@ import (
 	"io/fs"
 	"net/http"
 
-	v1 "github.com/W1ndys/qfnu-api-go/api/v1"
+	zhjw "github.com/W1ndys/qfnu-api-go/api/v1/zhjw"
 	"github.com/W1ndys/qfnu-api-go/common/response"
 	"github.com/W1ndys/qfnu-api-go/middleware"
 	"github.com/gin-gonic/gin"
@@ -43,28 +43,22 @@ func installAPIRoutes(r *gin.Engine) {
 	}
 
 	// 创建 v1 根组 (仅用于统一前缀 /api/v1)
-	apiv1 := r.Group("/api/v1")
+	apiV1 := apiRoot.Group("/v1")
 
 	// 【公开接口组】 (Public)
 	// 特点：不挂载 AuthRequired 中间件
 	{
-		// apiv1.GET("/news", v1.GetNewsList)
-		// apiv1.GET("/calendar", v1.GetCalendar)
+		// apiV1.GET("/news", v1.GetNewsList)
+		// apiV1.GET("/calendar", v1.GetCalendar)
 	}
 
 	// 【受保护接口组】 (Protected)
-	apiv1Group := apiv1.Group("/")
-
-	// 注意：此 health 接口定义在 AuthRequired 之前，所以是公开的（符合原 main.go 逻辑）
-	apiv1Group.GET("/health", func(c *gin.Context) {
-		response.Success(c, "API is healthy")
-	})
-
-	// 挂载鉴权中间件
-	apiv1Group.Use(middleware.AuthRequired())
+	// zhjw 教务系统相关接口
+	zhjwGroup := apiV1.Group("/zhjw")
+	zhjwGroup.Use(middleware.AuthRequired())
 	{
 		// 成绩相关接口
-		apiv1Group.GET("/grades", v1.GetGradeList)
+		zhjwGroup.GET("/grades", zhjw.GetGradeList)
 	}
 }
 

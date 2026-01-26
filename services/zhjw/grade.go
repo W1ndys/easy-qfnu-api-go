@@ -48,7 +48,7 @@ func FetchGrades(cookie string, term string, courseType string, courseName strin
 	}
 
 	// 解析 HTML (调用内部私有函数)
-	grades, err := parseHtml(resp.Body())
+	grades, err := parseGradesHtml(resp.Body())
 	if err != nil {
 		return nil, err
 	}
@@ -157,8 +157,8 @@ func round2(f float64) float64 {
 	return float64(int(f*100+0.5)) / 100
 }
 
-// parseHtml 是私有函数(小写p)，只在这个文件内部使用，外部不需要知道解析细节
-func parseHtml(htmlBody []byte) ([]model.Grade, error) {
+// parseGradesHtml 是私有函数(小写p)，只在这个文件内部使用，外部不需要知道解析细节
+func parseGradesHtml(htmlBody []byte) ([]model.Grade, error) {
 	doc, err := goquery.NewDocumentFromReader(bytes.NewReader(htmlBody))
 	if err != nil {
 		return nil, err

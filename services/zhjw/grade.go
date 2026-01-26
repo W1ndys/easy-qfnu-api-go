@@ -189,11 +189,6 @@ func parseHtml(htmlBody []byte) ([]model.Grade, error) {
 		grades = append(grades, g)
 	})
 
-	// 如果包含"未查询到数据"字样，说明结果为空
-	if strings.Contains(string(htmlBody), "未查询到数据") {
-		return nil, fmt.Errorf("未查询到数据，请检查查询条件")
-	}
-
 	if len(grades) == 0 {
 		// 语法点 4: 自定义错误
 		return nil, fmt.Errorf("解析结果为空，可能是Cookie失效或页面结构变更")

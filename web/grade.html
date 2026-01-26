@@ -623,7 +623,7 @@
                         const queryString = params.toString();
                         // 使用当前页面的主机名，适配内网访问（前后端需部署在同一机器）
                         const apiHost = window.location.hostname;
-                        const url = `http://${apiHost}:8080/api/grades${queryString ? '?' + queryString : ''}`;
+                        const url = `http://${apiHost}:8080/api/v1/zhjw/grades${queryString ? '?' + queryString : ''}`;
 
                         const response = await fetch(url, {
                             method: 'GET',

@@ -1,7 +1,7 @@
 # claude cli specific ignores
 .claude/
-
-.serena
+.spec-workflow/
+.serena/
 
 # Go language specific ignores
 

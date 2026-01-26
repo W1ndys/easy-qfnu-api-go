@@ -11,6 +11,9 @@ import (
 // 这样在 API Handler 层可以通过 errors.Is() 精确捕获它，然后返回 401
 var ErrCookieExpired = errors.New("cookie_expired_or_invalid")
 
+// 未查询到数据 类型错误
+var ErrResourceNotFound = errors.New("resource_not_found")
+
 // NewJwcClient 创建一个配置好“自动检查机制”的 Resty 客户端
 func NewClient(Authorization string) *resty.Client {
 	client := resty.New()
@@ -36,6 +39,8 @@ func NewClient(Authorization string) *resty.Client {
 			// 注意：这里返回 error 会导致后续的 API 请求直接报错返回，
 			// 不会再执行 fetchGrade 里的 parseHtml 逻辑
 			return ErrCookieExpired
+		} else if strings.Contains(body, "未查询到数据") {
+			return ErrResourceNotFound
 		}
 
 		return nil // 正常，继续执行

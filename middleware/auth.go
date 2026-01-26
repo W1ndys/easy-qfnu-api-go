@@ -15,7 +15,7 @@ func AuthRequired() gin.HandlerFunc {
 		// 2. 检查是否存在
 		if Authorization == "" {
 			// 如果没有 Authorization，直接报错返回
-			response.FailWithCode(c, response.CodeAuthExpired, "缺少鉴权 Authorization (Cookie)")
+			response.CookieExpired(c)
 
 			// 🛑 核心步骤：Abort
 			// 这一步非常重要！它告诉 Gin 停止执行后面的 Handler，直接返回响应。

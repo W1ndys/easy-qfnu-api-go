@@ -5,7 +5,7 @@ const (
 	CodeSuccess      = 0    // 成功
 	CodeServerBusy   = 1    // 系统繁忙/通用错误
 	CodeInvalidParam = 1001 // 参数错误
-	CodeAuthExpired  = 401  // Authorization 过期
+	CodeAuthExpired  = 401  // 缺少 Authorization 或 Authorization 过期
 	CodeTargetError  = 502  // 教务系统挂了
 )
 
@@ -14,7 +14,7 @@ var MsgFlags = map[int]string{
 	CodeSuccess:      "success",
 	CodeServerBusy:   "系统繁忙，请稍后再试",
 	CodeInvalidParam: "请求参数错误",
-	CodeAuthExpired:  "Cookie已过期，请重新获取cookie，获取方法参考 https://mp.weixin.qq.com/s/zFK9c4ecpGdRwXSKzaVFnw",
+	CodeAuthExpired:  "缺少 Authorization 字段 或 Authorization 过期，请重新获取相关系统的Cookie，获取方法参考 https://mp.weixin.qq.com/s/zFK9c4ecpGdRwXSKzaVFnw",
 	CodeTargetError:  "目标系统无响应",
 }
 

@@ -24,7 +24,7 @@ func Result[T any](c *gin.Context, httpStatus int, code int, msg string, data T)
 
 // Success 成功响应 (自动推导 T)
 func Success[T any](c *gin.Context, data T) {
-	Result(c, http.StatusOK, 0, "success", data)
+	Result(c, http.StatusOK, 0, GetMsg(CodeSuccess), data)
 }
 
 // Fail 失败响应

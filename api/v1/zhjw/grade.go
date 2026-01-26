@@ -31,8 +31,10 @@ func GetGradeList(c *gin.Context) {
 	if errors.Is(err, zhjwService.ErrCookieExpired) {
 		response.CookieExpired(c)
 		return
-	}
-	if err != nil {
+	} else if errors.Is(err, zhjwService.ErrResourceNotFound) {
+		response.ResourceNotFound(c)
+		return
+	} else if err != nil {
 		response.FailWithCode(c, 1, "获取成绩失败: "+err.Error())
 		return
 	}

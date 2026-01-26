@@ -22,6 +22,14 @@ type GradeRequest struct {
 	DisplayType string `form:"display_type"` // 显示方式，对应 upstream: xsfs
 }
 
+// GradeResponse 成绩查询响应结构
+type GradeResponse struct {
+	Grades        []Grade        `json:"grades"`         // 成绩列表
+	TotalStat     GradeStat      `json:"total_stat"`     // 总体统计
+	YearStats     []YearStat     `json:"year_stats"`     // 按学年统计
+	SemesterStats []SemesterStat `json:"semester_stats"` // 按学期统计
+}
+
 // 课程性质 类型名字与ID的对应
 // <option value="01">公共课</option>
 // <option value="02">公共基础课</option>
@@ -115,12 +123,4 @@ type SemesterStat struct {
 type YearStat struct {
 	Year string    `json:"year"` // 学年名称，如 "2023-2024"
 	Stat GradeStat `json:"stat"` // 统计数据
-}
-
-// GradeResponse 成绩查询响应结构
-type GradeResponse struct {
-	Grades        []Grade        `json:"grades"`         // 成绩列表
-	TotalStat     GradeStat      `json:"total_stat"`     // 总体统计
-	YearStats     []YearStat     `json:"year_stats"`     // 按学年统计
-	SemesterStats []SemesterStat `json:"semester_stats"` // 按学期统计
 }

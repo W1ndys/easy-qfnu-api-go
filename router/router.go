@@ -59,6 +59,8 @@ func installAPIRoutes(r *gin.Engine) {
 	{
 		// 成绩相关接口
 		zhjwGroup.GET("/grades", zhjw.GetGradeList)
+		// 教学计划/培养方案
+		zhjwGroup.GET("/course-plan", zhjw.GetCoursePlan)
 		// 考试安排相关接口
 		zhjwGroup.GET("/exam-schedules", zhjw.GetExamSchedules)
 	}

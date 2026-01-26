@@ -39,6 +39,11 @@ func CookieExpired(c *gin.Context) {
 	Result[any](c, http.StatusUnauthorized, CodeAuthExpired, GetMsg(CodeAuthExpired), nil)
 }
 
+// 未查询到数据响应
+func ResourceNotFound(c *gin.Context) {
+	Result[any](c, http.StatusNotFound, CodeResourceNotFound, GetMsg(CodeResourceNotFound), nil)
+}
+
 // FailWithCode 自定义错误码响应
 // 修复点：显式指定泛型类型为 [any]
 func FailWithCode(c *gin.Context, code int, msg string) {

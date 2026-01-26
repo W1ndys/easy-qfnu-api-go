@@ -6,8 +6,6 @@ import (
 	"log"
 	"net/http"
 
-	// 假设这是你原本的包路径，保持不变
-
 	v1 "github.com/W1ndys/qfnu-api-go/api/v1"
 	"github.com/W1ndys/qfnu-api-go/common/logger"
 	"github.com/W1ndys/qfnu-api-go/middleware"
@@ -32,16 +30,29 @@ func main() {
 	r.Use(middleware.RequestLogger())
 	r.Use(middleware.Cors())
 
-	// 注册 API 路由 (优先匹配)
-	// 创建一个带鉴权中间件的路由组
-	apiGroup := r.Group("/api")
-	apiGroup.Use(middleware.AuthRequired())
+	// ------------------------------------------------------
+	// 路由策略调整
+	// ------------------------------------------------------
 
+	//  创建 v1 根组 (仅用于统一前缀 /api/v1)
+	apiv1 := r.Group("/api/v1")
+
+	//  【公开接口组】 (Public)
+	// 特点：不挂载 AuthRequired 中间件
+	// 场景：教务公告、校历、空教室查询(如果不需要登录)、APP版本检查
 	{
-		// 这里的 Handler 不需要再写检查 Authorization 的代码了
-		apiGroup.GET("/grades", v1.GetGradeList)
-		// 以后加的新接口也不用写：
-		// apiGroup.GET("/schedule", v1.GetSchedule)
+		// apiv1.GET("/news", v1.GetNewsList)       // 获取公告列表
+		// apiv1.GET("/calendar", v1.GetCalendar)   // 获取校历
+	}
+
+	// 【受保接口组】 (Protected)
+	// 特点：挂载 AuthRequired，没有 Token 进不来
+	// 场景：查成绩、查课表、查考试
+	userGroup := apiv1.Group("/") // 在 v1 下面再分子组
+	userGroup.Use(middleware.AuthRequired())
+	{
+		userGroup.GET("/grades", v1.GetGradeList)
+
 	}
 
 	//  核心：实现根目录挂载静态资源 (作为兜底逻辑)

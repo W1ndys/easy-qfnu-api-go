@@ -34,10 +34,10 @@ func installMiddlewares(r *gin.Engine) {
 
 func installAPIRoutes(r *gin.Engine) {
 	// 创建/api根路由组
-	apiroot := r.Group("/api")
+	apiRoot := r.Group("/api")
 	{
 		// 健康检查接口
-		apiroot.GET("/health", func(c *gin.Context) {
+		apiRoot.GET("/health", func(c *gin.Context) {
 			response.Success(c, "API is healthy")
 		})
 	}

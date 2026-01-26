@@ -63,6 +63,8 @@ func installAPIRoutes(r *gin.Engine) {
 		zhjwGroup.GET("/course-plan", zhjw.GetCoursePlan)
 		// 考试安排相关接口
 		zhjwGroup.GET("/exam-schedules", zhjw.GetExamSchedules)
+		// 选课结果相关接口
+		zhjwGroup.GET("/selection-results", zhjw.GetSelectionResults)
 	}
 }
 

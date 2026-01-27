@@ -16,7 +16,7 @@ import (
 // ---------------------------------------------------------
 // 只嵌入运行时需要的文件，排除构建工具和源文件
 //
-//go:embed web/*.html web/static/css/tailwind.css web/static/js
+//go:embed web/*.html web/static/css/tailwind.css web/static/js web/static/favico.ico
 var webFS embed.FS
 
 func main() {

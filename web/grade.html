@@ -28,7 +28,7 @@
         <header class="mb-8 text-center">
             <h1 class="text-[28px] font-bold text-[#1C1C1E] leading-tight">成绩查询</h1>
             <p class="text-[#8E8E93] mt-2 text-[15px]">
-                <a href="index.html" class="hover:text-primary transition-colors">曲奇API</a>
+                <a href="/" class="hover:text-primary transition-colors">曲奇API</a>
             </p>
         </header>
 
@@ -182,10 +182,10 @@
         </div>
 
         <!-- 学年/学期统计 -->
-        <div x-show="yearStats.length > 0" x-transition class="card mb-4">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-[17px] font-semibold text-[#1C1C1E] flex items-center">
-                    <svg class="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div x-show="yearStats.length > 0" x-transition class="card mb-4 !py-3">
+            <div class="flex items-center justify-between mb-2">
+                <h2 class="text-[15px] font-semibold text-[#1C1C1E] flex items-center">
+                    <svg class="w-4 h-4 mr-1.5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
                         </path>
@@ -195,52 +195,34 @@
                 <div class="segment-control">
                     <button @click="statView = 'year'"
                         :class="statView === 'year' ? 'segment-item-active' : 'segment-item-inactive'"
-                        class="segment-item">学年</button>
+                        class="segment-item text-[12px] !px-2 !py-0.5">学年</button>
                     <button @click="statView = 'semester'"
                         :class="statView === 'semester' ? 'segment-item-active' : 'segment-item-inactive'"
-                        class="segment-item">学期</button>
+                        class="segment-item text-[12px] !px-2 !py-0.5">学期</button>
                 </div>
             </div>
             <!-- 学年统计 -->
-            <div x-show="statView === 'year'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div x-show="statView === 'year'" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
                 <template x-for="ys in yearStats" :key="ys.year">
-                    <div class="bg-cream/50 rounded-2xl p-4">
-                        <div class="font-semibold text-[#1C1C1E] mb-3 text-[15px]" x-text="ys.year + ' 学年'"></div>
-                        <div class="grid grid-cols-3 gap-2 text-center text-[13px]">
-                            <div>
-                                <div class="text-[17px] font-bold text-primary" x-text="ys.stat.weighted_gpa"></div>
-                                <div class="text-[#8E8E93]">加权绩点</div>
-                            </div>
-                            <div>
-                                <div class="text-[17px] font-bold text-success" x-text="ys.stat.total_credits"></div>
-                                <div class="text-[#8E8E93]">学分</div>
-                            </div>
-                            <div>
-                                <div class="text-[17px] font-bold text-primary-lighter" x-text="ys.stat.course_count"></div>
-                                <div class="text-[#8E8E93]">门数</div>
-                            </div>
+                    <div class="bg-cream/50 rounded-xl p-2">
+                        <div class="font-medium text-[#1C1C1E] mb-1 text-[12px]" x-text="ys.year"></div>
+                        <div class="flex items-center justify-between text-[11px]">
+                            <span class="text-primary font-bold" x-text="ys.stat.weighted_gpa"></span>
+                            <span class="text-[#8E8E93]" x-text="ys.stat.total_credits + '分'"></span>
+                            <span class="text-[#8E8E93]" x-text="ys.stat.course_count + '门'"></span>
                         </div>
                     </div>
                 </template>
             </div>
             <!-- 学期统计 -->
-            <div x-show="statView === 'semester'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div x-show="statView === 'semester'" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
                 <template x-for="ss in semesterStats" :key="ss.semester">
-                    <div class="bg-cream/50 rounded-2xl p-4">
-                        <div class="font-semibold text-[#1C1C1E] mb-3 text-[15px]" x-text="ss.semester"></div>
-                        <div class="grid grid-cols-3 gap-2 text-center text-[13px]">
-                            <div>
-                                <div class="text-[17px] font-bold text-primary" x-text="ss.stat.weighted_gpa"></div>
-                                <div class="text-[#8E8E93]">加权绩点</div>
-                            </div>
-                            <div>
-                                <div class="text-[17px] font-bold text-success" x-text="ss.stat.total_credits"></div>
-                                <div class="text-[#8E8E93]">学分</div>
-                            </div>
-                            <div>
-                                <div class="text-[17px] font-bold text-primary-lighter" x-text="ss.stat.course_count"></div>
-                                <div class="text-[#8E8E93]">门数</div>
-                            </div>
+                    <div class="bg-cream/50 rounded-xl p-2">
+                        <div class="font-medium text-[#1C1C1E] mb-1 text-[12px]" x-text="ss.semester"></div>
+                        <div class="flex items-center justify-between text-[11px]">
+                            <span class="text-primary font-bold" x-text="ss.stat.weighted_gpa"></span>
+                            <span class="text-[#8E8E93]" x-text="ss.stat.total_credits + '分'"></span>
+                            <span class="text-[#8E8E93]" x-text="ss.stat.course_count + '门'"></span>
                         </div>
                     </div>
                 </template>
@@ -249,40 +231,39 @@
 
         <!-- 自定义计算区 -->
         <div x-show="grades.length > 0" x-transition
-            class="bg-gradient-to-r from-primary to-primary-lighter rounded-2xl shadow-md p-4 mb-4 text-white">
-            <h2 class="text-[17px] font-semibold mb-4 flex items-center">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z">
-                    </path>
-                </svg>
-                自定义计算（勾选下方课程参与计算）
-            </h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div class="text-center p-4 bg-white/20 rounded-2xl backdrop-blur">
-                    <div class="text-[22px] font-bold" x-text="customStat.courseCount"></div>
-                    <div class="text-[13px] opacity-80 mt-1">已选课程</div>
-                </div>
-                <div class="text-center p-4 bg-white/20 rounded-2xl backdrop-blur">
-                    <div class="text-[22px] font-bold" x-text="customStat.totalCredits"></div>
-                    <div class="text-[13px] opacity-80 mt-1">总学分</div>
-                </div>
-                <div class="text-center p-4 bg-white/20 rounded-2xl backdrop-blur">
-                    <div class="text-[22px] font-bold" x-text="customStat.weightedGPA"></div>
-                    <div class="text-[13px] opacity-80 mt-1">加权平均绩点</div>
-                </div>
-                <div class="text-center p-4 bg-white/20 rounded-2xl backdrop-blur">
-                    <div class="text-[22px] font-bold" x-text="customStat.avgScore"></div>
-                    <div class="text-[13px] opacity-80 mt-1">加权平均分</div>
+            class="bg-gradient-to-r from-primary to-primary-lighter rounded-xl shadow-md p-3 mb-4 text-white sticky top-4 z-10">
+            <div class="flex items-center justify-between mb-2">
+                <h2 class="text-[14px] font-semibold flex items-center">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z">
+                        </path>
+                    </svg>
+                    自定义计算
+                </h2>
+                <div class="flex space-x-1 text-[11px]">
+                    <button @click="selectAll()" class="px-2 py-1 bg-white/20 hover:bg-white/30 rounded-md transition-colors duration-150">全选</button>
+                    <button @click="deselectAll()" class="px-2 py-1 bg-white/20 hover:bg-white/30 rounded-md transition-colors duration-150">清空</button>
+                    <button @click="invertSelection()" class="px-2 py-1 bg-white/20 hover:bg-white/30 rounded-md transition-colors duration-150">反选</button>
                 </div>
             </div>
-            <div class="mt-4 flex justify-between items-center text-[13px]">
-                <div class="flex space-x-2">
-                    <button @click="selectAll()" class="px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg transition-colors duration-150 active:scale-[0.98]">全选</button>
-                    <button @click="deselectAll()" class="px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg transition-colors duration-150 active:scale-[0.98]">取消全选</button>
-                    <button @click="invertSelection()" class="px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg transition-colors duration-150 active:scale-[0.98]">反选</button>
+            <div class="grid grid-cols-4 gap-2">
+                <div class="text-center p-2 bg-white/20 rounded-xl backdrop-blur">
+                    <div class="text-[18px] font-bold" x-text="customStat.courseCount"></div>
+                    <div class="text-[11px] opacity-80">已选</div>
                 </div>
-                <span class="opacity-70 hidden md:inline">提示：点击卡片上的勾选框来选择/取消课程</span>
+                <div class="text-center p-2 bg-white/20 rounded-xl backdrop-blur">
+                    <div class="text-[18px] font-bold" x-text="customStat.totalCredits"></div>
+                    <div class="text-[11px] opacity-80">学分</div>
+                </div>
+                <div class="text-center p-2 bg-white/20 rounded-xl backdrop-blur">
+                    <div class="text-[18px] font-bold" x-text="customStat.weightedGPA"></div>
+                    <div class="text-[11px] opacity-80">绩点</div>
+                </div>
+                <div class="text-center p-2 bg-white/20 rounded-xl backdrop-blur">
+                    <div class="text-[18px] font-bold" x-text="customStat.avgScore"></div>
+                    <div class="text-[11px] opacity-80">均分</div>
+                </div>
             </div>
         </div>
 

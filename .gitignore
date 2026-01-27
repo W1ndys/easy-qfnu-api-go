@@ -1,3 +1,7 @@
+# Tailwind CSS Standalone CLI (all platforms)
+web/tailwindcss
+web/tailwindcss.exe
+
 # claude cli specific ignores
 .claude/
 .spec-workflow/

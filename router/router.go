@@ -4,6 +4,7 @@ import (
 	"embed"
 	"io/fs"
 	"net/http"
+	"strings"
 
 	zhjw "github.com/W1ndys/qfnu-api-go/api/v1/zhjw"
 	"github.com/W1ndys/qfnu-api-go/common/response"
@@ -65,6 +66,8 @@ func installAPIRoutes(r *gin.Engine) {
 		zhjwGroup.GET("/exam-schedules", zhjw.GetExamSchedules)
 		// 选课结果相关接口
 		zhjwGroup.GET("/selection-results", zhjw.GetSelectionResults)
+		// 课程表相关接口
+		zhjwGroup.GET("/class-schedules", zhjw.GetClassSchedules)
 	}
 }
 
@@ -83,7 +86,34 @@ func installStaticRoutes(r *gin.Engine, webFS embed.FS) {
 			return
 		}
 
-		// 将请求转交给 Go 原生的文件服务器处理
+		path := c.Request.URL.Path
+		// 如果是根路径，直接交给 FileServer 处理（会自动寻找 index.html）
+		if path == "/" {
+			fileServer.ServeHTTP(c.Writer, c.Request)
+			return
+		}
+
+		// 尝试去掉开头的 "/"
+		fsPath := strings.TrimPrefix(path, "/")
+
+		// 1. 尝试直接访问文件 (例如 /static/css/style.css)
+		f, err := staticFiles.Open(fsPath)
+		if err == nil {
+			f.Close()
+			fileServer.ServeHTTP(c.Writer, c.Request)
+			return
+		}
+
+		// 2. 如果文件不存在，尝试添加 .html 后缀 (例如 /grade -> /grade.html)
+		f, err = staticFiles.Open(fsPath + ".html")
+		if err == nil {
+			f.Close()
+			c.Request.URL.Path += ".html"
+			fileServer.ServeHTTP(c.Writer, c.Request)
+			return
+		}
+
+		// 3. 都不存在，还是交给 FileServer 处理（通常会返回 404）
 		fileServer.ServeHTTP(c.Writer, c.Request)
 	})
 }

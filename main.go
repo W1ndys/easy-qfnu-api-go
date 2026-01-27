@@ -12,10 +12,11 @@ import (
 )
 
 // ---------------------------------------------------------
-// 1. 嵌入 web 目录下的所有文件
+// 1. 嵌入 web 目录下的静态资源
 // ---------------------------------------------------------
+// 只嵌入运行时需要的文件，排除构建工具和源文件
 //
-//go:embed web
+//go:embed web/*.html web/static/css/tailwind.css web/static/js
 var webFS embed.FS
 
 func main() {

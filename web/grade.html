@@ -33,9 +33,20 @@
 
         <!-- Cookie 输入区 -->
         <div class="card mb-4">
-            <label class="block text-[15px] font-medium text-[#1C1C1E] mb-2">
-                教务系统 Cookie
-            </label>
+            <div class="flex items-center justify-between mb-2">
+                <label class="text-[15px] font-medium text-[#1C1C1E]">
+                    教务系统 Cookie
+                </label>
+                <button x-show="cookieStr" @click="clearCookie()"
+                    class="text-[13px] text-[#8E8E93] hover:text-danger flex items-center transition-colors duration-150">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                        </path>
+                    </svg>
+                    清除
+                </button>
+            </div>
             <div class="cookie-container" :class="{'is-blurred': cookieBlurred && cookieStr}">
                 <textarea x-model="cookieStr" rows="2"
                     :class="{'cookie-blur': cookieBlurred && cookieStr}"
@@ -44,6 +55,9 @@
                     class="input-field font-mono text-[13px]"
                     placeholder="粘贴 Cookie，例如: JSESSIONID=abc123..."></textarea>
             </div>
+            <p x-show="cookieStr" class="text-[11px] text-[#8E8E93] mt-2">
+                Cookie 已自动保存到本地，刷新页面后无需重新输入
+            </p>
         </div>
 
         <!-- 筛选条件区 -->
@@ -447,6 +461,19 @@
 
                 // 方法
                 init() {
+                    // 从 localStorage 恢复 Cookie
+                    const savedCookie = window.Storage.getJSON('qfnu_auth_cookie', '');
+                    if (savedCookie) {
+                        this.cookieStr = savedCookie;
+                    }
+
+                    // 监听 Cookie 变化，保存到 localStorage
+                    this.$watch('cookieStr', (newValue) => {
+                        if (newValue && newValue.trim()) {
+                            window.Storage.setJSON('qfnu_auth_cookie', newValue.trim());
+                        }
+                    });
+
                     // 监听成绩变化，初始化勾选状态（默认全选）
                     this.$watch('grades', (newGrades) => {
                         this.selectedGrades = newGrades.map(() => true);
@@ -513,6 +540,12 @@
                     } catch {
                         window.Toast.error('复制失败');
                     }
+                },
+
+                clearCookie() {
+                    this.cookieStr = '';
+                    window.Storage.remove('qfnu_auth_cookie');
+                    window.Toast.success('Cookie 已清除');
                 }
             };
         }

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/W1ndys/qfnu-api-go/api/v1/questions"
 	zhjw "github.com/W1ndys/qfnu-api-go/api/v1/zhjw"
 	"github.com/W1ndys/qfnu-api-go/common/response"
 	"github.com/W1ndys/qfnu-api-go/middleware"
@@ -51,6 +52,9 @@ func installAPIRoutes(r *gin.Engine) {
 	{
 		// apiV1.GET("/news", v1.GetNewsList)
 		// apiV1.GET("/calendar", v1.GetCalendar)
+
+		// 新生试题库搜索
+		apiV1.GET("/questions/search", questions.Search)
 	}
 
 	// 【受保护接口组】 (Protected)

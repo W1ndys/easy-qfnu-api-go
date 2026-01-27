@@ -1,3 +1,6 @@
+# data
+data/
+
 # Tailwind CSS Standalone CLI (all platforms)
 web/tailwindcss
 web/tailwindcss.exe

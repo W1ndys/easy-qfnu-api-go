@@ -40,13 +40,154 @@
                     </div>
                 </a>
 
-                <!-- API 文档 -->
-                <a href="//easy-qfnu-api.apifox.cn" target="_blank"
+                <!-- 课表查询 -->
+                <a href="/schedule"
+                    class="card hover:shadow-md transition-all duration-250 hover:-translate-y-0.5 group">
+                    <div class="flex items-start">
+                        <div
+                            class="w-12 h-12 bg-success/10 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-success/20 transition-colors">
+                            <svg class="w-6 h-6 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-[17px] font-semibold text-[#1C1C1E] mb-1">
+                                课表查询
+                            </h3>
+                            <p class="text-[13px] text-[#8E8E93]">
+                                查看每周课程安排、上课地点时间
+                            </p>
+                        </div>
+                        <svg class="w-5 h-5 text-[#C7C7CC] group-hover:text-success transition-colors" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                            </path>
+                        </svg>
+                    </div>
+                </a>
+
+                <!-- 考试安排 -->
+                <a href="/exam"
+                    class="card hover:shadow-md transition-all duration-250 hover:-translate-y-0.5 group">
+                    <div class="flex items-start">
+                        <div
+                            class="w-12 h-12 bg-warning/10 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-warning/20 transition-colors">
+                            <svg class="w-6 h-6 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-[17px] font-semibold text-[#1C1C1E] mb-1">
+                                考试安排
+                            </h3>
+                            <p class="text-[13px] text-[#8E8E93]">
+                                查看考试时间、考场、座位号
+                            </p>
+                        </div>
+                        <svg class="w-5 h-5 text-[#C7C7CC] group-hover:text-warning transition-colors" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                            </path>
+                        </svg>
+                    </div>
+                </a>
+
+                <!-- 选课结果 -->
+                <a href="/selection"
                     class="card hover:shadow-md transition-all duration-250 hover:-translate-y-0.5 group">
                     <div class="flex items-start">
                         <div
                             class="w-12 h-12 bg-info/10 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-info/20 transition-colors">
                             <svg class="w-6 h-6 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-[17px] font-semibold text-[#1C1C1E] mb-1">
+                                选课结果
+                            </h3>
+                            <p class="text-[13px] text-[#8E8E93]">
+                                查看已选课程、学分学时统计
+                            </p>
+                        </div>
+                        <svg class="w-5 h-5 text-[#C7C7CC] group-hover:text-info transition-colors" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                            </path>
+                        </svg>
+                    </div>
+                </a>
+
+                <!-- 培养方案 -->
+                <a href="/course-plan"
+                    class="card hover:shadow-md transition-all duration-250 hover:-translate-y-0.5 group">
+                    <div class="flex items-start">
+                        <div
+                            class="w-12 h-12 bg-danger/10 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-danger/20 transition-colors">
+                            <svg class="w-6 h-6 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-[17px] font-semibold text-[#1C1C1E] mb-1">
+                                培养方案
+                            </h3>
+                            <p class="text-[13px] text-[#8E8E93]">
+                                查看培养目标、课程进度、学分完成情况
+                            </p>
+                        </div>
+                        <svg class="w-5 h-5 text-[#C7C7CC] group-hover:text-danger transition-colors" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                            </path>
+                        </svg>
+                    </div>
+                </a>
+
+                <!-- 新生试题库 -->
+                <a href="/questions"
+                    class="card hover:shadow-md transition-all duration-250 hover:-translate-y-0.5 group">
+                    <div class="flex items-start">
+                        <div
+                            class="w-12 h-12 bg-[#AF52DE]/10 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-[#AF52DE]/20 transition-colors">
+                            <svg class="w-6 h-6 text-[#AF52DE]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-[17px] font-semibold text-[#1C1C1E] mb-1">
+                                新生试题库
+                                <span class="ml-1 px-1.5 py-0.5 bg-success/10 text-success text-[10px] rounded-md">公开</span>
+                            </h3>
+                            <p class="text-[13px] text-[#8E8E93]">
+                                搜索新生入学考试题目，无需登录
+                            </p>
+                        </div>
+                        <svg class="w-5 h-5 text-[#C7C7CC] group-hover:text-[#AF52DE] transition-colors" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                            </path>
+                        </svg>
+                    </div>
+                </a>
+
+                <!-- API 文档 -->
+                <a href="//easy-qfnu-api.apifox.cn" target="_blank"
+                    class="card hover:shadow-md transition-all duration-250 hover:-translate-y-0.5 group">
+                    <div class="flex items-start">
+                        <div
+                            class="w-12 h-12 bg-[#8E8E93]/10 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-[#8E8E93]/20 transition-colors">
+                            <svg class="w-6 h-6 text-[#8E8E93]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
                                 </path>
@@ -60,7 +201,7 @@
                                 接口说明、请求示例、参数参考
                             </p>
                         </div>
-                        <svg class="w-5 h-5 text-[#C7C7CC] group-hover:text-info transition-colors" fill="none"
+                        <svg class="w-5 h-5 text-[#C7C7CC] group-hover:text-[#8E8E93] transition-colors" fill="none"
                             stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
                             </path>

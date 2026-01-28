@@ -766,26 +766,14 @@
   .text-\[\#3C3C43\]\/60 {
     color: color-mix(in oklab, #3C3C43 60%, transparent);
   }
-  .text-\[\#007AFF\] {
-    color: #007AFF;
-  }
   .text-\[\#8E8E93\] {
     color: #8E8E93;
-  }
-  .text-\[\#34C759\] {
-    color: #34C759;
   }
   .text-\[\#98989D\] {
     color: #98989D;
   }
   .text-\[\#C7C7CC\] {
     color: #C7C7CC;
-  }
-  .text-\[\#FF3B30\] {
-    color: #FF3B30;
-  }
-  .text-\[\#FF9500\] {
-    color: #FF9500;
   }
   .text-danger {
     color: var(--color-danger);

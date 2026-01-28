@@ -149,7 +149,7 @@ func GetCourseTypeID(input string) string {
 ## 目录结构
 
 ```
-qfnu-api-go/
+easy-qfnu-api-go/
 ├── api/v1/          # 接口层 - Handler
 ├── common/          # 公共层 - 工具函数
 │   ├── logger/      # 日志配置
@@ -186,4 +186,4 @@ qfnu-api-go/
 ---
 
 _作者：W1ndys_
-_项目地址：https://github.com/W1ndys/qfnu-api-go_
+_项目地址：https://github.com/W1ndys/easy-qfnu-api-go_

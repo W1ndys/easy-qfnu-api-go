@@ -5,7 +5,7 @@
 (function() {
   // 创建 Axios 实例
   const request = axios.create({
-    baseURL: `${window.location.protocol}//${window.location.hostname}:8141`,
+    baseURL: window.location.origin,
     timeout: 30000,
     headers: {
       'Content-Type': 'application/json'

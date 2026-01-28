@@ -2,7 +2,6 @@ package zhjw
 
 import (
 	"bytes"
-	"log"
 	"log/slog"
 	"regexp"
 	"strconv"
@@ -33,7 +32,7 @@ func FetchClassSchedules(cookie string, date string) (*model.ClassScheduleRespon
 		SetFormData(formData).
 		Post(targetURL)
 
-	log.Printf("响应内容：%s", resp.Body())
+	// log.Printf("响应内容：%s", resp.Body())
 
 	// 错误处理
 	if err != nil {
@@ -52,17 +51,21 @@ func parseClassSchedulesHtml(htmlBody []byte) (*model.ClassScheduleResponse, err
 	}
 
 	response := &model.ClassScheduleResponse{}
-
-	// 1. 获取当前周次
-	// 从 script 中提取: $("#li_showWeek").html("<span class=\"main_text main_color\">第18周</span>/20周");
 	htmlStr := string(htmlBody)
-	reWeek := regexp.MustCompile(`\$\("#li_showWeek"\)\.html\("(.+?)"\);`)
+
+	// 1. 获取当前周次信息
+	// 从 script 中提取: $("#li_showWeek").html("<span class=\"main_text main_color\">第18周</span>/20周");
+	// 只匹配包含 span 标签的内容，排除 "当前登录已失效，请重新登录！" 这种纯文本
+	// 匹配的内容：
+	// - "<span class=\"main_text main_color\">第18周</span>/20周"
+	// - "<span class=\"main_text main_color\">当前日期不在教学周历内</span>"
+	reWeek := regexp.MustCompile(`\$\("#li_showWeek"\)\.html\("(<span[^>]*>.*?</span>.*?)"\);`)
 	matches := reWeek.FindStringSubmatch(htmlStr)
 	if len(matches) > 1 {
 		// 清除 html 标签
 		reTag := regexp.MustCompile(`<[^>]+>`)
 		cleanWeek := reTag.ReplaceAllString(matches[1], "")
-		// 处理转义字符，如 \" -> " (虽然正则提取出来的可能已经不带反斜杠了，但视情况而定)
+		// 处理转义字符
 		cleanWeek = strings.ReplaceAll(cleanWeek, `\"`, `"`)
 		response.CurrentWeekRaw = cleanWeek
 	}

@@ -5,8 +5,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/W1ndys/qfnu-api-go/common/logger"
-	"github.com/W1ndys/qfnu-api-go/router"
+	"github.com/W1ndys/easy-qfnu-api-go/common/logger"
+	"github.com/W1ndys/easy-qfnu-api-go/router"
 	"github.com/fatih/color"
 	"github.com/joho/godotenv"
 )

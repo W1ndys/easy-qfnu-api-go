@@ -13,7 +13,7 @@ import (
 )
 
 // InitLogger 初始化全局日志配置
-// logName 建议只传前缀，例如 "qfnu-api" (不要带 .log)
+// logName 建议只传前缀，例如 "easy-qfnu-api" (不要带 .log)
 func InitLogger(logDir, logNamePrefix, level string) {
 	// 1. 确保日志目录存在
 	_ = os.MkdirAll(logDir, 0755)
@@ -23,7 +23,7 @@ func InitLogger(logDir, logNamePrefix, level string) {
 	// Windows文件名不支持冒号，所以用 15-04-05
 	timestamp := time.Now().Format("2006-01-02_15-04-05")
 
-	// 最终文件名: qfnu-api-2026-01-26_12-57-05.log
+	// 最终文件名: easy-qfnu-api-2026-01-26_12-57-05.log
 	fullFileName := fmt.Sprintf("%s-%s.log", logNamePrefix, timestamp)
 	logPath := filepath.Join(logDir, fullFileName)
 

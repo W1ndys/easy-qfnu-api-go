@@ -1,9 +1,9 @@
 package questions
 
 import (
-	"github.com/W1ndys/qfnu-api-go/common/response"
-	"github.com/W1ndys/qfnu-api-go/model"
-	services "github.com/W1ndys/qfnu-api-go/services/questions"
+	"github.com/W1ndys/easy-qfnu-api-go/common/response"
+	"github.com/W1ndys/easy-qfnu-api-go/model"
+	services "github.com/W1ndys/easy-qfnu-api-go/services/questions"
 	"github.com/gin-gonic/gin"
 )
 

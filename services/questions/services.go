@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/W1ndys/qfnu-api-go/model"
+	"github.com/W1ndys/easy-qfnu-api-go/model"
 	_ "modernc.org/sqlite"
 )
 

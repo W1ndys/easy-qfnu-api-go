@@ -1,4 +1,4 @@
-module github.com/W1ndys/qfnu-api-go
+module github.com/W1ndys/easy-qfnu-api-go
 
 go 1.25.1
 
@@ -9,9 +9,9 @@ require (
 	github.com/go-resty/resty/v2 v2.17.1
 	github.com/joho/godotenv v1.5.1
 	github.com/lmittmann/tint v1.1.2
-	github.com/mattn/go-sqlite3 v1.14.33
 	github.com/samber/slog-multi v1.7.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
+	modernc.org/sqlite v1.44.3
 )
 
 require (
@@ -56,5 +56,4 @@ require (
 	modernc.org/libc v1.67.6 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.11.0 // indirect
-	modernc.org/sqlite v1.44.3 // indirect
 )

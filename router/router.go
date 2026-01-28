@@ -6,10 +6,10 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/W1ndys/qfnu-api-go/api/v1/questions"
-	zhjw "github.com/W1ndys/qfnu-api-go/api/v1/zhjw"
-	"github.com/W1ndys/qfnu-api-go/common/response"
-	"github.com/W1ndys/qfnu-api-go/middleware"
+	"github.com/W1ndys/easy-qfnu-api-go/api/v1/questions"
+	zhjw "github.com/W1ndys/easy-qfnu-api-go/api/v1/zhjw"
+	"github.com/W1ndys/easy-qfnu-api-go/common/response"
+	"github.com/W1ndys/easy-qfnu-api-go/middleware"
 	"github.com/gin-gonic/gin"
 )
 

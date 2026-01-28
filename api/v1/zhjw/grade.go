@@ -3,10 +3,10 @@ package zhjw
 import (
 	"errors"
 
-	"github.com/W1ndys/qfnu-api-go/common/request"
-	"github.com/W1ndys/qfnu-api-go/common/response"
-	"github.com/W1ndys/qfnu-api-go/model"
-	zhjwService "github.com/W1ndys/qfnu-api-go/services/zhjw"
+	"github.com/W1ndys/easy-qfnu-api-go/common/request"
+	"github.com/W1ndys/easy-qfnu-api-go/common/response"
+	"github.com/W1ndys/easy-qfnu-api-go/model"
+	zhjwService "github.com/W1ndys/easy-qfnu-api-go/services/zhjw"
 	"github.com/gin-gonic/gin"
 )
 

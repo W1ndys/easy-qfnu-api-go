@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/W1ndys/qfnu-api-go/model"
+	"github.com/W1ndys/easy-qfnu-api-go/model"
 )
 
 // FetchClassSchedules 抓取并解析课程表

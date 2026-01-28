@@ -5,6 +5,7 @@ go 1.25.1
 require (
 	github.com/PuerkitoBio/goquery v1.11.0
 	github.com/fatih/color v1.18.0
+	github.com/gin-contrib/multitemplate v1.1.1
 	github.com/gin-gonic/gin v1.11.0
 	github.com/go-resty/resty/v2 v2.17.1
 	github.com/joho/godotenv v1.5.1

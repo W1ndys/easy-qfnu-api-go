@@ -1,20 +1,5 @@
-<!doctype html>
-<html lang="zh-CN">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>曲奇API</title>
-    <link rel="icon" type="image/x-icon" href="static/favico.ico" />
-
-    <!-- Tailwind CSS (编译后) -->
-    <link rel="stylesheet" href="static/css/tailwind.css" />
-
-    <!-- Alpine.js -->
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-</head>
-
-<body class="bg-[#F2F2F7] min-h-screen font-sans">
+{{ define "title" }}曲奇API{{ end }}
+{{ define "body" }}
     <div class="max-w-4xl mx-auto px-4 py-8">
         <!-- 头部 -->
         <header class="text-center mb-12">
@@ -28,7 +13,7 @@
             <h2 class="text-[22px] font-semibold text-[#1C1C1E] mb-4">功能入口</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- 成绩查询 -->
-                <a href="grade"
+                <a href="/grade"
                     class="card hover:shadow-md transition-all duration-250 hover:-translate-y-0.5 group">
                     <div class="flex items-start">
                         <div
@@ -215,6 +200,4 @@
             </p>
         </footer>
     </div>
-</body>
-
-</html>
+{{ end }}

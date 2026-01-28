@@ -4,7 +4,6 @@ import (
 	"embed"
 	"io/fs"
 	"net/http"
-	"strings"
 
 	"github.com/W1ndys/easy-qfnu-api-go/api/v1/questions"
 	zhjw "github.com/W1ndys/easy-qfnu-api-go/api/v1/zhjw"
@@ -76,48 +75,18 @@ func installAPIRoutes(r *gin.Engine) {
 }
 
 func installStaticRoutes(r *gin.Engine, webFS embed.FS) {
-	// 第一步：剥离 "web" 这一层目录
-	staticFiles, _ := fs.Sub(webFS, "web")
+	// 1. 加载 HTML 模板
+	r.HTMLRender = loadTemplates(webFS)
 
-	// 第二步：创建标准的文件服务器
-	fileServer := http.FileServer(http.FS(staticFiles))
+	// 2. 注册静态资源路由
+	staticFiles, _ := fs.Sub(webFS, "web/static")
+	r.StaticFS("/static", http.FS(staticFiles))
 
-	// 第三步：使用 NoRoute 作为静态资源入口
-	r.NoRoute(func(c *gin.Context) {
-		// 出于安全考虑，拦截非 GET/HEAD 请求
-		if c.Request.Method != http.MethodGet && c.Request.Method != http.MethodHead {
-			c.Status(http.StatusMethodNotAllowed)
-			return
-		}
-
-		path := c.Request.URL.Path
-		// 如果是根路径，直接交给 FileServer 处理（会自动寻找 index.html）
-		if path == "/" {
-			fileServer.ServeHTTP(c.Writer, c.Request)
-			return
-		}
-
-		// 尝试去掉开头的 "/"
-		fsPath := strings.TrimPrefix(path, "/")
-
-		// 1. 尝试直接访问文件 (例如 /static/css/style.css)
-		f, err := staticFiles.Open(fsPath)
-		if err == nil {
-			f.Close()
-			fileServer.ServeHTTP(c.Writer, c.Request)
-			return
-		}
-
-		// 2. 如果文件不存在，尝试添加 .html 后缀 (例如 /grade -> /grade.html)
-		f, err = staticFiles.Open(fsPath + ".html")
-		if err == nil {
-			f.Close()
-			c.Request.URL.Path += ".html"
-			fileServer.ServeHTTP(c.Writer, c.Request)
-			return
-		}
-
-		// 3. 都不存在，还是交给 FileServer 处理（通常会返回 404）
-		fileServer.ServeHTTP(c.Writer, c.Request)
+	// 3. 注册页面路由
+	r.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.html", nil)
+	})
+	r.GET("/grade", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "grade.html", nil)
 	})
 }

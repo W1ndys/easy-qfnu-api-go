@@ -1,29 +1,15 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>成绩查询 - 曲奇API</title>
-    <link rel="icon" type="image/x-icon" href="static/favico.ico">
-
-    <!-- Tailwind CSS (编译后) -->
-    <link rel="stylesheet" href="static/css/tailwind.css">
-
-    <!-- Alpine.js -->
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <!-- Axios -->
+{{ define "title" }}成绩查询 - 曲奇API{{ end }}
+{{ define "head" }}
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-</head>
-
-<body class="bg-[#F2F2F7] min-h-screen py-8 font-sans">
+{{ end }}
+{{ define "body" }}
     <!-- JS 模块 -->
-    <script src="static/js/components/toast.js"></script>
-    <script src="static/js/utils/storage.js"></script>
-    <script src="static/js/api/request.js"></script>
-    <script src="static/js/api/grade.js"></script>
+    <script src="/static/js/components/toast.js"></script>
+    <script src="/static/js/utils/storage.js"></script>
+    <script src="/static/js/api/request.js"></script>
+    <script src="/static/js/api/grade.js"></script>
 
-    <div x-data="gradeApp()" x-cloak class="max-w-4xl mx-auto px-4">
+    <div x-data="gradeApp()" x-cloak class="max-w-4xl mx-auto px-4 py-8">
         <!-- 标题 -->
         <header class="mb-8 text-center">
             <h1 class="text-[28px] font-bold text-[#1C1C1E] leading-tight">成绩查询</h1>
@@ -389,7 +375,8 @@
             </div>
         </div>
     </div>
-
+{{ end }}
+{{ define "scripts" }}
     <script>
         function gradeApp() {
             return {
@@ -537,6 +524,4 @@
             };
         }
     </script>
-</body>
-
-</html>
+{{ end }}

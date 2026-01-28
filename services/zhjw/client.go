@@ -30,7 +30,7 @@ func NewClient(Authorization string) *resty.Client {
 		body := resp.String()
 
 		// 统一检查规则：
-		// 强智教务系统 Cookie 失效时，通常会重定向到登录页，或者 body 里包含特定文字
+		// 教务系统 Cookie 失效时，通常会重定向到登录页，或者 body 里包含特定文字
 		// 这里的判断条件根据你的实际情况添加
 		if resp.StatusCode() != 200 ||
 			strings.Contains(body, "用户登录") {

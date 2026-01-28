@@ -1,6 +1,6 @@
 # qfnu-api-go
 
-使用Go语言封装的qfnu曲阜师范大学教务系统、教务处、图书馆等各种系统API聚合调用中间件
+QFNU 综合校园服务网关。基于 Go (Gin) 构建，不仅支持教务系统（成绩/课表）清洗，更聚合了通知公告检索、题库搜索等多元化服务，实现单文件部署的一站式校园数据中心。A comprehensive campus service gateway for QFNU built with Go. Aggregates educational data (grades/schedules), notification search, and question banks into a single-binary, high-performance API solution.
 
 API文档地址：https://easy-qfnu-api.apifox.cn/
 

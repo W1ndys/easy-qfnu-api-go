@@ -89,4 +89,19 @@ func installStaticRoutes(r *gin.Engine, webFS embed.FS) {
 	r.GET("/grade", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "grade.html", nil)
 	})
+	r.GET("/schedule", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "schedule.html", nil)
+	})
+	r.GET("/course-plan", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "course-plan.html", nil)
+	})
+	r.GET("/exam", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "exam.html", nil)
+	})
+	r.GET("/selection", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "selection.html", nil)
+	})
+	r.GET("/questions", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "questions.html", nil)
+	})
 }

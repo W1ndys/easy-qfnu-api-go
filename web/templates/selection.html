@@ -65,7 +65,6 @@
                 <div class="flex-1">
                     <label class="block text-[13px] font-medium text-[#8E8E93] mb-1">学期</label>
                     <select x-model="queryTerm" class="select-field">
-                        <option value="">当前学期</option>
                         <template x-for="t in termOptions" :key="t.value">
                             <option :value="t.value" x-text="t.label"></option>
                         </template>
@@ -193,13 +192,13 @@
                 // 数据
                 cookieStr: '',
                 cookieBlurred: true,
-                queryTerm: '',
                 result: null,
                 loading: false,
                 errorMsg: '',
 
                 // 选项数据
                 termOptions: window.SelectionApi.generateTermOptions(),
+                queryTerm: window.SelectionApi.generateTermOptions()[0]?.value || '',
 
                 // 计算属性
                 get results() {

@@ -30,7 +30,7 @@ window.SelectionApi = {
     if (term) queryParams.append('term', term);
 
     const queryString = queryParams.toString();
-    const url = `/api/v1/zhjw/selection-results${queryString ? '?' + queryString : ''}`;
+    const url = `/api/v1/zhjw/selection${queryString ? '?' + queryString : ''}`;
 
     return await window.request.get(url);
   },

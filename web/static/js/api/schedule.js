@@ -13,7 +13,7 @@ window.ScheduleApi = {
     if (date) queryParams.append('date', date);
 
     const queryString = queryParams.toString();
-    const url = `/api/v1/zhjw/class-schedules${queryString ? '?' + queryString : ''}`;
+    const url = `/api/v1/zhjw/schedule${queryString ? '?' + queryString : ''}`;
 
     return await window.request.get(url);
   },

@@ -60,7 +60,7 @@ window.GradeApi = {
     if (params.displayType) queryParams.append('display_type', params.displayType);
 
     const queryString = queryParams.toString();
-    const url = `/api/v1/zhjw/grades${queryString ? '?' + queryString : ''}`;
+    const url = `/api/v1/zhjw/grade${queryString ? '?' + queryString : ''}`;
 
     return await window.request.get(url);
   },

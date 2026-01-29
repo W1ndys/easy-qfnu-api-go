@@ -30,7 +30,7 @@ window.ExamApi = {
     if (term) queryParams.append('term', term);
 
     const queryString = queryParams.toString();
-    const url = `/api/v1/zhjw/exam-schedules${queryString ? '?' + queryString : ''}`;
+    const url = `/api/v1/zhjw/exam${queryString ? '?' + queryString : ''}`;
 
     return await window.request.get(url);
   },

@@ -26,11 +26,11 @@ func RequestLogger() gin.HandlerFunc {
 
 		// 组装 Log 属性
 		args := []any{
-			slog.String("method", method),
-			slog.String("path", path),
-			slog.Int("status", statusCode),
-			slog.String("ip", clientIP),
-			slog.Duration("latency", latency),
+			slog.String("method", method),     // 请求方法
+			slog.String("path", path),         // 请求路径
+			slog.Int("status", statusCode),    // 响应状态码
+			slog.String("ip", clientIP),       // 客户端 IP
+			slog.Duration("latency", latency), // 请求耗时
 		}
 		if raw != "" {
 			args = append(args, slog.String("query", raw))

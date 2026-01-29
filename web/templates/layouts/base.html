@@ -1,6 +1,7 @@
 {{ define "base" }}
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,12 +9,16 @@
     <link rel="icon" type="image/x-icon" href="/static/favico.ico">
     <link rel="stylesheet" href="/static/css/tailwind.css">
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script charset="UTF-8" id="LA_COLLECT" src="//sdk.51.la/js-sdk-pro.min.js"></script>
+    <script>LA.init({ id: "3HxQRMoHKBJizCgs", ck: "3HxQRMoHKBJizCgs", autoTrack: true, hashMode: true, screenRecord: true })</script>
     {{ template "head" . }}
 </head>
+
 <body class="bg-[#F2F2F7] min-h-screen font-sans">
     {{ template "body" . }}
     {{ template "scripts" . }}
 </body>
+
 </html>
 {{ end }}
 

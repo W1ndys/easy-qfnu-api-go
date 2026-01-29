@@ -41,11 +41,11 @@ func RequestLogger() gin.HandlerFunc {
 
 		// 根据状态码决定日志级别
 		if statusCode >= 500 {
-			slog.Error("Request Failed", args...)
+			slog.Error("[请求服务器错误]", args...)
 		} else if statusCode >= 400 {
-			slog.Warn("Request Client Error", args...)
+			slog.Warn("[请求客户端错误]", args...)
 		} else {
-			slog.Info("Request Success", args...)
+			slog.Info("[响应成功]", args...)
 		}
 	}
 }

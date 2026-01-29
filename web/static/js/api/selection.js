@@ -12,9 +12,9 @@ window.SelectionApi = {
     const currentYear = new Date().getFullYear();
 
     for (let year = currentYear + 1; year >= 2020; year--) {
-      options.push({ value: `${year - 1}-${year}-3`, label: `${year - 1}-${year} 学年 第三学期` });
-      options.push({ value: `${year - 1}-${year}-2`, label: `${year - 1}-${year} 学年 第二学期` });
-      options.push({ value: `${year - 1}-${year}-1`, label: `${year - 1}-${year} 学年 第一学期` });
+      options.push({ value: `${year - 1}-${year}-3`, label: `${year - 1}-${year}-3` });
+      options.push({ value: `${year - 1}-${year}-2`, label: `${year - 1}-${year}-2` });
+      options.push({ value: `${year - 1}-${year}-1`, label: `${year - 1}-${year}-1` });
     }
 
     return options;

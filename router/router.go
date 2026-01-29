@@ -62,15 +62,15 @@ func installAPIRoutes(r *gin.Engine) {
 	zhjwGroup.Use(middleware.AuthRequired())
 	{
 		// 成绩相关接口
-		zhjwGroup.GET("/grades", zhjw.GetGradeList)
+		zhjwGroup.GET("/grade", zhjw.GetGradeList)
 		// 教学计划/培养方案
 		zhjwGroup.GET("/course-plan", zhjw.GetCoursePlan)
 		// 考试安排相关接口
-		zhjwGroup.GET("/exam-schedules", zhjw.GetExamSchedules)
+		zhjwGroup.GET("/exam", zhjw.GetExamSchedules)
 		// 选课结果相关接口
-		zhjwGroup.GET("/selection-results", zhjw.GetSelectionResults)
+		zhjwGroup.GET("/selection", zhjw.GetSelectionResults)
 		// 课程表相关接口
-		zhjwGroup.GET("/class-schedules", zhjw.GetClassSchedules)
+		zhjwGroup.GET("/schedule", zhjw.GetClassSchedules)
 	}
 }
 

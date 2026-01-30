@@ -282,9 +282,116 @@ adminPages.Use(middleware.AdminAuthRequired())
 
 ---
 
-## 八、流程图
+## 八、Token 实现方案（无状态）
 
-### 8.1 前端访问验证流程
+### 8.1 Token 结构
+
+```
+Token = Base64(Payload) + "." + Signature
+```
+
+**Payload 内容**：
+```json
+{
+    "type": "site|admin",
+    "exp": 1706745600
+}
+```
+
+| 字段 | 说明 |
+|------|------|
+| `type` | Token 类型：`site`（访问验证）或 `admin`（管理员） |
+| `exp` | 过期时间（Unix 时间戳） |
+
+### 8.2 Token 生成流程
+
+```go
+func GenerateToken(tokenType string, expireHours int) string {
+    // 1. 构建 Payload
+    payload := map[string]interface{}{
+        "type": tokenType,
+        "exp":  time.Now().Add(time.Hour * time.Duration(expireHours)).Unix(),
+    }
+
+    // 2. JSON 序列化并 Base64 编码
+    payloadJSON, _ := json.Marshal(payload)
+    payloadBase64 := base64.URLEncoding.EncodeToString(payloadJSON)
+
+    // 3. 使用密钥生成签名
+    h := hmac.New(sha256.New, []byte(secretKey))
+    h.Write([]byte(payloadBase64))
+    signature := base64.URLEncoding.EncodeToString(h.Sum(nil))
+
+    // 4. 拼接 Token
+    return payloadBase64 + "." + signature
+}
+```
+
+### 8.3 Token 验证流程
+
+```go
+func ValidateToken(token string, expectedType string) bool {
+    // 1. 分割 Token
+    parts := strings.Split(token, ".")
+    if len(parts) != 2 {
+        return false
+    }
+
+    // 2. 验证签名
+    h := hmac.New(sha256.New, []byte(secretKey))
+    h.Write([]byte(parts[0]))
+    expectedSig := base64.URLEncoding.EncodeToString(h.Sum(nil))
+    if parts[1] != expectedSig {
+        return false
+    }
+
+    // 3. 解析 Payload
+    payloadJSON, _ := base64.URLEncoding.DecodeString(parts[0])
+    var payload map[string]interface{}
+    json.Unmarshal(payloadJSON, &payload)
+
+    // 4. 验证类型
+    if payload["type"] != expectedType {
+        return false
+    }
+
+    // 5. 验证过期时间
+    exp := int64(payload["exp"].(float64))
+    if time.Now().Unix() > exp {
+        return false
+    }
+
+    return true
+}
+```
+
+### 8.4 密钥管理
+
+**密钥来源**：从环境变量 `TOKEN_SECRET` 读取，若未设置则自动生成随机密钥。
+
+```go
+var secretKey string
+
+func init() {
+    secretKey = os.Getenv("TOKEN_SECRET")
+    if secretKey == "" {
+        // 生成 32 字节随机密钥
+        key := make([]byte, 32)
+        rand.Read(key)
+        secretKey = base64.StdEncoding.EncodeToString(key)
+    }
+}
+```
+
+**注意事项**：
+- 生产环境建议在 `.env` 中配置固定密钥
+- 若未配置，每次重启服务会生成新密钥，导致所有 Token 失效
+
+---
+
+## 九、流程图
+
+### 9.1 前端访问验证流程
 
 ```
 用户访问受保护页面
@@ -311,7 +418,7 @@ adminPages.Use(middleware.AdminAuthRequired())
          正常访问
 ```
 
-### 8.2 管理员登录流程
+### 9.2 管理员登录流程
 
 ```
 访问 /admin/*

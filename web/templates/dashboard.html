@@ -1,0 +1,120 @@
+{{ define "title" }}数据大屏 - 曲奇API{{ end }}
+
+{{ define "head" }}
+<style>
+    /* 数字动画 */
+    .stat-number {
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* 进度条动画 */
+    .progress-bar {
+        transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+</style>
+{{ end }}
+
+{{ define "body" }}
+<div class="min-h-screen bg-[#F2F2F7] dark:bg-black p-4 md:p-6 font-sans">
+    <!-- 页面标题 -->
+    <header class="mb-6">
+        <h1 class="text-[28px] font-bold text-[#1C1C1E] dark:text-white leading-tight">
+            数据大屏
+        </h1>
+        <p class="text-[15px] text-[#8E8E93] mt-1">实时数据监控</p>
+    </header>
+
+    <!-- 顶部统计卡片 -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+        <!-- 总调用次数 -->
+        <div class="bg-white dark:bg-[#1C1C1E] rounded-2xl p-4">
+            <div class="text-[13px] text-[#8E8E93] mb-1">总调用次数</div>
+            <div id="totalRequests" class="text-[28px] font-bold text-[#885021] stat-number">-</div>
+        </div>
+
+        <!-- 今日调用 -->
+        <div class="bg-white dark:bg-[#1C1C1E] rounded-2xl p-4">
+            <div class="text-[13px] text-[#8E8E93] mb-1">今日调用</div>
+            <div id="todayRequests" class="text-[28px] font-bold text-[#34C759] stat-number">-</div>
+        </div>
+
+        <!-- 独立 IP -->
+        <div class="bg-white dark:bg-[#1C1C1E] rounded-2xl p-4">
+            <div class="text-[13px] text-[#8E8E93] mb-1">独立 IP</div>
+            <div id="uniqueIPs" class="text-[28px] font-bold text-[#007AFF] stat-number">-</div>
+        </div>
+
+        <!-- 平均响应 -->
+        <div class="bg-white dark:bg-[#1C1C1E] rounded-2xl p-4">
+            <div class="text-[13px] text-[#8E8E93] mb-1">平均响应</div>
+            <div id="avgLatency" class="text-[28px] font-bold text-[#FF9500] stat-number">-</div>
+        </div>
+    </div>
+
+    <!-- 运行时长卡片 -->
+    <div class="dashboard-card rounded-2xl p-4 mb-4">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-[#885021]/10 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-[#885021]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <div class="text-[13px] text-[#8E8E93]">系统运行时长</div>
+                    <div id="uptime" class="text-[17px] font-semibold text-[#1C1C1E] dark:text-white font-mono">-</div>
+                </div>
+            </div>
+            <div class="text-[11px] text-[#8E8E93]" id="lastUpdate">-</div>
+        </div>
+    </div>
+
+    <!-- 图表区域 -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+        <!-- 调用趋势 -->
+        <div class="bg-white dark:bg-[#1C1C1E] rounded-2xl p-4">
+            <h3 class="text-[17px] font-semibold text-[#1C1C1E] dark:text-white mb-4">调用趋势</h3>
+            <div id="trendChart" style="height: 240px;"></div>
+        </div>
+
+        <!-- 状态码分布 -->
+        <div class="bg-white dark:bg-[#1C1C1E] rounded-2xl p-4">
+            <h3 class="text-[17px] font-semibold text-[#1C1C1E] dark:text-white mb-4">状态码分布</h3>
+            <div id="statusChart" style="height: 240px;"></div>
+        </div>
+    </div>
+
+    <!-- 列表区域 -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <!-- 接口调用排行 -->
+        <div class="bg-white dark:bg-[#1C1C1E] rounded-2xl overflow-hidden">
+            <div class="px-4 py-3 border-b border-[#E5E5EA] dark:border-[#38383A]">
+                <h3 class="text-[17px] font-semibold text-[#1C1C1E] dark:text-white">接口调用 TOP 10</h3>
+            </div>
+            <div id="apiList" class="divide-y divide-[#E5E5EA] dark:divide-[#38383A] max-h-80 overflow-y-auto">
+                <div class="px-4 py-8 text-center text-[#8E8E93] text-[15px]">加载中...</div>
+            </div>
+        </div>
+
+        <!-- 搜索热词 -->
+        <div class="bg-white dark:bg-[#1C1C1E] rounded-2xl overflow-hidden">
+            <div class="px-4 py-3 border-b border-[#E5E5EA] dark:border-[#38383A]">
+                <h3 class="text-[17px] font-semibold text-[#1C1C1E] dark:text-white">搜索热词 TOP 10</h3>
+            </div>
+            <div id="keywordList" class="divide-y divide-[#E5E5EA] dark:divide-[#38383A] max-h-80 overflow-y-auto">
+                <div class="px-4 py-8 text-center text-[#8E8E93] text-[15px]">加载中...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部信息 -->
+    <div class="text-center text-[#8E8E93] text-[11px] mt-6 pb-4">
+        每 30 秒自动刷新
+    </div>
+</div>
+{{ end }}
+
+{{ define "scripts" }}
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<script src="/static/js/dashboard.js"></script>
+{{ end }}

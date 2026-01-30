@@ -15,6 +15,19 @@
 </head>
 
 <body class="bg-[#F2F2F7] min-h-screen font-sans">
+    <!-- 公告区域 -->
+    <div x-data="announcementBanner()" x-init="init()">
+        <template x-for="a in announcements" :key="a.id">
+            <div class="border-b px-4 py-3" :class="getTypeClass(a.type)">
+                <div class="max-w-4xl mx-auto flex items-center gap-2">
+                    <span class="font-medium" x-text="a.title"></span>
+                    <span class="text-sm" x-text="a.content"></span>
+                </div>
+            </div>
+        </template>
+    </div>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="/static/js/components/announcement.js"></script>
     {{ template "body" . }}
     {{ template "scripts" . }}
 </body>

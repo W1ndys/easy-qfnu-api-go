@@ -11,6 +11,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/lmittmann/tint v1.1.2
 	github.com/samber/slog-multi v1.7.0
+	golang.org/x/crypto v0.47.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	modernc.org/sqlite v1.44.3
 )
@@ -48,7 +49,6 @@ require (
 	github.com/ugorji/go/codec v1.3.1 // indirect
 	go.uber.org/mock v0.6.0 // indirect
 	golang.org/x/arch v0.23.0 // indirect
-	golang.org/x/crypto v0.47.0 // indirect
 	golang.org/x/exp v0.0.0-20251023183803-a4bb9ffd2546 // indirect
 	golang.org/x/net v0.49.0 // indirect
 	golang.org/x/sys v0.40.0 // indirect

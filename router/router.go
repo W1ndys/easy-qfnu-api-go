@@ -102,11 +102,11 @@ func installAPIRoutes(r *gin.Engine) {
 		{
 			authAdmin.POST("/logout", admin.Logout)
 			authAdmin.GET("/config", admin.GetConfig)
-			authAdmin.PUT("/config", admin.UpdateConfig)
+			authAdmin.POST("/config/update", admin.UpdateConfig)
 			authAdmin.GET("/announcements", admin.GetAnnouncements)
 			authAdmin.POST("/announcements", admin.CreateAnnouncement)
-			authAdmin.PUT("/announcements/:id", admin.UpdateAnnouncement)
-			authAdmin.DELETE("/announcements/:id", admin.DeleteAnnouncement)
+			authAdmin.POST("/announcements/:id/update", admin.UpdateAnnouncement)
+			authAdmin.POST("/announcements/:id/delete", admin.DeleteAnnouncement)
 		}
 	}
 }

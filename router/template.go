@@ -18,14 +18,24 @@ func loadTemplates(webFS embed.FS) multitemplate.Renderer {
 	baseBytes, _ := webFS.ReadFile("web/templates/layouts/base.html")
 	baseContent := string(baseBytes)
 
-	// 动态扫描 templates 目录下的页面文件
-	entries, err := webFS.ReadDir("web/templates")
+	// 加载根目录模板
+	loadTemplatesFromDir(webFS, r, baseContent, "web/templates", "")
+
+	// 加载 admin 子目录模板
+	loadTemplatesFromDir(webFS, r, baseContent, "web/templates/admin", "admin/")
+
+	return r
+}
+
+// loadTemplatesFromDir 从指定目录加载模板
+func loadTemplatesFromDir(webFS embed.FS, r multitemplate.Renderer, baseContent, dir, prefix string) {
+	entries, err := webFS.ReadDir(dir)
 	if err != nil {
-		panic("failed to read templates directory: " + err.Error())
+		return
 	}
 
 	for _, entry := range entries {
-		// 跳过目录（如 layouts）
+		// 跳过目录
 		if entry.IsDir() {
 			continue
 		}
@@ -36,8 +46,8 @@ func loadTemplates(webFS embed.FS) multitemplate.Renderer {
 			continue
 		}
 
-		// 读取页面模板 (embed.FS 始终使用正斜杠)
-		pagePath := "web/templates/" + name
+		// 读取页面模板
+		pagePath := dir + "/" + name
 		pageBytes, err := webFS.ReadFile(pagePath)
 		if err != nil {
 			continue
@@ -46,8 +56,6 @@ func loadTemplates(webFS embed.FS) multitemplate.Renderer {
 		// 组合 base + page
 		tmpl := template.Must(template.New("base").Parse(baseContent))
 		template.Must(tmpl.Parse(string(pageBytes)))
-		r.Add(name, tmpl)
+		r.Add(prefix+name, tmpl)
 	}
-
-	return r
 }

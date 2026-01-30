@@ -5,7 +5,9 @@ import (
 	"io/fs"
 	"net/http"
 
+	"github.com/W1ndys/easy-qfnu-api-go/api/v1/admin"
 	"github.com/W1ndys/easy-qfnu-api-go/api/v1/questions"
+	"github.com/W1ndys/easy-qfnu-api-go/api/v1/site"
 	"github.com/W1ndys/easy-qfnu-api-go/api/v1/stats"
 	zhjw "github.com/W1ndys/easy-qfnu-api-go/api/v1/zhjw"
 	"github.com/W1ndys/easy-qfnu-api-go/common/response"
@@ -60,6 +62,14 @@ func installAPIRoutes(r *gin.Engine) {
 		// 统计接口
 		apiV1.GET("/stats/dashboard", stats.GetDashboard)
 		apiV1.GET("/stats/trend", stats.GetTrend)
+
+		// 站点公共接口
+		siteGroup := apiV1.Group("/site")
+		{
+			siteGroup.POST("/verify", site.Verify)
+			siteGroup.GET("/check-token", site.CheckToken)
+			siteGroup.GET("/announcements", site.GetAnnouncements)
+		}
 	}
 
 	// 【受保护接口组】 (Protected)
@@ -78,6 +88,27 @@ func installAPIRoutes(r *gin.Engine) {
 		// 课程表相关接口
 		zhjwGroup.GET("/schedule", zhjw.GetClassSchedules)
 	}
+
+	// 管理后台接口
+	adminGroup := apiV1.Group("/admin")
+	{
+		adminGroup.POST("/login", admin.Login)
+		adminGroup.GET("/check-init", admin.CheckInit)
+		adminGroup.POST("/init", admin.Init)
+
+		// 需要认证的管理接口
+		authAdmin := adminGroup.Group("")
+		authAdmin.Use(middleware.AdminAuthRequired())
+		{
+			authAdmin.POST("/logout", admin.Logout)
+			authAdmin.GET("/config", admin.GetConfig)
+			authAdmin.PUT("/config", admin.UpdateConfig)
+			authAdmin.GET("/announcements", admin.GetAnnouncements)
+			authAdmin.POST("/announcements", admin.CreateAnnouncement)
+			authAdmin.PUT("/announcements/:id", admin.UpdateAnnouncement)
+			authAdmin.DELETE("/announcements/:id", admin.DeleteAnnouncement)
+		}
+	}
 }
 
 func installStaticRoutes(r *gin.Engine, webFS embed.FS) {
@@ -89,28 +120,56 @@ func installStaticRoutes(r *gin.Engine, webFS embed.FS) {
 	r.StaticFS("/static", http.FS(staticFiles))
 
 	// 3. 注册页面路由
+	// 公开页面
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", nil)
-	})
-	r.GET("/grade", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "grade.html", nil)
-	})
-	r.GET("/schedule", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "schedule.html", nil)
-	})
-	r.GET("/course-plan", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "course-plan.html", nil)
-	})
-	r.GET("/exam", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "exam.html", nil)
-	})
-	r.GET("/selection", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "selection.html", nil)
-	})
-	r.GET("/questions", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "questions.html", nil)
 	})
 	r.GET("/dashboard", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "dashboard.html", nil)
 	})
+	r.GET("/access", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "access.html", nil)
+	})
+
+	// 管理后台页面
+	r.GET("/admin/login", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "admin/login.html", nil)
+	})
+	r.GET("/admin/init", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "admin/init.html", nil)
+	})
+	adminPages := r.Group("/admin")
+	adminPages.Use(middleware.AdminAuthRequired())
+	{
+		adminPages.GET("", func(c *gin.Context) {
+			c.HTML(http.StatusOK, "admin/index.html", nil)
+		})
+		adminPages.GET("/", func(c *gin.Context) {
+			c.HTML(http.StatusOK, "admin/index.html", nil)
+		})
+	}
+
+	// 受保护页面
+	protected := r.Group("")
+	protected.Use(middleware.SiteAccessRequired())
+	{
+		protected.GET("/grade", func(c *gin.Context) {
+			c.HTML(http.StatusOK, "grade.html", nil)
+		})
+		protected.GET("/schedule", func(c *gin.Context) {
+			c.HTML(http.StatusOK, "schedule.html", nil)
+		})
+		protected.GET("/course-plan", func(c *gin.Context) {
+			c.HTML(http.StatusOK, "course-plan.html", nil)
+		})
+		protected.GET("/exam", func(c *gin.Context) {
+			c.HTML(http.StatusOK, "exam.html", nil)
+		})
+		protected.GET("/selection", func(c *gin.Context) {
+			c.HTML(http.StatusOK, "selection.html", nil)
+		})
+		protected.GET("/questions", func(c *gin.Context) {
+			c.HTML(http.StatusOK, "questions.html", nil)
+		})
+	}
 }

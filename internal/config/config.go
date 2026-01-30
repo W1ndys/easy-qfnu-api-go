@@ -1,9 +1,10 @@
 package config
 
 import (
+	"time"
+
 	"github.com/W1ndys/easy-qfnu-api-go/internal/crypto"
 	"github.com/W1ndys/easy-qfnu-api-go/internal/database"
-	"time"
 )
 
 const (

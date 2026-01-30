@@ -8,6 +8,7 @@ import (
 	"github.com/W1ndys/easy-qfnu-api-go/common/logger"
 	"github.com/W1ndys/easy-qfnu-api-go/router"
 	"github.com/fatih/color"
+	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
 
@@ -22,6 +23,9 @@ var webFS embed.FS
 func main() {
 	// 尝试加载 .env 文件，忽略错误（因为环境变量可能已经存在）
 	_ = godotenv.Load()
+
+	// 设置 Gin 为 Release 模式
+	gin.SetMode(gin.ReleaseMode)
 
 	// 初始化日志
 	logger.InitLogger("./logs", "easy-qfnu-api", "info")

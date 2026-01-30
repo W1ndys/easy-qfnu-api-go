@@ -2,6 +2,7 @@ package questions
 
 import (
 	"github.com/W1ndys/easy-qfnu-api-go/common/response"
+	"github.com/W1ndys/easy-qfnu-api-go/common/stats"
 	"github.com/W1ndys/easy-qfnu-api-go/model"
 	services "github.com/W1ndys/easy-qfnu-api-go/services/questions"
 	"github.com/gin-gonic/gin"
@@ -16,6 +17,9 @@ func Search(c *gin.Context) {
 		response.Success(c, []model.FreshmanQuestion{})
 		return
 	}
+
+	// 记录搜索热词
+	go stats.RecordKeyword(keyword)
 
 	questions, err := services.SearchQuestions(keyword)
 	if err != nil {

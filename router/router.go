@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/W1ndys/easy-qfnu-api-go/api/v1/questions"
+	"github.com/W1ndys/easy-qfnu-api-go/api/v1/stats"
 	zhjw "github.com/W1ndys/easy-qfnu-api-go/api/v1/zhjw"
 	"github.com/W1ndys/easy-qfnu-api-go/common/response"
 	"github.com/W1ndys/easy-qfnu-api-go/middleware"
@@ -31,6 +32,7 @@ func InitRouter(webFS embed.FS) *gin.Engine {
 func installMiddlewares(r *gin.Engine) {
 	r.Use(middleware.RequestLogger())
 	r.Use(middleware.Cors())
+	r.Use(middleware.StatsCollector())
 }
 
 func installAPIRoutes(r *gin.Engine) {
@@ -54,6 +56,10 @@ func installAPIRoutes(r *gin.Engine) {
 
 		// 新生试题库搜索
 		apiV1.GET("/questions/search", questions.Search)
+
+		// 统计接口
+		apiV1.GET("/stats/dashboard", stats.GetDashboard)
+		apiV1.GET("/stats/trend", stats.GetTrend)
 	}
 
 	// 【受保护接口组】 (Protected)
@@ -103,5 +109,8 @@ func installStaticRoutes(r *gin.Engine, webFS embed.FS) {
 	})
 	r.GET("/questions", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "questions.html", nil)
+	})
+	r.GET("/dashboard", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "dashboard.html", nil)
 	})
 }

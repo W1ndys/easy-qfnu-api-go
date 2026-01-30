@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/W1ndys/easy-qfnu-api-go/common/logger"
+	"github.com/W1ndys/easy-qfnu-api-go/common/stats"
 	"github.com/W1ndys/easy-qfnu-api-go/router"
 	"github.com/fatih/color"
 	"github.com/gin-gonic/gin"
@@ -29,6 +30,10 @@ func main() {
 
 	// 初始化日志
 	logger.InitLogger("./logs", "easy-qfnu-api", "info")
+
+	// 初始化统计模块
+	stats.InitCollector()
+	stats.RecordStartTime()
 
 	// 初始化路由 (注入 webFS)
 	r := router.InitRouter(webFS)

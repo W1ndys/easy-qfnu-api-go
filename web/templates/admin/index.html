@@ -194,19 +194,19 @@ function adminPanel() {
         },
 
         async updateConfig() {
-            await axios.put('/api/v1/admin/config', { site_access_enabled: this.config.site_access_enabled });
+            await axios.post('/api/v1/admin/config/update', { site_access_enabled: this.config.site_access_enabled });
         },
 
         async updateSitePassword() {
             if (!this.newSitePassword) return;
-            await axios.put('/api/v1/admin/config', { site_access_password: this.newSitePassword });
+            await axios.post('/api/v1/admin/config/update', { site_access_password: this.newSitePassword });
             this.newSitePassword = '';
             alert('访问密码已更新');
         },
 
         async updateAdminPassword() {
             if (!this.newAdminPassword) return;
-            await axios.put('/api/v1/admin/config', { admin_password: this.newAdminPassword });
+            await axios.post('/api/v1/admin/config/update', { admin_password: this.newAdminPassword });
             this.newAdminPassword = '';
             alert('管理员密码已更新');
         },

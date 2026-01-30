@@ -2,11 +2,37 @@
 {{ define "body" }}
     <div class="max-w-4xl mx-auto px-4 py-8">
         <!-- 头部 -->
-        <header class="text-center mb-12">
+        <header class="text-center mb-8">
             <h1 class="text-[34px] font-bold text-[#1C1C1E] leading-tight tracking-tight">
                 曲奇API
             </h1>
         </header>
+
+        <!-- 统计数据卡片 -->
+        <section class="mb-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="bg-white dark:bg-[#1C1C1E] rounded-2xl p-4 text-center">
+                    <div class="text-[11px] text-[#8E8E93] mb-1">总调用</div>
+                    <div id="totalRequests" class="text-[22px] font-bold text-[#885021]">-</div>
+                </div>
+                <div class="bg-white dark:bg-[#1C1C1E] rounded-2xl p-4 text-center">
+                    <div class="text-[11px] text-[#8E8E93] mb-1">今日调用</div>
+                    <div id="todayRequests" class="text-[22px] font-bold text-[#34C759]">-</div>
+                </div>
+                <div class="bg-white dark:bg-[#1C1C1E] rounded-2xl p-4 text-center">
+                    <div class="text-[11px] text-[#8E8E93] mb-1">独立 IP</div>
+                    <div id="uniqueIPs" class="text-[22px] font-bold text-[#007AFF]">-</div>
+                </div>
+                <div class="bg-white dark:bg-[#1C1C1E] rounded-2xl p-4 text-center">
+                    <div class="text-[11px] text-[#8E8E93] mb-1">平均响应</div>
+                    <div id="avgLatency" class="text-[22px] font-bold text-[#FF9500]">-</div>
+                </div>
+            </div>
+            <!-- 查看大屏入口 -->
+            <a href="/dashboard" class="block mt-3 text-center text-[13px] text-[#885021] hover:underline">
+                查看数据大屏 →
+            </a>
+        </section>
 
         <!-- 功能卡片 -->
         <section class="mb-12">
@@ -341,4 +367,31 @@
             </p>
         </footer>
     </div>
+
+    <script>
+        // 加载统计数据
+        async function loadStats() {
+            try {
+                const res = await fetch('/api/v1/stats/dashboard');
+                const data = await res.json();
+                if (data.code === 200) {
+                    document.getElementById('totalRequests').textContent = formatNumber(data.data.totalRequests || 0);
+                    document.getElementById('todayRequests').textContent = formatNumber(data.data.todayRequests || 0);
+                    document.getElementById('uniqueIPs').textContent = formatNumber(data.data.uniqueIPs || 0);
+                    document.getElementById('avgLatency').textContent = (data.data.avgLatencyMs || 0).toFixed(0) + 'ms';
+                }
+            } catch (e) {
+                console.error('加载统计失败:', e);
+            }
+        }
+
+        function formatNumber(num) {
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 10000) return (num / 10000).toFixed(1) + 'W';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+            return num.toString();
+        }
+
+        loadStats();
+    </script>
 {{ end }}

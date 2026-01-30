@@ -1,10 +1,12 @@
 package middleware
 
 import (
+	"net/http"
+	"net/url"
+
 	"github.com/W1ndys/easy-qfnu-api-go/internal/config"
 	"github.com/W1ndys/easy-qfnu-api-go/internal/crypto"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 const (
@@ -21,10 +23,17 @@ func SiteAccessRequired() gin.HandlerFunc {
 			return
 		}
 
+		// 构建带 redirect 参数的验证页 URL
+		currentPath := c.Request.URL.Path
+		if c.Request.URL.RawQuery != "" {
+			currentPath += "?" + c.Request.URL.RawQuery
+		}
+		accessURL := "/access?redirect=" + url.QueryEscape(currentPath)
+
 		// 从 Cookie 获取 Token
 		token, err := c.Cookie(SiteTokenCookie)
 		if err != nil || token == "" {
-			c.Redirect(http.StatusFound, "/access")
+			c.Redirect(http.StatusFound, accessURL)
 			c.Abort()
 			return
 		}
@@ -32,7 +41,7 @@ func SiteAccessRequired() gin.HandlerFunc {
 		// 验证 Token
 		if !crypto.ValidateToken(token, "site") {
 			c.SetCookie(SiteTokenCookie, "", -1, "/", "", false, true)
-			c.Redirect(http.StatusFound, "/access")
+			c.Redirect(http.StatusFound, accessURL)
 			c.Abort()
 			return
 		}

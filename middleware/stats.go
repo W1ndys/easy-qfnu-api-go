@@ -13,9 +13,10 @@ func StatsCollector() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		path := c.Request.URL.Path
 
-		// 只统计 API 路由，排除静态资源、页面和统计接口本身
+		// 只统计 API 路由，排除静态资源、页面、统计接口和站点公共接口
 		shouldCollect := strings.HasPrefix(path, "/api/") &&
-			!strings.HasPrefix(path, "/api/v1/stats/")
+			!strings.HasPrefix(path, "/api/v1/stats/") &&
+			!strings.HasPrefix(path, "/api/v1/site/")
 
 		var start time.Time
 		if shouldCollect {

@@ -12,31 +12,46 @@ import (
 )
 
 var (
-	db   *sql.DB
-	once sync.Once
+	db     *sql.DB
+	dbPath = "./data/stats.db"
+	mu     sync.Mutex
 )
 
-// GetDB 获取统计数据库连接（单例）
+// GetDB 获取统计数据库连接
+// 如果数据库文件被删除，会自动重新创建
 func GetDB() *sql.DB {
-	once.Do(func() {
+	mu.Lock()
+	defer mu.Unlock()
+
+	// 检查数据库文件是否存在，如果不存在则重新初始化
+	if db != nil {
+		if _, err := os.Stat(dbPath); os.IsNotExist(err) {
+			// 文件被删除，关闭旧连接并重新初始化
+			db.Close()
+			db = nil
+		}
+	}
+
+	if db == nil {
 		initDB()
-	})
+	}
+
 	return db
 }
 
 func initDB() {
-	dbPath := "./data/stats.db"
-
 	// 确保目录存在
 	dir := filepath.Dir(dbPath)
 	if err := os.MkdirAll(dir, 0755); err != nil {
-		log.Fatalf("创建数据目录失败: %v", err)
+		log.Printf("创建数据目录失败: %v", err)
+		return
 	}
 
 	var err error
 	db, err = sql.Open("sqlite", dbPath)
 	if err != nil {
-		log.Fatalf("打开统计数据库失败: %v", err)
+		log.Printf("打开统计数据库失败: %v", err)
+		return
 	}
 
 	// 设置连接池参数
@@ -48,6 +63,10 @@ func initDB() {
 }
 
 func createTables() {
+	if db == nil {
+		return
+	}
+
 	// API 请求日志表 - 使用 Unix 时间戳
 	_, err := db.Exec(`
 		CREATE TABLE IF NOT EXISTS api_request_logs (
@@ -62,7 +81,7 @@ func createTables() {
 		)
 	`)
 	if err != nil {
-		log.Fatalf("创建 api_request_logs 表失败: %v", err)
+		log.Printf("创建 api_request_logs 表失败: %v", err)
 	}
 
 	// 创建索引以加速查询
@@ -79,7 +98,7 @@ func createTables() {
 		)
 	`)
 	if err != nil {
-		log.Fatalf("创建 search_keywords 表失败: %v", err)
+		log.Printf("创建 search_keywords 表失败: %v", err)
 	}
 
 	// 系统信息表 - 使用 Unix 时间戳
@@ -90,13 +109,16 @@ func createTables() {
 		)
 	`)
 	if err != nil {
-		log.Fatalf("创建 system_info 表失败: %v", err)
+		log.Printf("创建 system_info 表失败: %v", err)
 	}
 }
 
 // RecordStartTime 记录系统启动时间（Unix 时间戳）
 func RecordStartTime() {
 	db := GetDB()
+	if db == nil {
+		return
+	}
 	now := time.Now().Unix()
 	_, err := db.Exec(`
 		INSERT OR REPLACE INTO system_info (id, start_time)
@@ -109,7 +131,10 @@ func RecordStartTime() {
 
 // Close 关闭数据库连接
 func Close() {
+	mu.Lock()
+	defer mu.Unlock()
 	if db != nil {
 		db.Close()
+		db = nil
 	}
 }

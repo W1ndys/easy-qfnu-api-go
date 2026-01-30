@@ -1,5 +1,7 @@
-# data
+# custom ignores
+node_modules/
 data/
+build/
 
 # Tailwind CSS Standalone CLI (all platforms)
 web/tailwindcss

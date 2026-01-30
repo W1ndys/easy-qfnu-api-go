@@ -39,13 +39,11 @@ go build -o easy-qfnu-api-go
 | 变量名 | 默认值 | 说明 |
 |--------|--------|------|
 | `PORT` | `8141` | 服务监听端口 |
-| `GIN_MODE` | `debug` | Gin 运行模式 (`debug` / `release` / `test`) |
 
 **示例 `.env` 文件：**
 
 ```env
 PORT=8141
-GIN_MODE=release
 ```
 
 ### 验证部署

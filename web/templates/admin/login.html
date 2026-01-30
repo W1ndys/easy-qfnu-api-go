@@ -1,0 +1,71 @@
+{{ define "title" }}管理后台 - 登录{{ end }}
+
+{{ define "body" }}
+<div class="min-h-screen flex items-center justify-center p-4" x-data="loginForm()" x-init="init()">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-[360px]">
+        <!-- 标题区域 -->
+        <div class="text-center mb-8">
+            <h1 class="text-[28px] font-semibold text-[#1C1C1E] leading-tight">管理后台</h1>
+            <p class="text-[15px] text-[#8E8E93] mt-2">请输入管理员密码</p>
+        </div>
+
+        <!-- 表单 -->
+        <form @submit.prevent="submit">
+            <div class="mb-6">
+                <input type="password" x-model="password" placeholder="请输入管理员密码"
+                    class="w-full bg-[#E5E5EA] border-none rounded-xl px-4 py-3 text-[15px] text-[#1C1C1E] placeholder-[#C7C7CC] transition-all duration-200 focus:bg-white focus:ring-2 focus:ring-[#885021]/10 focus:outline-none">
+            </div>
+
+            <button type="submit" :disabled="loading"
+                class="w-full bg-[#885021] text-white rounded-xl px-6 py-3 text-[15px] font-semibold transition-all duration-150 ease-out active:bg-[#5D3615] active:scale-[0.98] disabled:opacity-50">
+                <span x-show="!loading">登录</span>
+                <span x-show="loading" class="flex items-center justify-center gap-2">
+                    <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    </svg>
+                    登录中...
+                </span>
+            </button>
+        </form>
+
+        <!-- 错误提示 -->
+        <p x-show="error" x-text="error"
+            class="mt-4 text-center text-[13px] text-[#FF3B30] transition-all duration-250"></p>
+    </div>
+</div>
+{{ end }}
+
+{{ define "scripts" }}
+<script>
+function loginForm() {
+    return {
+        password: '',
+        loading: false,
+        error: '',
+        async init() {
+            try {
+                const res = await axios.get('/api/v1/admin/check-init');
+                if (res.data.data.need_init) {
+                    window.location.href = '/admin/init';
+                }
+            } catch (e) {}
+        },
+        async submit() {
+            this.loading = true;
+            this.error = '';
+            try {
+                await axios.post('/api/v1/admin/login', {
+                    password: this.password
+                });
+                window.location.href = '/admin';
+            } catch (e) {
+                this.error = e.response?.data?.msg || '登录失败';
+            } finally {
+                this.loading = false;
+            }
+        }
+    }
+}
+</script>
+{{ end }}

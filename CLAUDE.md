@@ -1,35 +1,39 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+此文件为 Claude Code (claude.ai/code) 在处理本仓库代码时提供指导。
 
-## Build & Run
+## 构建与运行
 
-- **Install Dependencies**: `go mod tidy`
-- **Run Locally**: `go run main.go`
-- **Build**: `go build -o easy-qfnu-api-go`
-- **Test**: `go test ./...`
+- **安装依赖**: `go mod tidy`
+- **本地运行**: `go run main.go`
+- **构建**: `go build -o easy-qfnu-api-go`
+- **测试**: `go test ./...`
 - **Lint**: `go vet ./...`
 
-## Architecture & Code Structure
+## 架构与代码结构
 
-This is a Go-based API gateway and scraping service for QFNU campus services, built with the Gin framework. It aggregates data from educational systems (grades, schedules) and other sources.
+这是一个基于 Go 的 API 网关和 QFNU 校园服务爬虫服务，使用 Gin 框架构建。它聚合了来自教务系统（成绩、课表）和其他来源的数据。
 
-### Core Structure
-- **Entry Point**: `main.go` initializes the logger, router, and embeds static assets.
-- **Routing**: `router/router.go` defines API groups (`/api/v1`) and HTML rendering.
-- **API Handlers**: Located in `api/` (e.g., `api/v1/zhjw` for educational system, `api/v1/questions` for question bank).
-- **Services**: `services/` contains business logic, particularly the scraping and HTML parsing logic using `go-resty` and `goquery`.
-- **Middleware**: `middleware/` handles logging, CORS, and authentication (`AuthRequired`).
-- **Frontend**: `web/` contains static assets and HTML templates which are embedded into the Go binary using `go:embed`.
-- **Common**: `common/` holds shared utilities like logging (`logger`) and standardized API responses (`response`).
+### 核心结构
+- **入口点**: `main.go` 初始化日志记录器、路由器并嵌入静态资源。
+- **路由**: `router/router.go` 定义 API 组 (`/api/v1`) 和 HTML 渲染。
+- **API 处理程序**: 位于 `api/` (例如 `api/v1/zhjw` 用于教务系统, `api/v1/questions` 用于题库)。
+- **服务**: `services/` 包含业务逻辑，特别是使用 `go-resty` 和 `goquery` 的爬虫和 HTML 解析逻辑。
+- **中间件**: `middleware/` 处理日志记录、CORS 和认证 (`AuthRequired`)。
+- **前端**: `web/` 包含静态资源和 HTML 模板，使用 `go:embed` 嵌入到 Go 二进制文件中。
+- **通用**: `common/` 包含共享工具，如日志记录 (`logger`) 和标准化 API 响应 (`response`)。
 
-### Key Concepts
-- **Single Binary**: The project uses `embed` to package HTML/CSS/JS with the binary for easy deployment.
-- **Scraping**: Data is primarily fetched by simulating HTTP requests to school servers and parsing HTML responses.
-- **Configuration**: Environment variables are loaded via `.env` (using `godotenv`). Key variables: `PORT`, `GIN_MODE`.
-- **Database**: Uses SQLite (`modernc.org/sqlite`) for local data storage where necessary.
+### 关键概念
+- **单二进制文件**: 项目使用 `embed` 将 HTML/CSS/JS 与二进制文件打包，便于部署。
+- **爬虫**: 数据主要通过模拟对学校服务器的 HTTP 请求并解析 HTML 响应来获取。
+- **配置**: 环境变量通过 `.env` 加载 (使用 `godotenv`)。关键变量: `PORT`, `GIN_MODE`。
+- **数据库**: 在必要时使用 SQLite (`modernc.org/sqlite`) 进行本地数据存储。
 
-### Development Conventions
-- **Routing**: API routes are versioned (`/api/v1`).
-- **Logging**: Uses a custom logger setup in `common/logger`.
-- **Response Format**: Standardized JSON responses via `common/response` package.
+### 开发规范
+- **路由**: API 路由有版本控制 (`/api/v1`)。
+- **日志**: 使用 `common/logger` 中的自定义日志设置。
+- **响应格式**: 通过 `common/response` 包进行标准化 JSON 响应。
+
+## 交互要求
+- **语言**: 请始终使用中文回复。
+- **称呼**: 每次回复结束时，请称呼我为“卷卷”。

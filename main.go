@@ -2,11 +2,13 @@ package main
 
 import (
 	"embed"
+	"flag"
 	"log"
 	"os"
 
 	"github.com/W1ndys/easy-qfnu-api-go/common/logger"
 	"github.com/W1ndys/easy-qfnu-api-go/common/stats"
+	"github.com/W1ndys/easy-qfnu-api-go/internal/config"
 	"github.com/W1ndys/easy-qfnu-api-go/router"
 	"github.com/fatih/color"
 	"github.com/gin-gonic/gin"
@@ -22,6 +24,19 @@ import (
 var webFS embed.FS
 
 func main() {
+	// 定义命令行参数
+	resetPwd := flag.String("reset-password", "", "重置管理员密码")
+	flag.Parse()
+
+	// 处理重置密码逻辑
+	if *resetPwd != "" {
+		if err := config.SetAdminPassword(*resetPwd); err != nil {
+			log.Fatalf("重置密码失败: %v", err)
+		}
+		log.Printf("管理员密码已成功重置为: %s", *resetPwd)
+		return
+	}
+
 	// 尝试加载 .env 文件，忽略错误（因为环境变量可能已经存在）
 	_ = godotenv.Load()
 

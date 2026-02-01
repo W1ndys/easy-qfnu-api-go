@@ -45,7 +45,7 @@ $TargetArch = "amd64"
 $SupervisorService = "easy-qfnu-api-go:easy-qfnu-api-go_00"
 
 # 健康检查 URL
-$HealthCheckUrl = "https://easy-qfnu.top"
+$HealthCheckUrl = "http://127.0.0.1:8141"
 
 # 健康检查超时时间 (秒)
 $HealthCheckTimeout = 30
@@ -92,7 +92,7 @@ function Invoke-RemoteCommand {
     return $LASTEXITCODE
 }
 
-# 辅助函数：健康检查
+# 辅助函数：健康检查 (在远程服务器上执行)
 function Test-ServiceHealth {
     param(
         [string]$Url,
@@ -103,16 +103,20 @@ function Test-ServiceHealth {
 
     for ($i = 1; $i -le $Retries; $i++) {
         Write-Host "[-] 健康检查 (第 $i/$Retries 次)..." -ForegroundColor Cyan
-        try {
-            $response = Invoke-WebRequest -Uri $Url -TimeoutSec $Timeout -UseBasicParsing -ErrorAction Stop
-            if ($response.StatusCode -eq 200) {
-                Write-Host "[+] 健康检查通过! (HTTP $($response.StatusCode))" -ForegroundColor Green
-                return $true
-            }
-            Write-Host "[!] 健康检查返回非 200 状态码: $($response.StatusCode)" -ForegroundColor Yellow
+
+        # 在远程服务器上使用 curl 进行健康检查
+        $healthCmd = "curl -s -o /dev/null -w '%{http_code}' --connect-timeout $Timeout '$Url'"
+        $httpCode = & $sshCmdPrefix[0] $sshCmdPrefix[1..($sshCmdPrefix.Length - 1)] $healthCmd 2>$null
+
+        if ($httpCode -eq "200") {
+            Write-Host "[+] 健康检查通过! (HTTP $httpCode)" -ForegroundColor Green
+            return $true
         }
-        catch {
-            Write-Host "[!] 健康检查失败: $($_.Exception.Message)" -ForegroundColor Yellow
+        elseif ($httpCode) {
+            Write-Host "[!] 健康检查返回非 200 状态码: $httpCode" -ForegroundColor Yellow
+        }
+        else {
+            Write-Host "[!] 健康检查失败: 无法连接到服务" -ForegroundColor Yellow
         }
 
         if ($i -lt $Retries) {

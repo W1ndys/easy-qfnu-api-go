@@ -6,7 +6,8 @@
     1. 自动检测本地 SSH 密钥
     2. 检查并自动创建远程目标目录
     3. 使用 Git Bash 的 tar + ssh 管道流式上传文件
-    4. 远程执行重启命令
+    4. 备份旧版本、重启 Supervisor 服务
+    5. 健康检查，失败时自动回滚
 
 .EXAMPLE
     .\deploy.ps1
@@ -28,9 +29,6 @@ $User = "root"
 # 远程部署路径
 $RemotePath = "/root/easy-qfnu-api-go"
 
-# 部署完成后执行的远程命令 (留空则不执行)
-$RestartCmd = "echo 'Deploy finished, no restart command specified.'"
-
 # SSH 私钥路径 (留空则自动检测 ~/.ssh/id_rsa 或 id_ed25519)
 $IdentityFile = ""
 
@@ -42,6 +40,21 @@ $TargetOS = "linux"
 
 # 目标架构
 $TargetArch = "amd64"
+
+# Supervisor 服务名称
+$SupervisorService = "easy-qfnu-api-go:easy-qfnu-api-go_00"
+
+# 健康检查 URL
+$HealthCheckUrl = "https://easy-qfnu.top"
+
+# 健康检查超时时间 (秒)
+$HealthCheckTimeout = 30
+
+# 健康检查重试次数
+$HealthCheckRetries = 3
+
+# 健康检查重试间隔 (秒)
+$HealthCheckInterval = 5
 
 # ============================================================
 #                     配置区域结束
@@ -71,9 +84,50 @@ if (-not (Test-Path $IdentityFile)) {
 # 构建基础 SSH 命令前缀
 $sshCmdPrefix = @("ssh", "-i", "$IdentityFile", "-p", "$Port", "-o", "StrictHostKeyChecking=no", "$User@$Server")
 
+# 辅助函数：执行远程命令
+function Invoke-RemoteCommand {
+    param([string]$Command)
+    $cmd = $sshCmdPrefix + $Command
+    & $cmd[0] $cmd[1..($cmd.Length - 1)]
+    return $LASTEXITCODE
+}
+
+# 辅助函数：健康检查
+function Test-ServiceHealth {
+    param(
+        [string]$Url,
+        [int]$Timeout,
+        [int]$Retries,
+        [int]$Interval
+    )
+
+    for ($i = 1; $i -le $Retries; $i++) {
+        Write-Host "[-] 健康检查 (第 $i/$Retries 次)..." -ForegroundColor Cyan
+        try {
+            $response = Invoke-WebRequest -Uri $Url -TimeoutSec $Timeout -UseBasicParsing -ErrorAction Stop
+            if ($response.StatusCode -eq 200) {
+                Write-Host "[+] 健康检查通过! (HTTP $($response.StatusCode))" -ForegroundColor Green
+                return $true
+            }
+            Write-Host "[!] 健康检查返回非 200 状态码: $($response.StatusCode)" -ForegroundColor Yellow
+        }
+        catch {
+            Write-Host "[!] 健康检查失败: $($_.Exception.Message)" -ForegroundColor Yellow
+        }
+
+        if ($i -lt $Retries) {
+            Write-Host "[-] 等待 $Interval 秒后重试..." -ForegroundColor DarkGray
+            Start-Sleep -Seconds $Interval
+        }
+    }
+
+    return $false
+}
+
 # 2. 交叉编译 (Windows -> Linux)
 Write-Host "[-] 正在编译 $TargetOS ($TargetArch) 二进制文件..." -ForegroundColor Cyan
 $BinaryName = "${ProjectName}-${TargetOS}-${TargetArch}"
+$BackupBinaryName = "${BinaryName}.backup"
 
 # 保存旧的环境变量
 $OriginalGOOS = $env:GOOS
@@ -99,13 +153,20 @@ finally {
 
 # 3. 检查并修复远程路径 (mkdir -p)
 Write-Host "[-] 正在检查/创建远程目录: $RemotePath" -ForegroundColor Cyan
-$mkdirCmd = $sshCmdPrefix + "mkdir -p $RemotePath"
-& $mkdirCmd[0] $mkdirCmd[1..($mkdirCmd.Length - 1)]
-if ($LASTEXITCODE -ne 0) {
+$exitCode = Invoke-RemoteCommand "mkdir -p $RemotePath"
+if ($exitCode -ne 0) {
     Write-Error "无法创建远程目录，请检查连接或权限。"
 }
 
-# 4. 使用 Tar + SSH 上传二进制文件 (通过 Git Bash)
+# 4. 备份旧版本
+Write-Host "[-] 正在备份旧版本..." -ForegroundColor Cyan
+$backupCmd = "if [ -f '$RemotePath/$BinaryName' ]; then cp '$RemotePath/$BinaryName' '$RemotePath/$BackupBinaryName' && echo 'Backup created'; else echo 'No existing binary to backup'; fi"
+$exitCode = Invoke-RemoteCommand $backupCmd
+if ($exitCode -ne 0) {
+    Write-Warning "备份旧版本失败，继续部署..."
+}
+
+# 5. 使用 Tar + SSH 上传二进制文件 (通过 Git Bash)
 Write-Host "[-] 正在上传二进制文件..." -ForegroundColor Cyan
 
 # 查找 Git Bash (优先使用 Git for Windows，避免 WSL)
@@ -169,18 +230,78 @@ else {
     Write-Error "文件上传失败。"
 }
 
-# 5. 执行远程重启命令
-if (-not [string]::IsNullOrEmpty($RestartCmd)) {
-    Write-Host "[-] 正在执行远程命令: $RestartCmd" -ForegroundColor Cyan
-    $remoteExec = $sshCmdPrefix + $RestartCmd
-    & $remoteExec[0] $remoteExec[1..($remoteExec.Length - 1)]
+# 6. 重启 Supervisor 服务
+Write-Host "[-] 正在重启 Supervisor 服务: $SupervisorService" -ForegroundColor Cyan
+$exitCode = Invoke-RemoteCommand "supervisorctl restart $SupervisorService"
+if ($exitCode -ne 0) {
+    Write-Warning "Supervisor 重启命令返回非零状态码"
+}
 
-    if ($LASTEXITCODE -eq 0) {
-        Write-Host "[+] 远程命令执行成功!" -ForegroundColor Green
+# 等待服务启动
+Write-Host "[-] 等待服务启动..." -ForegroundColor Cyan
+Start-Sleep -Seconds 3
+
+# 7. 健康检查
+Write-Host "[-] 开始健康检查: $HealthCheckUrl" -ForegroundColor Cyan
+$isHealthy = Test-ServiceHealth -Url $HealthCheckUrl -Timeout $HealthCheckTimeout -Retries $HealthCheckRetries -Interval $HealthCheckInterval
+
+if ($isHealthy) {
+    Write-Host "[+] 部署成功! 服务运行正常。" -ForegroundColor Green
+
+    # 删除备份文件
+    Write-Host "[-] 清理备份文件..." -ForegroundColor DarkGray
+    Invoke-RemoteCommand "rm -f '$RemotePath/$BackupBinaryName'" | Out-Null
+}
+else {
+    Write-Host "[!] 健康检查失败! 正在回滚..." -ForegroundColor Red
+
+    # 检查备份是否存在
+    $checkBackup = "test -f '$RemotePath/$BackupBinaryName' && echo 'EXISTS' || echo 'NOT_EXISTS'"
+    $backupExists = & $sshCmdPrefix[0] $sshCmdPrefix[1..($sshCmdPrefix.Length - 1)] $checkBackup
+
+    if ($backupExists -eq "EXISTS") {
+        Write-Host "[-] 正在恢复旧版本..." -ForegroundColor Yellow
+
+        # 恢复备份
+        $restoreCmd = "cp '$RemotePath/$BackupBinaryName' '$RemotePath/$BinaryName' && chmod +x '$RemotePath/$BinaryName'"
+        $exitCode = Invoke-RemoteCommand $restoreCmd
+
+        if ($exitCode -eq 0) {
+            Write-Host "[-] 旧版本已恢复，正在重启服务..." -ForegroundColor Yellow
+
+            # 重启服务
+            $exitCode = Invoke-RemoteCommand "supervisorctl restart $SupervisorService"
+
+            # 等待服务启动
+            Start-Sleep -Seconds 3
+
+            # 再次健康检查
+            $isRollbackHealthy = Test-ServiceHealth -Url $HealthCheckUrl -Timeout $HealthCheckTimeout -Retries 2 -Interval 3
+
+            if ($isRollbackHealthy) {
+                Write-Host "[+] 回滚成功! 服务已恢复到旧版本。" -ForegroundColor Yellow
+            }
+            else {
+                Write-Host "[!] 回滚后健康检查仍然失败，请手动检查服务状态!" -ForegroundColor Red
+            }
+        }
+        else {
+            Write-Host "[!] 恢复旧版本失败，请手动检查!" -ForegroundColor Red
+        }
+
+        # 获取 Supervisor 日志
+        Write-Host "`n[-] Supervisor 服务日志:" -ForegroundColor Cyan
+        Invoke-RemoteCommand "supervisorctl tail $SupervisorService" | Out-Null
     }
     else {
-        Write-Warning "远程命令执行返回了非零状态码。"
+        Write-Host "[!] 没有找到备份文件，无法回滚! 请手动检查服务状态。" -ForegroundColor Red
+
+        # 获取 Supervisor 日志
+        Write-Host "`n[-] Supervisor 服务日志:" -ForegroundColor Cyan
+        Invoke-RemoteCommand "supervisorctl tail $SupervisorService" | Out-Null
     }
+
+    Write-Error "部署失败，已尝试回滚。"
 }
 
 Write-Host "`n部署流程结束。" -ForegroundColor Cyan

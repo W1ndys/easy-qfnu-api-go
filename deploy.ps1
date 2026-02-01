@@ -5,7 +5,7 @@
 .DESCRIPTION
     1. 自动检测本地 SSH 密钥
     2. 检查并自动创建远程目标目录
-    3. 使用 tar + ssh 管道流式上传文件
+    3. 使用 Git Bash 的 tar + ssh 管道流式上传文件
     4. 远程执行重启命令
 
 .EXAMPLE
@@ -108,18 +108,36 @@ if ($LASTEXITCODE -ne 0) {
     Write-Error "无法创建远程目录，请检查连接或权限。"
 }
 
-# 4. 使用 Tar + SSH 上传二进制文件
+# 4. 使用 Git Bash 的 Tar + SSH 上传二进制文件
 Write-Host "[-] 正在上传二进制文件..." -ForegroundColor Cyan
 
-# 构造上传命令：
-# 1. 本地 tar 打包二进制文件
-# 2. SSH 传输
-# 3. 远程 tar 解压
-# 4. 远程 chmod +x 赋予执行权限
-$uploadCmdString = "tar -c $BinaryName | ssh -i `"$IdentityFile`" -p $Port -o StrictHostKeyChecking=no $User@$Server `"tar -x -C $RemotePath && chmod +x $RemotePath/$BinaryName`""
+# 查找 Git Bash 路径
+$gitBashPath = ""
+$possibleGitPaths = @(
+    "$env:ProgramFiles\Git\bin\bash.exe",
+    "${env:ProgramFiles(x86)}\Git\bin\bash.exe",
+    "$env:LOCALAPPDATA\Programs\Git\bin\bash.exe"
+)
 
-Write-Host "Executing: Upload..." -ForegroundColor DarkGray
-Invoke-Expression $uploadCmdString
+foreach ($path in $possibleGitPaths) {
+    if (Test-Path $path) {
+        $gitBashPath = $path
+        break
+    }
+}
+
+if ([string]::IsNullOrEmpty($gitBashPath)) {
+    Write-Error "未找到 Git Bash，请确保已安装 Git for Windows。"
+}
+
+# 将 Windows 路径转换为 Unix 风格路径（用于 Git Bash）
+$unixIdentityFile = $IdentityFile -replace '\\', '/' -replace '^([A-Za-z]):', '/$1'
+
+# 构造 bash 命令
+$bashCmd = "tar -cf - $BinaryName | ssh -i '$unixIdentityFile' -p $Port -o StrictHostKeyChecking=no $User@$Server 'tar -xf - -C $RemotePath && chmod +x $RemotePath/$BinaryName'"
+
+Write-Host "Executing: tar upload via Git Bash..." -ForegroundColor DarkGray
+& $gitBashPath -c $bashCmd
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host "[+] 文件上传成功!" -ForegroundColor Green

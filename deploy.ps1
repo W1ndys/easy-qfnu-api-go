@@ -84,12 +84,24 @@ if (-not (Test-Path $IdentityFile)) {
 # 构建基础 SSH 命令前缀
 $sshCmdPrefix = @("ssh", "-i", "$IdentityFile", "-p", "$Port", "-o", "StrictHostKeyChecking=no", "$User@$Server")
 
-# 辅助函数：执行远程命令
+# 辅助函数：执行远程命令 (返回输出和退出码)
 function Invoke-RemoteCommand {
-    param([string]$Command)
+    param(
+        [string]$Command,
+        [switch]$Silent
+    )
     $cmd = $sshCmdPrefix + $Command
-    & $cmd[0] $cmd[1..($cmd.Length - 1)]
-    return $LASTEXITCODE
+    $output = & $cmd[0] $cmd[1..($cmd.Length - 1)] 2>&1
+    $code = $LASTEXITCODE
+
+    if (-not $Silent -and $output) {
+        Write-Host $output -ForegroundColor DarkGray
+    }
+
+    return @{
+        Output = $output
+        ExitCode = $code
+    }
 }
 
 # 辅助函数：健康检查 (在远程服务器上执行)
@@ -157,17 +169,27 @@ finally {
 
 # 3. 检查并修复远程路径 (mkdir -p)
 Write-Host "[-] 正在检查/创建远程目录: $RemotePath" -ForegroundColor Cyan
-$exitCode = Invoke-RemoteCommand "mkdir -p $RemotePath"
-if ($exitCode -ne 0) {
+$result = Invoke-RemoteCommand "mkdir -p $RemotePath"
+if ($result.ExitCode -ne 0) {
+    Write-Host "[!] 错误详情: $($result.Output)" -ForegroundColor Red
     Write-Error "无法创建远程目录，请检查连接或权限。"
 }
 
 # 4. 备份旧版本
 Write-Host "[-] 正在备份旧版本..." -ForegroundColor Cyan
-$backupCmd = "if [ -f '$RemotePath/$BinaryName' ]; then cp '$RemotePath/$BinaryName' '$RemotePath/$BackupBinaryName' && echo 'Backup created'; else echo 'No existing binary to backup'; fi"
-$exitCode = Invoke-RemoteCommand $backupCmd
-if ($exitCode -ne 0) {
-    Write-Warning "备份旧版本失败，继续部署..."
+$backupCmd = "if [ -f '$RemotePath/$BinaryName' ]; then cp -f '$RemotePath/$BinaryName' '$RemotePath/$BackupBinaryName'; echo 'BACKUP_OK'; else echo 'NO_BINARY'; fi"
+$result = Invoke-RemoteCommand $backupCmd -Silent
+$backupOutput = ($result.Output | Out-String).Trim()
+
+if ($backupOutput -match "BACKUP_OK") {
+    Write-Host "[-] 旧版本已备份: $BackupBinaryName" -ForegroundColor Green
+}
+elseif ($backupOutput -match "NO_BINARY") {
+    Write-Host "[-] 没有旧版本需要备份 (首次部署)" -ForegroundColor DarkGray
+}
+else {
+    Write-Host "[!] 备份输出: $backupOutput" -ForegroundColor Yellow
+    Write-Warning "备份旧版本可能失败，继续部署..."
 }
 
 # 5. 使用 Tar + SSH 上传二进制文件 (通过 Git Bash)
@@ -236,8 +258,9 @@ else {
 
 # 6. 重启 Supervisor 服务
 Write-Host "[-] 正在重启 Supervisor 服务: $SupervisorService" -ForegroundColor Cyan
-$exitCode = Invoke-RemoteCommand "supervisorctl restart $SupervisorService"
-if ($exitCode -ne 0) {
+$result = Invoke-RemoteCommand "supervisorctl restart $SupervisorService"
+if ($result.ExitCode -ne 0) {
+    Write-Host "[!] Supervisor 重启错误: $($result.Output)" -ForegroundColor Yellow
     Write-Warning "Supervisor 重启命令返回非零状态码"
 }
 
@@ -254,27 +277,30 @@ if ($isHealthy) {
 
     # 删除备份文件
     Write-Host "[-] 清理备份文件..." -ForegroundColor DarkGray
-    Invoke-RemoteCommand "rm -f '$RemotePath/$BackupBinaryName'" | Out-Null
+    Invoke-RemoteCommand "rm -f '$RemotePath/$BackupBinaryName'" -Silent | Out-Null
 }
 else {
     Write-Host "[!] 健康检查失败! 正在回滚..." -ForegroundColor Red
 
     # 检查备份是否存在
     $checkBackup = "test -f '$RemotePath/$BackupBinaryName' && echo 'EXISTS' || echo 'NOT_EXISTS'"
-    $backupExists = & $sshCmdPrefix[0] $sshCmdPrefix[1..($sshCmdPrefix.Length - 1)] $checkBackup
+    $result = Invoke-RemoteCommand $checkBackup -Silent
+    $backupStatus = ($result.Output | Out-String).Trim()
 
-    if ($backupExists -eq "EXISTS") {
+    Write-Host "[-] 备份文件状态: $backupStatus" -ForegroundColor DarkGray
+
+    if ($backupStatus -match "EXISTS") {
         Write-Host "[-] 正在恢复旧版本..." -ForegroundColor Yellow
 
         # 恢复备份
-        $restoreCmd = "cp '$RemotePath/$BackupBinaryName' '$RemotePath/$BinaryName' && chmod +x '$RemotePath/$BinaryName'"
-        $exitCode = Invoke-RemoteCommand $restoreCmd
+        $restoreCmd = "cp -f '$RemotePath/$BackupBinaryName' '$RemotePath/$BinaryName' && chmod +x '$RemotePath/$BinaryName'"
+        $result = Invoke-RemoteCommand $restoreCmd
 
-        if ($exitCode -eq 0) {
+        if ($result.ExitCode -eq 0) {
             Write-Host "[-] 旧版本已恢复，正在重启服务..." -ForegroundColor Yellow
 
             # 重启服务
-            $exitCode = Invoke-RemoteCommand "supervisorctl restart $SupervisorService"
+            $result = Invoke-RemoteCommand "supervisorctl restart $SupervisorService"
 
             # 等待服务启动
             Start-Sleep -Seconds 3
@@ -290,19 +316,21 @@ else {
             }
         }
         else {
-            Write-Host "[!] 恢复旧版本失败，请手动检查!" -ForegroundColor Red
+            Write-Host "[!] 恢复旧版本失败: $($result.Output)" -ForegroundColor Red
         }
 
         # 获取 Supervisor 日志
         Write-Host "`n[-] Supervisor 服务日志:" -ForegroundColor Cyan
-        Invoke-RemoteCommand "supervisorctl tail $SupervisorService" | Out-Null
+        $logResult = Invoke-RemoteCommand "supervisorctl tail -1000 $SupervisorService stderr"
+        Write-Host $logResult.Output -ForegroundColor DarkGray
     }
     else {
         Write-Host "[!] 没有找到备份文件，无法回滚! 请手动检查服务状态。" -ForegroundColor Red
 
         # 获取 Supervisor 日志
         Write-Host "`n[-] Supervisor 服务日志:" -ForegroundColor Cyan
-        Invoke-RemoteCommand "supervisorctl tail $SupervisorService" | Out-Null
+        $logResult = Invoke-RemoteCommand "supervisorctl tail -1000 $SupervisorService stderr"
+        Write-Host $logResult.Output -ForegroundColor DarkGray
     }
 
     Write-Error "部署失败，已尝试回滚。"

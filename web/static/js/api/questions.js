@@ -1,5 +1,5 @@
 /**
- * 新生试题库搜索 API
+ * 智慧曲园入学题库搜索 API
  * 提供试题搜索相关接口
  */
 window.QuestionsApi = {

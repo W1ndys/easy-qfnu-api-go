@@ -31,9 +31,6 @@ $RemotePath = "/root/easy-qfnu-api-go"
 # 部署完成后执行的远程命令 (留空则不执行)
 $RestartCmd = "echo 'Deploy finished, no restart command specified.'"
 
-# 本地项目路径
-$LocalPath = "."
-
 # SSH 私钥路径 (留空则自动检测 ~/.ssh/id_rsa 或 id_ed25519)
 $IdentityFile = ""
 

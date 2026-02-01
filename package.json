@@ -1,0 +1,27 @@
+{
+  "name": "easy-qfnu-api-go",
+  "version": "1.0.0",
+  "description": "QFNU 综合校园服务网关。基于 Go (Gin) 构建，不仅支持教务系统（成绩/课表）清洗，更聚合了通知公告检索、题库搜索等多元化服务，实现单文件部署的一站式校园数据中心。A comprehensive campus service gateway for QFNU built with Go. Aggregates educational data (grades/schedules), notification search, and question banks into a single-binary, high-performance API solution.",
+  "homepage": "https://github.com/W1ndys/easy-qfnu-api-go#readme",
+  "bugs": {
+    "url": "https://github.com/W1ndys/easy-qfnu-api-go/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/W1ndys/easy-qfnu-api-go.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "tailwindcss -i ./web/static/css/input.css -o ./web/static/css/tailwind.css --watch",
+    "build": "tailwindcss -i ./web/static/css/input.css -o ./web/static/css/tailwind.css --minify"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.18"
+  }
+}

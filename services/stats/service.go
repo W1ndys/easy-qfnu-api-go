@@ -51,19 +51,19 @@ func GetDashboardData() (*DashboardData, error) {
 	// 1. 总请求数
 	db.QueryRow(`SELECT COUNT(*) FROM api_request_logs`).Scan(&data.TotalRequests)
 
-	// 2. 今日请求数（使用时间戳计算今日开始时间）
+	// 2. 今日请求数（东八区）
 	db.QueryRow(`
 		SELECT COUNT(*) FROM api_request_logs
-		WHERE created_at >= strftime('%s', 'now', 'start of day')
+		WHERE created_at >= strftime('%s', datetime('now', 'start of day', '+8 hours'))
 	`).Scan(&data.TodayRequests)
 
 	// 3. 独立 IP 数
 	db.QueryRow(`SELECT COUNT(DISTINCT client_ip) FROM api_request_logs`).Scan(&data.UniqueIPs)
 
-	// 4. 今日独立 IP 数
+	// 4. 今日独立 IP 数（东八区）
 	db.QueryRow(`
 		SELECT COUNT(DISTINCT client_ip) FROM api_request_logs
-		WHERE created_at >= strftime('%s', 'now', 'start of day')
+		WHERE created_at >= strftime('%s', datetime('now', 'start of day', '+8 hours'))
 	`).Scan(&data.TodayUniqueIPs)
 
 	// 5. 平均响应时间
@@ -160,9 +160,9 @@ func GetTrendData(days int) ([]TrendData, error) {
 
 	db := stats.GetDB()
 	rows, err := db.Query(`
-		SELECT date(created_at, 'unixepoch', 'localtime') as day, COUNT(*) as cnt
+		SELECT date(created_at, 'unixepoch', '+8 hours') as day, COUNT(*) as cnt
 		FROM api_request_logs
-		WHERE created_at >= strftime('%s', 'now', '-' || ? || ' days')
+		WHERE created_at >= strftime('%s', datetime('now', '-' || ? || ' days', '+8 hours'))
 		GROUP BY day
 		ORDER BY day ASC
 	`, days)

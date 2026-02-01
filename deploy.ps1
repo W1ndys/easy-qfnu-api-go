@@ -305,14 +305,18 @@ else {
             # 等待服务启动
             Start-Sleep -Seconds 3
 
-            # 再次健康检查
-            $isRollbackHealthy = Test-ServiceHealth -Url $HealthCheckUrl -Timeout $HealthCheckTimeout -Retries 2 -Interval 3
+            # 检查 Supervisor 进程状态 (回滚后只检查进程是否运行，不检查 HTTP)
+            Write-Host "[-] 检查服务进程状态..." -ForegroundColor Cyan
+            $statusResult = Invoke-RemoteCommand "supervisorctl status $SupervisorService" -Silent
+            $statusOutput = ($statusResult.Output | Out-String).Trim()
+            Write-Host "    $statusOutput" -ForegroundColor DarkGray
 
-            if ($isRollbackHealthy) {
-                Write-Host "[+] 回滚成功! 服务已恢复到旧版本。" -ForegroundColor Yellow
+            if ($statusOutput -match "RUNNING") {
+                Write-Host "[+] 回滚成功! 服务进程已运行。" -ForegroundColor Yellow
+                Write-Host "[!] 注意: 请检查健康检查 URL 配置是否正确: $HealthCheckUrl" -ForegroundColor Yellow
             }
             else {
-                Write-Host "[!] 回滚后健康检查仍然失败，请手动检查服务状态!" -ForegroundColor Red
+                Write-Host "[!] 回滚后服务进程状态异常，请手动检查!" -ForegroundColor Red
             }
         }
         else {

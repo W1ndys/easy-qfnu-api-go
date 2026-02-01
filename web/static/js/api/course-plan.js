@@ -35,10 +35,16 @@ window.CoursePlanApi = {
     let totalEarned = 0;
     let courseCount = 0;
     let completedCount = 0;
+    let groupCount = groups.length;
+    let completedGroupCount = 0;
 
     groups.forEach(group => {
       totalRequired += group.required_credits || 0;
       totalEarned += group.earned_credits || 0;
+      // 检查模块是否完成（已修学分 >= 应修学分）
+      if ((group.earned_credits || 0) >= (group.required_credits || 0)) {
+        completedGroupCount++;
+      }
       if (group.courses) {
         courseCount += group.courses.length;
         completedCount += group.courses.filter(c => c.status && c.status.includes('已修')).length;
@@ -50,7 +56,9 @@ window.CoursePlanApi = {
       totalEarned: totalEarned.toFixed(1),
       progress: totalRequired > 0 ? Math.round((totalEarned / totalRequired) * 100) : 0,
       courseCount,
-      completedCount
+      completedCount,
+      groupCount,
+      completedGroupCount
     };
   }
 };

@@ -111,8 +111,8 @@
                     <div class="text-[13px] text-[#8E8E93] mt-1">完成进度</div>
                 </div>
                 <div class="stat-card bg-warning/10">
-                    <div class="text-[22px] font-bold text-warning" x-text="totalStats.completedCount + '/' + totalStats.courseCount"></div>
-                    <div class="text-[13px] text-[#8E8E93] mt-1">课程完成</div>
+                    <div class="text-[22px] font-bold text-warning" x-text="totalStats.completedGroupCount + '/' + totalStats.groupCount"></div>
+                    <div class="text-[13px] text-[#8E8E93] mt-1">模块完成</div>
                 </div>
             </div>
             <!-- 进度条 -->
@@ -216,8 +216,50 @@
 
                 get groups() {
                     const groups = this.result?.data?.groups || [];
-                    // 添加展开状态
-                    return groups.map(g => ({ ...g, expanded: g.expanded !== false }));
+
+                    // 处理每个模块
+                    const processedGroups = groups.map(g => {
+                        // 判断模块是否完成（已修学分 >= 应修学分）
+                        const isCompleted = (g.earned_credits || 0) >= (g.required_credits || 0);
+
+                        // 对课程进行排序
+                        let sortedCourses = [...(g.courses || [])];
+                        if (isCompleted) {
+                            // 已完成模块：已修课程置顶
+                            sortedCourses.sort((a, b) => {
+                                const aCompleted = a.status && a.status.includes('已修');
+                                const bCompleted = b.status && b.status.includes('已修');
+                                if (aCompleted && !bCompleted) return -1;
+                                if (!aCompleted && bCompleted) return 1;
+                                return 0;
+                            });
+                        } else {
+                            // 未完成模块：未修课程置顶
+                            sortedCourses.sort((a, b) => {
+                                const aCompleted = a.status && a.status.includes('已修');
+                                const bCompleted = b.status && b.status.includes('已修');
+                                if (!aCompleted && bCompleted) return -1;
+                                if (aCompleted && !bCompleted) return 1;
+                                return 0;
+                            });
+                        }
+
+                        return {
+                            ...g,
+                            courses: sortedCourses,
+                            expanded: false, // 默认折叠
+                            isCompleted: isCompleted
+                        };
+                    });
+
+                    // 模块排序：未完成模块置顶
+                    processedGroups.sort((a, b) => {
+                        if (!a.isCompleted && b.isCompleted) return -1;
+                        if (a.isCompleted && !b.isCompleted) return 1;
+                        return 0;
+                    });
+
+                    return processedGroups;
                 },
 
                 get totalStats() {

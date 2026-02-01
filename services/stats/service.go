@@ -117,11 +117,36 @@ func GetDashboardData() (*DashboardData, error) {
 		for rows.Next() {
 			var stat KeywordStat
 			rows.Scan(&stat.Keyword, &stat.SearchCount, &stat.LastSearched)
+			// 对关键词进行脱敏处理
+			stat.Keyword = maskKeyword(stat.Keyword)
 			data.TopKeywords = append(data.TopKeywords, stat)
 		}
 	}
 
 	return data, nil
+}
+
+// maskKeyword 对关键词进行脱敏处理
+// 规则：保留首尾各一个字符，中间用星号替换
+func maskKeyword(keyword string) string {
+	runes := []rune(keyword)
+	length := len(runes)
+
+	if length <= 1 {
+		return keyword
+	}
+	if length == 2 {
+		return string(runes[0]) + "*"
+	}
+
+	// 保留首尾各一个字符，中间全部用星号替换
+	masked := string(runes[0])
+	for i := 1; i < length-1; i++ {
+		masked += "*"
+	}
+	masked += string(runes[length-1])
+
+	return masked
 }
 
 // GetTrendData 获取调用趋势数据

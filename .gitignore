@@ -46,3 +46,4 @@ go.work.sum
 # Logs
 logs/
 *.log
+docs/course_recommendation_task.md

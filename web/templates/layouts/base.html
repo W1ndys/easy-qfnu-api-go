@@ -18,14 +18,39 @@
     <!-- 公告区域 -->
     <div x-data="announcementBanner()" x-init="init()">
         <template x-for="a in announcements" :key="a.id">
-            <div class="border-b px-4 py-3" :class="getTypeClass(a.type)">
-                <div class="max-w-4xl mx-auto flex items-center gap-2">
-                    <span class="font-medium" x-text="a.title"></span>
-                    <span class="text-sm" x-text="a.content"></span>
+            <div class="border-b overflow-hidden"
+                :class="{
+                    'bg-[#E8F4FD] border-[#B8DAFF] text-[#004085]': a.type === 'info',
+                    'bg-[#FFF3CD] border-[#FFEEBA] text-[#856404]': a.type === 'warning',
+                    'bg-[#F8D7DA] border-[#F5C6CB] text-[#721C24]': a.type === 'error'
+                }">
+                <div class="announcement-scroll py-2">
+                    <div class="announcement-content whitespace-nowrap inline-block">
+                        <span class="font-medium text-sm" x-text="a.title"></span>
+                        <span class="mx-2">|</span>
+                        <span class="text-sm" x-text="a.content"></span>
+                    </div>
                 </div>
             </div>
         </template>
     </div>
+    <style>
+        .announcement-scroll {
+            position: relative;
+            width: 100%;
+        }
+        .announcement-content {
+            animation: marquee 20s linear infinite;
+            padding-left: 100%;
+        }
+        .announcement-scroll:hover .announcement-content {
+            animation-play-state: paused;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+    </style>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="/static/js/components/announcement.js"></script>
     {{ template "body" . }}

@@ -194,10 +194,30 @@
                 },
                 submitting: false,
 
+                init() {
+                    // 初始化时检查 URL hash
+                    this.checkHash();
+                    // 监听 hash 变化
+                    window.addEventListener('hashchange', () => this.checkHash());
+                    // 监听 tab 变化更新 hash
+                    this.$watch('currentTab', value => {
+                        window.location.hash = value;
+                    });
+                },
+
+                checkHash() {
+                    const hash = window.location.hash.substring(1);
+                    if (hash === 'recommend') {
+                        this.currentTab = 'recommend';
+                    } else {
+                        this.currentTab = 'query';
+                    }
+                },
+
                 // 搜索方法
                 async search() {
                     if (!this.keyword.trim()) {
-                        vant.showToast('请输入搜索关键词');
+                        window.Toast.warning('请输入搜索关键词');
                         return;
                     }
 
@@ -209,11 +229,11 @@
                         this.hasSearched = true;
 
                         if (this.results.length === 0) {
-                            vant.showToast('未找到相关记录');
+                            window.Toast.info('未找到相关记录');
                         }
                     } catch (error) {
                         console.error(error);
-                        vant.showToast(error.message || '查询失败');
+                        window.Toast.error(error.message || '查询失败');
                     } finally {
                         this.loading = false;
                     }
@@ -222,20 +242,16 @@
                 // 提交方法
                 async submitRecommendation() {
                     // 验证
-                    if (!this.form.course_name.trim()) return vant.showToast('请输入课程名称');
-                    if (!this.form.teacher_name.trim()) return vant.showToast('请输入教师姓名');
-                    if (!this.form.recommender_nickname.trim()) return vant.showToast('请输入您的昵称');
-                    if (!this.form.recommendation_reason.trim()) return vant.showToast('请输入推荐理由');
-                    if (this.form.recommendation_reason.length > 500) return vant.showToast('推荐理由字数过多');
+                    if (!this.form.course_name.trim()) return window.Toast.warning('请输入课程名称');
+                    if (!this.form.teacher_name.trim()) return window.Toast.warning('请输入教师姓名');
+                    if (!this.form.recommender_nickname.trim()) return window.Toast.warning('请输入您的昵称');
+                    if (!this.form.recommendation_reason.trim()) return window.Toast.warning('请输入推荐理由');
+                    if (this.form.recommendation_reason.length > 500) return window.Toast.warning('推荐理由字数过多');
 
                     this.submitting = true;
                     try {
                         await window.CourseRecommendationApi.recommend(this.form);
-                        vant.showToast({
-                            type: 'success',
-                            message: '提交成功，等待审核',
-                            duration: 2000
-                        });
+                        window.Toast.success('提交成功，等待审核', 2000);
 
                         // 清空表单
                         this.form = {
@@ -251,7 +267,7 @@
                         }, 2000);
 
                     } catch (error) {
-                        vant.showToast(error.message || '提交失败');
+                        window.Toast.error(error.message || '提交失败');
                     } finally {
                         this.submitting = false;
                     }

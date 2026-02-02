@@ -49,7 +49,7 @@
           if (window.Storage) {
             window.Storage.removeCookie('auth_cookie');
           }
-          message = 'Cookie 无效或已过期，请重新输入';
+          message = 'Cookie 无效或已过期，请重新获取';
         }
       } else if (error.request) {
         message = '网络错误，请检查网络连接';

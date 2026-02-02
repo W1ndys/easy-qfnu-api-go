@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/W1ndys/easy-qfnu-api-go/common/logger"
+	"github.com/W1ndys/easy-qfnu-api-go/common/notify"
 	"github.com/W1ndys/easy-qfnu-api-go/common/stats"
 	"github.com/W1ndys/easy-qfnu-api-go/internal/config"
 	"github.com/W1ndys/easy-qfnu-api-go/router"
@@ -50,6 +51,9 @@ func main() {
 	stats.InitCollector()
 	stats.RecordStartTime()
 
+	// 初始化飞书通知
+	notify.InitFeishu()
+
 	// 初始化路由 (注入 webFS)
 	r := router.InitRouter(webFS)
 
@@ -63,6 +67,9 @@ func main() {
 	// 启动提示
 	// ---------------------------------------------------------
 	printBanner(port)
+
+	// 发送启动通知
+	notify.NotifyStartup(port)
 
 	r.Run("0.0.0.0:" + port)
 }

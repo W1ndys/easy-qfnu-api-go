@@ -1,426 +1,422 @@
 {{ define "title" }}曲奇API{{ end }}
 {{ define "body" }}
-    <div class="max-w-4xl mx-auto px-4 py-8">
-        <!-- 头部 -->
-        <header class="text-center mb-8">
-            <h1 class="text-[34px] font-bold text-[#1C1C1E] leading-tight tracking-tight">
-                曲奇API
-            </h1>
-        </header>
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <!-- 头部 -->
+    <header class="text-center mb-8">
+        <h1 class="text-[34px] font-bold text-[#1C1C1E] leading-tight tracking-tight">
+            曲奇API
+        </h1>
+    </header>
 
-        <!-- 统计数据卡片 -->
-        <section class="mb-8">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div class="bg-white dark:bg-[#1C1C1E] rounded-2xl p-4 text-center">
-                    <div class="text-[11px] text-[#8E8E93] mb-1">总调用</div>
-                    <div id="totalRequests" class="text-[22px] font-bold text-[#885021]">-</div>
+    <!-- 统计数据卡片 -->
+    <section class="mb-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="bg-white dark:bg-[#1C1C1E] rounded-2xl p-4 text-center">
+                <div class="text-[11px] text-[#8E8E93] mb-1">总调用</div>
+                <div id="totalRequests" class="text-[22px] font-bold text-[#885021]">-</div>
+            </div>
+            <div class="bg-white dark:bg-[#1C1C1E] rounded-2xl p-4 text-center">
+                <div class="text-[11px] text-[#8E8E93] mb-1">今日调用</div>
+                <div id="todayRequests" class="text-[22px] font-bold text-[#34C759]">-</div>
+            </div>
+            <div class="bg-white dark:bg-[#1C1C1E] rounded-2xl p-4 text-center">
+                <div class="text-[11px] text-[#8E8E93] mb-1">独立 IP</div>
+                <div id="uniqueIPs" class="text-[22px] font-bold text-[#007AFF]">-</div>
+            </div>
+            <div class="bg-white dark:bg-[#1C1C1E] rounded-2xl p-4 text-center">
+                <div class="text-[11px] text-[#8E8E93] mb-1">平均响应</div>
+                <div id="avgLatency" class="text-[22px] font-bold text-[#FF9500]">-</div>
+            </div>
+        </div>
+        <!-- 查看大屏入口 -->
+        <a href="/dashboard" class="block mt-3 text-center text-[13px] text-[#885021] hover:underline">
+            查看数据大屏 →
+        </a>
+    </section>
+
+    <!-- 功能卡片 -->
+    <section class="mb-12">
+        <h2 class="text-[22px] font-semibold text-[#1C1C1E] mb-4">功能入口</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- 成绩查询 -->
+            <a href="/grade" class="card hover:shadow-md transition-all duration-250 hover:-translate-y-0.5 group">
+                <div class="flex items-start">
+                    <div
+                        class="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-primary/20 transition-colors">
+                        <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                            </path>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-[17px] font-semibold text-[#1C1C1E] mb-1">
+                            成绩查询
+                        </h3>
+                        <p class="text-[13px] text-[#8E8E93]">
+                            查询课程成绩、绩点统计、自定义计算
+                        </p>
+                    </div>
+                    <svg class="w-5 h-5 text-[#C7C7CC] group-hover:text-primary transition-colors" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                        </path>
+                    </svg>
                 </div>
-                <div class="bg-white dark:bg-[#1C1C1E] rounded-2xl p-4 text-center">
-                    <div class="text-[11px] text-[#8E8E93] mb-1">今日调用</div>
-                    <div id="todayRequests" class="text-[22px] font-bold text-[#34C759]">-</div>
+            </a>
+
+            <!-- 课表查询 -->
+            <a href="/schedule" class="card hover:shadow-md transition-all duration-250 hover:-translate-y-0.5 group">
+                <div class="flex items-start">
+                    <div
+                        class="w-12 h-12 bg-success/10 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-success/20 transition-colors">
+                        <svg class="w-6 h-6 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-[17px] font-semibold text-[#1C1C1E] mb-1">
+                            课表查询
+                        </h3>
+                        <p class="text-[13px] text-[#8E8E93]">
+                            查看每周课程安排、上课地点时间
+                        </p>
+                    </div>
+                    <svg class="w-5 h-5 text-[#C7C7CC] group-hover:text-success transition-colors" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                        </path>
+                    </svg>
                 </div>
-                <div class="bg-white dark:bg-[#1C1C1E] rounded-2xl p-4 text-center">
-                    <div class="text-[11px] text-[#8E8E93] mb-1">独立 IP</div>
-                    <div id="uniqueIPs" class="text-[22px] font-bold text-[#007AFF]">-</div>
+            </a>
+
+            <!-- 考试安排 -->
+            <a href="/exam" class="card hover:shadow-md transition-all duration-250 hover:-translate-y-0.5 group">
+                <div class="flex items-start">
+                    <div
+                        class="w-12 h-12 bg-warning/10 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-warning/20 transition-colors">
+                        <svg class="w-6 h-6 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4">
+                            </path>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-[17px] font-semibold text-[#1C1C1E] mb-1">
+                            考试安排
+                        </h3>
+                        <p class="text-[13px] text-[#8E8E93]">
+                            查看考试时间、考场、座位号
+                        </p>
+                    </div>
+                    <svg class="w-5 h-5 text-[#C7C7CC] group-hover:text-warning transition-colors" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                        </path>
+                    </svg>
                 </div>
-                <div class="bg-white dark:bg-[#1C1C1E] rounded-2xl p-4 text-center">
-                    <div class="text-[11px] text-[#8E8E93] mb-1">平均响应</div>
-                    <div id="avgLatency" class="text-[22px] font-bold text-[#FF9500]">-</div>
+            </a>
+
+            <!-- 选课结果 -->
+            <a href="/selection" class="card hover:shadow-md transition-all duration-250 hover:-translate-y-0.5 group">
+                <div class="flex items-start">
+                    <div
+                        class="w-12 h-12 bg-info/10 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-info/20 transition-colors">
+                        <svg class="w-6 h-6 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                            </path>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-[17px] font-semibold text-[#1C1C1E] mb-1">
+                            选课结果
+                        </h3>
+                        <p class="text-[13px] text-[#8E8E93]">
+                            查看已选课程、学分学时统计
+                        </p>
+                    </div>
+                    <svg class="w-5 h-5 text-[#C7C7CC] group-hover:text-info transition-colors" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                        </path>
+                    </svg>
+                </div>
+            </a>
+
+            <!-- 培养方案 -->
+            <a href="/course-plan"
+                class="card hover:shadow-md transition-all duration-250 hover:-translate-y-0.5 group">
+                <div class="flex items-start">
+                    <div
+                        class="w-12 h-12 bg-danger/10 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-danger/20 transition-colors">
+                        <svg class="w-6 h-6 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                            </path>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-[17px] font-semibold text-[#1C1C1E] mb-1">
+                            培养方案
+                        </h3>
+                        <p class="text-[13px] text-[#8E8E93]">
+                            查看培养目标、课程进度、学分完成情况
+                        </p>
+                    </div>
+                    <svg class="w-5 h-5 text-[#C7C7CC] group-hover:text-danger transition-colors" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                        </path>
+                    </svg>
+                </div>
+            </a>
+
+            <!-- 智慧曲园入学题库 -->
+            <a href="/questions" class="card hover:shadow-md transition-all duration-250 hover:-translate-y-0.5 group">
+                <div class="flex items-start">
+                    <div
+                        class="w-12 h-12 bg-[#AF52DE]/10 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-[#AF52DE]/20 transition-colors">
+                        <svg class="w-6 h-6 text-[#AF52DE]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                            </path>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-[17px] font-semibold text-[#1C1C1E] mb-1">
+                            智慧曲园入学题库
+                            <span class="ml-1 px-1.5 py-0.5 bg-success/10 text-success text-[10px] rounded-md">公开</span>
+                        </h3>
+                        <p class="text-[13px] text-[#8E8E93]">
+                            搜索新生入学考试题目，无需登录
+                        </p>
+                    </div>
+                    <svg class="w-5 h-5 text-[#C7C7CC] group-hover:text-[#AF52DE] transition-colors" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                        </path>
+                    </svg>
+                </div>
+            </a>
+
+            <!-- 选课推荐 -->
+            <a href="/course-recommendation"
+                class="card hover:shadow-md transition-all duration-250 hover:-translate-y-0.5 group">
+                <div class="flex items-start">
+                    <div
+                        class="w-12 h-12 bg-[#FF2D55]/10 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-[#FF2D55]/20 transition-colors">
+                        <svg class="w-6 h-6 text-[#FF2D55]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5">
+                            </path>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-[17px] font-semibold text-[#1C1C1E] mb-1">
+                            选课推荐
+                            <span
+                                class="ml-1 px-1.5 py-0.5 bg-[#FF2D55]/10 text-[#FF2D55] text-[10px] rounded-md">新</span>
+                        </h3>
+                        <p class="text-[13px] text-[#8E8E93]">
+                            查看往届师哥师姐课程推荐、发现宝藏老师
+                        </p>
+                    </div>
+                    <svg class="w-5 h-5 text-[#C7C7CC] group-hover:text-[#FF2D55] transition-colors" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                        </path>
+                    </svg>
+                </div>
+            </a>
+
+            <!-- API 文档 -->
+            <a href="//easy-qfnu-api.apifox.cn" target="_blank"
+                class="card hover:shadow-md transition-all duration-250 hover:-translate-y-0.5 group">
+                <div class="flex items-start">
+                    <div
+                        class="w-12 h-12 bg-[#8E8E93]/10 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-[#8E8E93]/20 transition-colors">
+                        <svg class="w-6 h-6 text-[#8E8E93]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-[17px] font-semibold text-[#1C1C1E] mb-1">
+                            API 文档
+                        </h3>
+                        <p class="text-[13px] text-[#8E8E93]">
+                            接口说明、请求示例、参数参考
+                        </p>
+                    </div>
+                    <svg class="w-5 h-5 text-[#C7C7CC] group-hover:text-[#8E8E93] transition-colors" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                        </path>
+                    </svg>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- 项目介绍 -->
+    <section class="mb-12">
+        <h2 class="text-[22px] font-semibold text-[#1C1C1E] mb-4">关于项目</h2>
+        <div class="card">
+            <div class="prose prose-sm max-w-none">
+                <p class="text-[15px] text-[#1C1C1E] leading-relaxed mb-4">
+                    曲奇API
+                    是一个为曲阜师范大学学生提供的聚合式数据查询服务，包括教务系统、图书馆系统、各类通知公告等数据的查询服务。通过标准的
+                    RESTful API 接口， 让你可以方便地获取成绩、课表、考试安排等信息。
+                </p>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
+                    <div class="text-center p-3 bg-[#F2F2F7] rounded-xl">
+                        <div class="text-[20px] font-bold text-primary">RESTful</div>
+                        <div class="text-[11px] text-[#8E8E93] mt-1">标准接口</div>
+                    </div>
+                    <div class="text-center p-3 bg-[#F2F2F7] rounded-xl">
+                        <div class="text-[20px] font-bold text-success">JSON</div>
+                        <div class="text-[11px] text-[#8E8E93] mt-1">数据格式</div>
+                    </div>
+                    <div class="text-center p-3 bg-[#F2F2F7] rounded-xl">
+                        <div class="text-[20px] font-bold text-info">Go</div>
+                        <div class="text-[11px] text-[#8E8E93] mt-1">后端语言</div>
+                    </div>
+                    <div class="text-center p-3 bg-[#F2F2F7] rounded-xl">
+                        <div class="text-[20px] font-bold text-warning">开源</div>
+                        <div class="text-[11px] text-[#8E8E93] mt-1">代码公开</div>
+                    </div>
                 </div>
             </div>
-            <!-- 查看大屏入口 -->
-            <a href="/dashboard" class="block mt-3 text-center text-[13px] text-[#885021] hover:underline">
-                查看数据大屏 →
-            </a>
-        </section>
+        </div>
+    </section>
 
-        <!-- 功能卡片 -->
-        <section class="mb-12">
-            <h2 class="text-[22px] font-semibold text-[#1C1C1E] mb-4">功能入口</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- 成绩查询 -->
-                <a href="/grade"
-                    class="card hover:shadow-md transition-all duration-250 hover:-translate-y-0.5 group">
-                    <div class="flex items-start">
-                        <div
-                            class="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-primary/20 transition-colors">
-                            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
-                                </path>
-                            </svg>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="text-[17px] font-semibold text-[#1C1C1E] mb-1">
-                                成绩查询
-                            </h3>
-                            <p class="text-[13px] text-[#8E8E93]">
-                                查询课程成绩、绩点统计、自定义计算
-                            </p>
-                        </div>
-                        <svg class="w-5 h-5 text-[#C7C7CC] group-hover:text-primary transition-colors" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
-                            </path>
-                        </svg>
+    <!-- 使用说明 -->
+    <section class="mb-12">
+        <h2 class="text-[22px] font-semibold text-[#1C1C1E] mb-4">快速开始</h2>
+        <div class="card">
+            <div class="space-y-4">
+                <div class="flex items-start">
+                    <div
+                        class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-[13px] font-semibold mr-3 flex-shrink-0">
+                        1
                     </div>
-                </a>
-
-                <!-- 课表查询 -->
-                <a href="/schedule"
-                    class="card hover:shadow-md transition-all duration-250 hover:-translate-y-0.5 group">
-                    <div class="flex items-start">
-                        <div
-                            class="w-12 h-12 bg-success/10 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-success/20 transition-colors">
-                            <svg class="w-6 h-6 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                </path>
-                            </svg>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="text-[17px] font-semibold text-[#1C1C1E] mb-1">
-                                课表查询
-                            </h3>
-                            <p class="text-[13px] text-[#8E8E93]">
-                                查看每周课程安排、上课地点时间
-                            </p>
-                        </div>
-                        <svg class="w-5 h-5 text-[#C7C7CC] group-hover:text-success transition-colors" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
-                            </path>
-                        </svg>
+                    <div>
+                        <h4 class="text-[15px] font-medium text-[#1C1C1E]">
+                            登录教务系统
+                        </h4>
+                        <p class="text-[13px] text-[#8E8E93] mt-1">
+                            在浏览器中登录曲阜师范大学教务系统
+                        </p>
                     </div>
-                </a>
-
-                <!-- 考试安排 -->
-                <a href="/exam"
-                    class="card hover:shadow-md transition-all duration-250 hover:-translate-y-0.5 group">
-                    <div class="flex items-start">
-                        <div
-                            class="w-12 h-12 bg-warning/10 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-warning/20 transition-colors">
-                            <svg class="w-6 h-6 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4">
-                                </path>
-                            </svg>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="text-[17px] font-semibold text-[#1C1C1E] mb-1">
-                                考试安排
-                            </h3>
-                            <p class="text-[13px] text-[#8E8E93]">
-                                查看考试时间、考场、座位号
-                            </p>
-                        </div>
-                        <svg class="w-5 h-5 text-[#C7C7CC] group-hover:text-warning transition-colors" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
-                            </path>
-                        </svg>
+                </div>
+                <div class="flex items-start">
+                    <div
+                        class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-[13px] font-semibold mr-3 flex-shrink-0">
+                        2
                     </div>
-                </a>
-
-                <!-- 选课结果 -->
-                <a href="/selection"
-                    class="card hover:shadow-md transition-all duration-250 hover:-translate-y-0.5 group">
-                    <div class="flex items-start">
-                        <div
-                            class="w-12 h-12 bg-info/10 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-info/20 transition-colors">
-                            <svg class="w-6 h-6 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div>
+                        <h4 class="text-[15px] font-medium text-[#1C1C1E]">
+                            获取 Cookie
+                        </h4>
+                        <p class="text-[13px] text-[#8E8E93] mt-1">
+                            按 F12 打开开发者工具，在 Network 或 Application 标签中复制
+                            Cookie
+                        </p>
+                        <a href="https://mp.weixin.qq.com/s/zFK9c4ecpGdRwXSKzaVFnw" target="_blank"
+                            class="inline-flex items-center text-[13px] text-primary hover:underline mt-2">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
                                 </path>
                             </svg>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="text-[17px] font-semibold text-[#1C1C1E] mb-1">
-                                选课结果
-                            </h3>
-                            <p class="text-[13px] text-[#8E8E93]">
-                                查看已选课程、学分学时统计
-                            </p>
-                        </div>
-                        <svg class="w-5 h-5 text-[#C7C7CC] group-hover:text-info transition-colors" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
-                            </path>
-                        </svg>
-                    </div>
-                </a>
-
-                <!-- 培养方案 -->
-                <a href="/course-plan"
-                    class="card hover:shadow-md transition-all duration-250 hover:-translate-y-0.5 group">
-                    <div class="flex items-start">
-                        <div
-                            class="w-12 h-12 bg-danger/10 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-danger/20 transition-colors">
-                            <svg class="w-6 h-6 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            查看图文教程
+                            <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14">
                                 </path>
                             </svg>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="text-[17px] font-semibold text-[#1C1C1E] mb-1">
-                                培养方案
-                            </h3>
-                            <p class="text-[13px] text-[#8E8E93]">
-                                查看培养目标、课程进度、学分完成情况
-                            </p>
-                        </div>
-                        <svg class="w-5 h-5 text-[#C7C7CC] group-hover:text-danger transition-colors" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
-                            </path>
-                        </svg>
-                    </div>
-                </a>
-
-                <!-- 智慧曲园入学题库 -->
-                <a href="/questions"
-                    class="card hover:shadow-md transition-all duration-250 hover:-translate-y-0.5 group">
-                    <div class="flex items-start">
-                        <div
-                            class="w-12 h-12 bg-[#AF52DE]/10 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-[#AF52DE]/20 transition-colors">
-                            <svg class="w-6 h-6 text-[#AF52DE]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
-                                </path>
-                            </svg>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="text-[17px] font-semibold text-[#1C1C1E] mb-1">
-                                智慧曲园入学题库
-                                <span class="ml-1 px-1.5 py-0.5 bg-success/10 text-success text-[10px] rounded-md">公开</span>
-                            </h3>
-                            <p class="text-[13px] text-[#8E8E93]">
-                                搜索新生入学考试题目，无需登录
-                            </p>
-                        </div>
-                        <svg class="w-5 h-5 text-[#C7C7CC] group-hover:text-[#AF52DE] transition-colors" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
-                            </path>
-                        </svg>
-                    </div>
-                </a>
-
-                <!-- 选课推荐 -->
-                <a href="/course-recommendation"
-                    class="card hover:shadow-md transition-all duration-250 hover:-translate-y-0.5 group">
-                    <div class="flex items-start">
-                        <div
-                            class="w-12 h-12 bg-[#FF2D55]/10 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-[#FF2D55]/20 transition-colors">
-                            <svg class="w-6 h-6 text-[#FF2D55]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5">
-                                </path>
-                            </svg>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="text-[17px] font-semibold text-[#1C1C1E] mb-1">
-                                选课推荐
-                                <span class="ml-1 px-1.5 py-0.5 bg-[#FF2D55]/10 text-[#FF2D55] text-[10px] rounded-md">新</span>
-                            </h3>
-                            <p class="text-[13px] text-[#8E8E93]">
-                                查看课程评价、分享优质好课
-                            </p>
-                        </div>
-                        <svg class="w-5 h-5 text-[#C7C7CC] group-hover:text-[#FF2D55] transition-colors" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
-                            </path>
-                        </svg>
-                    </div>
-                </a>
-
-                <!-- API 文档 -->
-                <a href="//easy-qfnu-api.apifox.cn" target="_blank"
-                    class="card hover:shadow-md transition-all duration-250 hover:-translate-y-0.5 group">
-                    <div class="flex items-start">
-                        <div
-                            class="w-12 h-12 bg-[#8E8E93]/10 rounded-2xl flex items-center justify-center mr-4 group-hover:bg-[#8E8E93]/20 transition-colors">
-                            <svg class="w-6 h-6 text-[#8E8E93]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                                </path>
-                            </svg>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="text-[17px] font-semibold text-[#1C1C1E] mb-1">
-                                API 文档
-                            </h3>
-                            <p class="text-[13px] text-[#8E8E93]">
-                                接口说明、请求示例、参数参考
-                            </p>
-                        </div>
-                        <svg class="w-5 h-5 text-[#C7C7CC] group-hover:text-[#8E8E93] transition-colors" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
-                            </path>
-                        </svg>
-                    </div>
-                </a>
-            </div>
-        </section>
-
-        <!-- 项目介绍 -->
-        <section class="mb-12">
-            <h2 class="text-[22px] font-semibold text-[#1C1C1E] mb-4">关于项目</h2>
-            <div class="card">
-                <div class="prose prose-sm max-w-none">
-                    <p class="text-[15px] text-[#1C1C1E] leading-relaxed mb-4">
-                        曲奇API
-                        是一个为曲阜师范大学学生提供的聚合式数据查询服务，包括教务系统、图书馆系统、各类通知公告等数据的查询服务。通过标准的
-                        RESTful API 接口， 让你可以方便地获取成绩、课表、考试安排等信息。
-                    </p>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
-                        <div class="text-center p-3 bg-[#F2F2F7] rounded-xl">
-                            <div class="text-[20px] font-bold text-primary">RESTful</div>
-                            <div class="text-[11px] text-[#8E8E93] mt-1">标准接口</div>
-                        </div>
-                        <div class="text-center p-3 bg-[#F2F2F7] rounded-xl">
-                            <div class="text-[20px] font-bold text-success">JSON</div>
-                            <div class="text-[11px] text-[#8E8E93] mt-1">数据格式</div>
-                        </div>
-                        <div class="text-center p-3 bg-[#F2F2F7] rounded-xl">
-                            <div class="text-[20px] font-bold text-info">Go</div>
-                            <div class="text-[11px] text-[#8E8E93] mt-1">后端语言</div>
-                        </div>
-                        <div class="text-center p-3 bg-[#F2F2F7] rounded-xl">
-                            <div class="text-[20px] font-bold text-warning">开源</div>
-                            <div class="text-[11px] text-[#8E8E93] mt-1">代码公开</div>
-                        </div>
+                        </a>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <!-- 使用说明 -->
-        <section class="mb-12">
-            <h2 class="text-[22px] font-semibold text-[#1C1C1E] mb-4">快速开始</h2>
-            <div class="card">
-                <div class="space-y-4">
-                    <div class="flex items-start">
-                        <div
-                            class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-[13px] font-semibold mr-3 flex-shrink-0">
-                            1
-                        </div>
-                        <div>
-                            <h4 class="text-[15px] font-medium text-[#1C1C1E]">
-                                登录教务系统
-                            </h4>
-                            <p class="text-[13px] text-[#8E8E93] mt-1">
-                                在浏览器中登录曲阜师范大学教务系统
-                            </p>
-                        </div>
-                    </div>
-                    <div class="flex items-start">
-                        <div
-                            class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-[13px] font-semibold mr-3 flex-shrink-0">
-                            2
-                        </div>
-                        <div>
-                            <h4 class="text-[15px] font-medium text-[#1C1C1E]">
-                                获取 Cookie
-                            </h4>
-                            <p class="text-[13px] text-[#8E8E93] mt-1">
-                                按 F12 打开开发者工具，在 Network 或 Application 标签中复制
-                                Cookie
-                            </p>
-                            <a href="https://mp.weixin.qq.com/s/zFK9c4ecpGdRwXSKzaVFnw" target="_blank"
-                                class="inline-flex items-center text-[13px] text-primary hover:underline mt-2">
-                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
-                                    </path>
-                                </svg>
-                                查看图文教程
-                                <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14">
-                                    </path>
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="flex items-start">
-                        <div
-                            class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-[13px] font-semibold mr-3 flex-shrink-0">
-                            3
-                        </div>
-                        <div>
-                            <h4 class="text-[15px] font-medium text-[#1C1C1E]">调用 API</h4>
-                            <p class="text-[13px] text-[#8E8E93] mt-1">
-                                将 Cookie 放入请求头
-                                <code class="bg-[#E5E5EA] px-1.5 py-0.5 rounded text-[12px]">Authorization</code>
-                                中发起请求
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 注意事项 -->
-        <section class="mb-12">
-            <div class="bg-warning/10 border border-warning/20 rounded-2xl p-4">
                 <div class="flex items-start">
-                    <svg class="w-5 h-5 text-warning mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd"
-                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                            clip-rule="evenodd"></path>
-                    </svg>
+                    <div
+                        class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-[13px] font-semibold mr-3 flex-shrink-0">
+                        3
+                    </div>
                     <div>
-                        <h4 class="text-[15px] font-medium text-[#1C1C1E] mb-1">
-                            注意事项
-                        </h4>
-                        <ul class="text-[13px] text-[#8E8E93] space-y-1">
-                            <li>• Cookie 包含你的登录凭证，请勿泄露给他人</li>
-                            <li>• 本服务仅供学习交流使用，请勿滥用</li>
-                            <li>• Cookie 有效期有限，过期后需要重新获取</li>
-                        </ul>
+                        <h4 class="text-[15px] font-medium text-[#1C1C1E]">调用 API</h4>
+                        <p class="text-[13px] text-[#8E8E93] mt-1">
+                            将 Cookie 放入请求头
+                            <code class="bg-[#E5E5EA] px-1.5 py-0.5 rounded text-[12px]">Authorization</code>
+                            中发起请求
+                        </p>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- 页脚 -->
-        <footer class="text-center py-8 border-t border-[#E5E5EA]">
-            <p class="text-[13px] text-[#8E8E93]">
-                曲奇API ·
-                <a href="https://github.com/W1ndys/easy-qfnu-api-go" target="_blank"
-                    class="text-primary hover:underline">GitHub</a>
-            </p>
-        </footer>
-    </div>
+    <!-- 注意事项 -->
+    <section class="mb-12">
+        <div class="bg-warning/10 border border-warning/20 rounded-2xl p-4">
+            <div class="flex items-start">
+                <svg class="w-5 h-5 text-warning mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                        d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                        clip-rule="evenodd"></path>
+                </svg>
+                <div>
+                    <h4 class="text-[15px] font-medium text-[#1C1C1E] mb-1">
+                        注意事项
+                    </h4>
+                    <ul class="text-[13px] text-[#8E8E93] space-y-1">
+                        <li>• Cookie 包含你的登录凭证，请勿泄露给他人</li>
+                        <li>• 本服务仅供学习交流使用，请勿滥用</li>
+                        <li>• Cookie 有效期有限，过期后需要重新获取</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <script>
-        // 加载统计数据
-        async function loadStats() {
-            try {
-                const res = await fetch('/api/v1/stats/dashboard');
-                const data = await res.json();
-                if (data.code === 200) {
-                    document.getElementById('totalRequests').textContent = formatNumber(data.data.totalRequests || 0);
-                    document.getElementById('todayRequests').textContent = formatNumber(data.data.todayRequests || 0);
-                    document.getElementById('uniqueIPs').textContent = formatNumber(data.data.uniqueIPs || 0);
-                    document.getElementById('avgLatency').textContent = (data.data.avgLatencyMs || 0).toFixed(0) + 'ms';
-                }
-            } catch (e) {
-                console.error('加载统计失败:', e);
+    <!-- 页脚 -->
+    <footer class="text-center py-8 border-t border-[#E5E5EA]">
+        <p class="text-[13px] text-[#8E8E93]">
+            曲奇API ·
+            <a href="https://github.com/W1ndys/easy-qfnu-api-go" target="_blank"
+                class="text-primary hover:underline">GitHub</a>
+        </p>
+    </footer>
+</div>
+
+<script>
+    // 加载统计数据
+    async function loadStats() {
+        try {
+            const res = await fetch('/api/v1/stats/dashboard');
+            const data = await res.json();
+            if (data.code === 200) {
+                document.getElementById('totalRequests').textContent = formatNumber(data.data.totalRequests || 0);
+                document.getElementById('todayRequests').textContent = formatNumber(data.data.todayRequests || 0);
+                document.getElementById('uniqueIPs').textContent = formatNumber(data.data.uniqueIPs || 0);
+                document.getElementById('avgLatency').textContent = (data.data.avgLatencyMs || 0).toFixed(0) + 'ms';
             }
+        } catch (e) {
+            console.error('加载统计失败:', e);
         }
+    }
 
-        function formatNumber(num) {
-            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
-            if (num >= 10000) return (num / 10000).toFixed(1) + 'W';
-            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
-            return num.toString();
-        }
+    function formatNumber(num) {
+        if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+        if (num >= 10000) return (num / 10000).toFixed(1) + 'W';
+        if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+        return num.toString();
+    }
 
-        loadStats();
-    </script>
+    loadStats();
+</script>
 {{ end }}

@@ -275,3 +275,34 @@ code {
   border-radius: 4px;
   font-size: 0.9em;
 }
+
+/* ==================== 公告滚动动画 ==================== */
+.announcement-scroll {
+  position: relative;
+  width: 100%;
+}
+
+.announcement-content {
+  animation: marquee 20s linear infinite;
+  padding-left: 100%;
+}
+
+.announcement-scroll:hover .announcement-content {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+/* ==================== 数据大屏样式 ==================== */
+/* 数字动画 */
+.stat-number {
+  font-variant-numeric: tabular-nums;
+}
+
+/* 进度条动画 */
+.progress-bar {
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}

@@ -34,23 +34,6 @@
             </div>
         </template>
     </div>
-    <style>
-        .announcement-scroll {
-            position: relative;
-            width: 100%;
-        }
-        .announcement-content {
-            animation: marquee 20s linear infinite;
-            padding-left: 100%;
-        }
-        .announcement-scroll:hover .announcement-content {
-            animation-play-state: paused;
-        }
-        @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-100%); }
-        }
-    </style>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="/static/js/components/announcement.js"></script>
     {{ template "body" . }}

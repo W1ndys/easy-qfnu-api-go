@@ -206,14 +206,10 @@ func NotifyError(errType, errMsg, stack string) {
 		return
 	}
 
-	content := fmt.Sprintf(`**❌ 系统发生错误**
-
-- **错误类型**: %s
-- **错误信息**: %s
-- **堆栈信息**:
-\`\`\`
-%s
-\`\`\``,
+	content := fmt.Sprintf("**❌ 系统发生错误**\n\n"+
+		"- **错误类型**: %s\n"+
+		"- **错误信息**: %s\n"+
+		"- **堆栈信息**:\n```\n%s\n```",
 		errType,
 		errMsg,
 		stack,

@@ -5,7 +5,7 @@
     <!-- 顶部导航栏 -->
     <nav class="bg-white/90 backdrop-blur-xl border-b border-[#E5E5EA] sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-14 sm:h-16">
+            <div class="flex justify-between items-center h-12 sm:h-14">
                 <!-- 移动端菜单按钮 -->
                 <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden p-2 -ml-2 rounded-lg text-[#8E8E93] hover:bg-[#E5E5EA] transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -14,20 +14,20 @@
                 </button>
                 <h1 class="text-[17px] sm:text-[20px] font-semibold text-[#1C1C1E]">管理后台</h1>
                 <button @click="logout"
-                    class="text-[14px] sm:text-[15px] text-[#FF3B30] font-medium px-3 py-1.5 rounded-lg hover:bg-[#FF3B30]/10 transition-all duration-150 active:opacity-60">
+                    class="text-[14px] sm:text-[15px] text-white bg-[#FF3B30] font-medium px-4 py-1.5 rounded-lg hover:bg-[#FF3B30]/90 shadow-sm transition-all duration-150 active:opacity-90">
                     退出登录
                 </button>
             </div>
         </div>
     </nav>
 
-    <div class="max-w-7xl mx-auto flex">
+    <div class="w-full flex">
         <!-- 侧边栏 - PC端 -->
-        <aside class="hidden lg:block w-64 shrink-0 sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto border-r border-[#E5E5EA] bg-white/50">
-            <nav class="p-4 space-y-2">
+        <aside class="hidden lg:block w-48 shrink-0 sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto border-r border-[#E5E5EA] bg-white/50">
+            <nav class="p-2 space-y-1">
                 <button @click="activeTab = 'config'"
                     :class="activeTab === 'config' ? 'bg-[#885021] text-white' : 'text-[#1C1C1E] hover:bg-[#E5E5EA]'"
-                    class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[15px] font-medium transition-all duration-150">
+                    class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-[15px] font-medium transition-all duration-150">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -36,7 +36,7 @@
                 </button>
                 <button @click="activeTab = 'announcements'"
                     :class="activeTab === 'announcements' ? 'bg-[#885021] text-white' : 'text-[#1C1C1E] hover:bg-[#E5E5EA]'"
-                    class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[15px] font-medium transition-all duration-150">
+                    class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-[15px] font-medium transition-all duration-150">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
                     </svg>
@@ -44,7 +44,7 @@
                 </button>
                 <button @click="activeTab = 'recommendations'"
                     :class="activeTab === 'recommendations' ? 'bg-[#885021] text-white' : 'text-[#1C1C1E] hover:bg-[#E5E5EA]'"
-                    class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[15px] font-medium transition-all duration-150">
+                    class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-[15px] font-medium transition-all duration-150">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path>
                     </svg>
@@ -82,10 +82,10 @@
                     </svg>
                 </button>
             </div>
-            <nav class="p-4 space-y-2">
+            <nav class="p-2 space-y-1">
                 <button @click="activeTab = 'config'; sidebarOpen = false"
                     :class="activeTab === 'config' ? 'bg-[#885021] text-white' : 'text-[#1C1C1E] hover:bg-[#E5E5EA]'"
-                    class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[15px] font-medium transition-all duration-150">
+                    class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-[15px] font-medium transition-all duration-150">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -94,7 +94,7 @@
                 </button>
                 <button @click="activeTab = 'announcements'; sidebarOpen = false"
                     :class="activeTab === 'announcements' ? 'bg-[#885021] text-white' : 'text-[#1C1C1E] hover:bg-[#E5E5EA]'"
-                    class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[15px] font-medium transition-all duration-150">
+                    class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-[15px] font-medium transition-all duration-150">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
                     </svg>
@@ -102,7 +102,7 @@
                 </button>
                 <button @click="activeTab = 'recommendations'; sidebarOpen = false"
                     :class="activeTab === 'recommendations' ? 'bg-[#885021] text-white' : 'text-[#1C1C1E] hover:bg-[#E5E5EA]'"
-                    class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[15px] font-medium transition-all duration-150">
+                    class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-[15px] font-medium transition-all duration-150">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path>
                     </svg>
@@ -224,37 +224,75 @@
                     </button>
                 </div>
 
-                <!-- 公告列表 - PC端网格，移动端列表 -->
-                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                <!-- 公告列表 - PC端网格，移动端横向滚动 -->
+                <div class="hidden md:grid md:grid-cols-2 xl:grid-cols-3 gap-3">
                     <template x-for="a in announcements" :key="a.id">
-                        <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200">
-                            <div class="p-4 sm:p-5">
+                        <div class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200">
+                            <div class="p-3">
                                 <!-- 标题和标签 -->
-                                <div class="flex items-start justify-between gap-3 mb-3">
-                                    <h3 class="text-[16px] font-semibold text-[#1C1C1E] line-clamp-1" x-text="a.title"></h3>
-                                    <div class="flex items-center gap-1.5 shrink-0">
-                                        <span class="text-[11px] px-2 py-0.5 rounded-full font-medium"
+                                <div class="flex items-start justify-between gap-2 mb-2">
+                                    <h3 class="text-[15px] font-semibold text-[#1C1C1E] line-clamp-1" x-text="a.title"></h3>
+                                    <div class="flex items-center gap-1 shrink-0">
+                                        <span class="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
                                             :class="{
                                                 'bg-[#007AFF]/10 text-[#007AFF]': a.type === 'info',
                                                 'bg-[#FF9500]/10 text-[#FF9500]': a.type === 'warning',
                                                 'bg-[#FF3B30]/10 text-[#FF3B30]': a.type === 'error'
                                             }" x-text="a.type === 'info' ? '信息' : (a.type === 'warning' ? '警告' : '错误')"></span>
-                                        <span class="text-[11px] px-2 py-0.5 rounded-full font-medium"
+                                        <span class="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
                                             :class="a.is_active ? 'bg-[#34C759]/10 text-[#34C759]' : 'bg-[#8E8E93]/10 text-[#8E8E93]'"
                                             x-text="a.is_active ? '启用' : '禁用'"></span>
                                     </div>
                                 </div>
                                 <!-- 内容 -->
-                                <p class="text-[14px] text-[#8E8E93] line-clamp-2 mb-4" x-text="a.content"></p>
+                                <p class="text-[13px] text-[#8E8E93] line-clamp-2 mb-2" x-text="a.content"></p>
                                 <!-- 操作按钮 -->
-                                <div class="flex items-center gap-2 pt-3 border-t border-[#E5E5EA]">
+                                <div class="flex items-center gap-2 pt-2 border-t border-[#E5E5EA]">
                                     <button @click="editAnnouncement(a)"
-                                        class="flex-1 text-[14px] text-[#007AFF] font-medium py-2 rounded-lg hover:bg-[#007AFF]/10 transition-colors">
+                                        class="flex-1 text-[13px] text-[#007AFF] font-medium py-1.5 rounded-lg hover:bg-[#007AFF]/10 transition-colors">
                                         编辑
                                     </button>
-                                    <div class="w-px h-5 bg-[#E5E5EA]"></div>
+                                    <div class="w-px h-4 bg-[#E5E5EA]"></div>
                                     <button @click="deleteAnnouncement(a.id)"
-                                        class="flex-1 text-[14px] text-[#FF3B30] font-medium py-2 rounded-lg hover:bg-[#FF3B30]/10 transition-colors">
+                                        class="flex-1 text-[13px] text-[#FF3B30] font-medium py-1.5 rounded-lg hover:bg-[#FF3B30]/10 transition-colors">
+                                        删除
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                <!-- 移动端横向滚动 -->
+                <div class="md:hidden flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 snap-x snap-mandatory scrollbar-hide">
+                    <template x-for="a in announcements" :key="'mobile-' + a.id">
+                        <div class="bg-white rounded-xl overflow-hidden shadow-sm flex-shrink-0 w-[280px] snap-start">
+                            <div class="p-3">
+                                <!-- 标题和标签 -->
+                                <div class="flex items-start justify-between gap-2 mb-2">
+                                    <h3 class="text-[15px] font-semibold text-[#1C1C1E] line-clamp-1" x-text="a.title"></h3>
+                                    <div class="flex items-center gap-1 shrink-0">
+                                        <span class="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
+                                            :class="{
+                                                'bg-[#007AFF]/10 text-[#007AFF]': a.type === 'info',
+                                                'bg-[#FF9500]/10 text-[#FF9500]': a.type === 'warning',
+                                                'bg-[#FF3B30]/10 text-[#FF3B30]': a.type === 'error'
+                                            }" x-text="a.type === 'info' ? '信息' : (a.type === 'warning' ? '警告' : '错误')"></span>
+                                        <span class="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
+                                            :class="a.is_active ? 'bg-[#34C759]/10 text-[#34C759]' : 'bg-[#8E8E93]/10 text-[#8E8E93]'"
+                                            x-text="a.is_active ? '启用' : '禁用'"></span>
+                                    </div>
+                                </div>
+                                <!-- 内容 -->
+                                <p class="text-[13px] text-[#8E8E93] line-clamp-2 mb-2" x-text="a.content"></p>
+                                <!-- 操作按钮 -->
+                                <div class="flex items-center gap-2 pt-2 border-t border-[#E5E5EA]">
+                                    <button @click="editAnnouncement(a)"
+                                        class="flex-1 text-[13px] text-[#007AFF] font-medium py-1.5 rounded-lg hover:bg-[#007AFF]/10 transition-colors">
+                                        编辑
+                                    </button>
+                                    <div class="w-px h-4 bg-[#E5E5EA]"></div>
+                                    <button @click="deleteAnnouncement(a.id)"
+                                        class="flex-1 text-[13px] text-[#FF3B30] font-medium py-1.5 rounded-lg hover:bg-[#FF3B30]/10 transition-colors">
                                         删除
                                     </button>
                                 </div>
@@ -289,17 +327,17 @@
 
                     <!-- 状态过滤器 -->
                     <div class="bg-[#E5E5EA] p-1 rounded-xl flex">
-                        <button @click="recommendationFilter = 'all'"
+                        <button @click="changeFilter('all')"
                             class="px-4 py-1.5 rounded-lg text-[13px] font-medium transition-all"
                             :class="recommendationFilter === 'all' ? 'bg-white shadow text-[#1C1C1E]' : 'text-[#8E8E93] hover:text-[#1C1C1E]'">
                             全部
                         </button>
-                        <button @click="recommendationFilter = 'pending'"
+                        <button @click="changeFilter('pending')"
                             class="px-4 py-1.5 rounded-lg text-[13px] font-medium transition-all"
                             :class="recommendationFilter === 'pending' ? 'bg-white shadow text-[#FF9500]' : 'text-[#8E8E93] hover:text-[#1C1C1E]'">
                             待审核
                         </button>
-                        <button @click="recommendationFilter = 'approved'"
+                        <button @click="changeFilter('approved')"
                             class="px-4 py-1.5 rounded-lg text-[13px] font-medium transition-all"
                             :class="recommendationFilter === 'approved' ? 'bg-white shadow text-[#34C759]' : 'text-[#8E8E93] hover:text-[#1C1C1E]'">
                             已公开
@@ -309,7 +347,7 @@
 
                 <!-- 推荐列表 -->
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                    <template x-for="r in filteredList()" :key="r.id">
+                    <template x-for="r in recommendations" :key="r.id">
                         <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col">
                             <div class="p-4 sm:p-5 flex-1">
                                 <!-- 头部信息 -->
@@ -388,7 +426,7 @@
                 </div>
 
                 <!-- 空状态 -->
-                <div x-show="filteredList().length === 0" class="bg-white rounded-2xl p-8 sm:p-12 text-center">
+                <div x-show="recommendations.length === 0" class="bg-white rounded-2xl p-8 sm:p-12 text-center">
                     <svg class="w-16 h-16 mx-auto text-[#C7C7CC] mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
                     </svg>
@@ -570,10 +608,10 @@ function adminPanel() {
         showAdminPassword: false,
         announcements: [],
         recommendations: [],
-        recommendationFilter: 'all',
+        recommendationFilter: 'pending',
         pagination: {
             page: 1,
-            pageSize: 9,
+            pageSize: 6,
             total: 0,
             totalPages: 1
         },
@@ -626,14 +664,7 @@ function adminPanel() {
         },
 
         filteredList() {
-            if (this.recommendationFilter === 'all') {
-                return this.recommendations;
-            } else if (this.recommendationFilter === 'pending') {
-                return this.recommendations.filter(r => !r.is_visible);
-            } else if (this.recommendationFilter === 'approved') {
-                return this.recommendations.filter(r => r.is_visible);
-            }
-            return this.recommendations;
+             return this.recommendations;
         },
 
         async loadConfig() {
@@ -655,7 +686,8 @@ function adminPanel() {
                 const res = await axios.get('/api/v1/admin/course-recommendations', {
                     params: {
                         page: this.pagination.page,
-                        page_size: this.pagination.pageSize
+                        page_size: this.pagination.pageSize,
+                        status: this.recommendationFilter
                     }
                 });
                 const data = res.data.data;
@@ -670,6 +702,12 @@ function adminPanel() {
             } catch (e) {
                 console.error(e);
             }
+        },
+
+        changeFilter(status) {
+            this.recommendationFilter = status;
+            this.pagination.page = 1;
+            this.loadRecommendations();
         },
 
         changePage(page) {
@@ -781,7 +819,7 @@ function adminPanel() {
 
         formatTime(ts) {
             const date = new Date(ts * 1000);
-            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
         },
 
         async logout() {

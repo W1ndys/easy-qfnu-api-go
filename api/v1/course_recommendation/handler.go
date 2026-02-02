@@ -2,6 +2,7 @@ package course_recommendation
 
 import (
 	"errors"
+	"strconv"
 
 	"github.com/W1ndys/easy-qfnu-api-go/common/response"
 	"github.com/W1ndys/easy-qfnu-api-go/model"
@@ -90,13 +91,21 @@ func Update(c *gin.Context) {
 
 // GetAll 获取所有课程推荐（管理员）
 func GetAll(c *gin.Context) {
-	list, err := services.GetAll()
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("page_size", "9"))
+
+	list, total, err := services.GetAll(page, pageSize)
 	if err != nil {
 		response.Fail(c, "获取失败: "+err.Error())
 		return
 	}
 
-	response.Success(c, list)
+	response.Success(c, gin.H{
+		"list":      list,
+		"total":     total,
+		"page":      page,
+		"page_size": pageSize,
+	})
 }
 
 // Delete 删除课程推荐（管理员）

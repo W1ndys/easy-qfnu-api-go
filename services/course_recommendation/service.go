@@ -132,19 +132,29 @@ func Review(recommendationID int64, isVisible bool) error {
 }
 
 // GetAll 获取所有课程推荐（管理员用，包含不可见的）
-func GetAll() ([]model.CourseRecommendation, error) {
+func GetAll(page, pageSize int) ([]model.CourseRecommendation, int64, error) {
 	db := database.GetCourseRecDB()
 	if db == nil {
-		return nil, errors.New("数据库连接失败")
+		return nil, 0, errors.New("数据库连接失败")
 	}
 
+	// 1. 获取总数
+	var total int64
+	err := db.QueryRow("SELECT COUNT(*) FROM course_recommendations").Scan(&total)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// 2. 分页查询
+	offset := (page - 1) * pageSize
 	rows, err := db.Query(`
 		SELECT id, course_name, teacher_name, recommendation_reason, recommender_nickname, recommendation_time, is_visible, campus, recommendation_year
 		FROM course_recommendations
 		ORDER BY recommendation_time DESC
-	`)
+		LIMIT ? OFFSET ?
+	`, pageSize, offset)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer rows.Close()
 
@@ -158,9 +168,9 @@ func GetAll() ([]model.CourseRecommendation, error) {
 	}
 
 	if list == nil {
-		return []model.CourseRecommendation{}, nil
+		return []model.CourseRecommendation{}, total, nil
 	}
-	return list, nil
+	return list, total, nil
 }
 
 // Delete 删除课程推荐（管理员用）

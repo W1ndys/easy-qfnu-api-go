@@ -319,9 +319,9 @@
                                         <p class="text-[13px] text-[#8E8E93] mt-0.5">
                                             <span x-text="r.teacher_name"></span>
                                             <span class="mx-1">·</span>
-                                            <span x-text="r.campus"></span>
+                                            <span x-text="r.campus || '未知校区'"></span>
                                             <span class="mx-1">·</span>
-                                            <span x-text="r.recommendation_year + '年'"></span>
+                                            <span x-text="r.recommendation_year ? r.recommendation_year + '年' : '未知年份'"></span>
                                         </p>
                                     </div>
                                     <span class="text-[11px] px-2 py-0.5 rounded-full font-medium shrink-0"
@@ -361,6 +361,30 @@
                             </div>
                         </div>
                     </template>
+                </div>
+
+                <!-- 分页控件 -->
+                <div x-show="recommendations.length > 0" class="mt-6 flex items-center justify-between border-t border-[#E5E5EA] pt-4">
+                    <div class="text-sm text-[#8E8E93]">
+                        共 <span x-text="pagination.total"></span> 条记录
+                    </div>
+                    <div class="flex gap-2">
+                        <button @click="changePage(pagination.page - 1)"
+                            :disabled="pagination.page === 1"
+                            class="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            :class="pagination.page === 1 ? 'text-[#8E8E93] bg-[#F2F2F7]' : 'text-[#1C1C1E] hover:bg-[#E5E5EA]'">
+                            上一页
+                        </button>
+                        <span class="px-3 py-1.5 text-sm font-medium text-[#1C1C1E]">
+                            <span x-text="pagination.page"></span> / <span x-text="pagination.totalPages"></span>
+                        </span>
+                        <button @click="changePage(pagination.page + 1)"
+                            :disabled="pagination.page === pagination.totalPages"
+                            class="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            :class="pagination.page === pagination.totalPages ? 'text-[#8E8E93] bg-[#F2F2F7]' : 'text-[#1C1C1E] hover:bg-[#E5E5EA]'">
+                            下一页
+                        </button>
+                    </div>
                 </div>
 
                 <!-- 空状态 -->
@@ -547,6 +571,12 @@ function adminPanel() {
         announcements: [],
         recommendations: [],
         recommendationFilter: 'all',
+        pagination: {
+            page: 1,
+            pageSize: 9,
+            total: 0,
+            totalPages: 1
+        },
         showAddModal: false,
         editingAnnouncement: null,
         editingRecommendation: null,
@@ -622,9 +652,30 @@ function adminPanel() {
 
         async loadRecommendations() {
             try {
-                const res = await axios.get('/api/v1/admin/course-recommendations');
-                this.recommendations = res.data.data || [];
-            } catch (e) {}
+                const res = await axios.get('/api/v1/admin/course-recommendations', {
+                    params: {
+                        page: this.pagination.page,
+                        page_size: this.pagination.pageSize
+                    }
+                });
+                const data = res.data.data;
+                // 兼容旧接口格式（如果是数组则直接赋值，如果是对象则取list）
+                if (Array.isArray(data)) {
+                    this.recommendations = data;
+                } else {
+                    this.recommendations = data.list || [];
+                    this.pagination.total = data.total;
+                    this.pagination.totalPages = Math.ceil(data.total / this.pagination.pageSize) || 1;
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        },
+
+        changePage(page) {
+            if (page < 1 || page > this.pagination.totalPages) return;
+            this.pagination.page = page;
+            this.loadRecommendations();
         },
 
         async updateConfig() {

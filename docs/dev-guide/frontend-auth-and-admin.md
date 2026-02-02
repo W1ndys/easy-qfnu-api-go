@@ -6,19 +6,21 @@
 
 ### 1.1 需求说明
 
-| 功能模块 | 描述 |
-|---------|------|
+| 功能模块         | 描述                                                                       |
+| ---------------- | -------------------------------------------------------------------------- |
 | **前端访问验证** | 用户访问子功能页面时需要输入访问密码，验证通过后才能使用。主页不需要验证。 |
-| **后台管理面板** | 单一管理员通过密码登录，可管理访问密码、公告内容等 |
+| **后台管理面板** | 单一管理员通过密码登录，可管理访问密码、公告内容等                         |
 
 ### 1.2 功能范围
 
 **前端访问验证**：
+
 - 保护范围：子功能页面（成绩查询、课表、考试安排等）
 - 不保护：主页 `/`、数据大屏 `/dashboard`
 - 验证方式：输入访问密码，验证通过后存储 Token
 
 **后台管理面板**：
+
 - 管理员认证：单一管理员，仅需密码登录
 - 访问密码管理：设置/修改前端访问密码
 - 公告管理：增删改查公告，公告显示在每个页面顶部
@@ -32,14 +34,15 @@
 
 当前所有数据存储在 `stats.db`，职责不清晰。重构为：
 
-| 数据库文件 | 用途 | 存储内容 |
-|-----------|------|---------|
+| 数据库文件      | 用途     | 存储内容                             |
+| --------------- | -------- | ------------------------------------ |
 | `data/stats.db` | 统计数据 | API 请求日志、搜索热词、系统运行信息 |
-| `data/app.db` | 应用数据 | 系统配置、公告、管理员信息 |
+| `data/app.db`   | 应用数据 | 系统配置、公告、管理员信息           |
 
 ### 2.2 目录结构重构
 
 **现有结构问题**：
+
 - `common/stats/` 混合了数据库连接和业务逻辑
 - 缺少统一的数据库管理层
 
@@ -107,12 +110,12 @@ CREATE TABLE IF NOT EXISTS system_config (
 
 **配置项说明**：
 
-| key | 说明 | 默认值 |
-|-----|------|--------|
-| `site_access_enabled` | 是否开启访问验证 | `true` |
-| `site_access_password` | 访问密码（bcrypt加密） | - |
-| `admin_password` | 管理员密码（bcrypt加密） | - |
-| `token_expire_hours` | Token 过期时间(小时) | `24` |
+| key                    | 说明                     | 默认值 |
+| ---------------------- | ------------------------ | ------ |
+| `site_access_enabled`  | 是否开启访问验证         | `true` |
+| `site_access_password` | 访问密码（bcrypt加密）   | -      |
+| `admin_password`       | 管理员密码（bcrypt加密） | -      |
+| `token_expire_hours`   | Token 过期时间(小时)     | `24`   |
 
 **公告表**：
 
@@ -135,28 +138,29 @@ CREATE TABLE IF NOT EXISTS announcements (
 
 ### 4.1 站点公共 API `/api/v1/site`
 
-| 方法 | 路径 | 说明 | 认证 |
-|------|------|------|------|
-| POST | `/verify` | 验证访问密码 | 无 |
-| GET | `/announcements` | 获取启用的公告列表 | 无 |
-| GET | `/check-token` | 检查访问 Token 是否有效 | 无 |
+| 方法 | 路径             | 说明                    | 认证 |
+| ---- | ---------------- | ----------------------- | ---- |
+| POST | `/verify`        | 验证访问密码            | 无   |
+| GET  | `/announcements` | 获取启用的公告列表      | 无   |
+| GET  | `/check-token`   | 检查访问 Token 是否有效 | 无   |
 
 ### 4.2 管理后台 API `/api/v1/admin`
 
-| 方法 | 路径 | 说明 | 认证 |
-|------|------|------|------|
-| POST | `/login` | 管理员登录 | 无 |
-| POST | `/logout` | 管理员登出 | 需要 |
-| GET | `/config` | 获取所有配置 | 需要 |
-| PUT | `/config` | 更新配置 | 需要 |
-| GET | `/announcements` | 获取所有公告 | 需要 |
-| POST | `/announcements` | 创建公告 | 需要 |
-| PUT | `/announcements/:id` | 更新公告 | 需要 |
-| DELETE | `/announcements/:id` | 删除公告 | 需要 |
+| 方法   | 路径                 | 说明         | 认证 |
+| ------ | -------------------- | ------------ | ---- |
+| POST   | `/login`             | 管理员登录   | 无   |
+| POST   | `/logout`            | 管理员登出   | 需要 |
+| GET    | `/config`            | 获取所有配置 | 需要 |
+| PUT    | `/config`            | 更新配置     | 需要 |
+| GET    | `/announcements`     | 获取所有公告 | 需要 |
+| POST   | `/announcements`     | 创建公告     | 需要 |
+| PUT    | `/announcements/:id` | 更新公告     | 需要 |
+| DELETE | `/announcements/:id` | 删除公告     | 需要 |
 
 ### 4.3 API 请求/响应格式
 
 **访问验证请求**：
+
 ```json
 POST /api/v1/site/verify
 {
@@ -165,18 +169,20 @@ POST /api/v1/site/verify
 ```
 
 **验证成功响应**：
+
 ```json
 {
-    "code": 200,
-    "message": "success",
-    "data": {
-        "token": "xxx",
-        "expire_at": 1706745600
-    }
+  "code": 200,
+  "message": "success",
+  "data": {
+    "token": "xxx",
+    "expire_at": 1706745600
+  }
 }
 ```
 
 **管理员登录请求**：
+
 ```json
 POST /api/v1/admin/login
 {
@@ -191,6 +197,7 @@ POST /api/v1/admin/login
 ### 5.1 页面路由保护
 
 **需要保护的页面**：
+
 - `/grade` - 成绩查询
 - `/schedule` - 课表查询
 - `/course-plan` - 培养方案
@@ -199,6 +206,7 @@ POST /api/v1/admin/login
 - `/questions` - 题库
 
 **不需要保护的页面**：
+
 - `/` - 主页
 - `/dashboard` - 数据大屏
 
@@ -239,34 +247,40 @@ adminPages.Use(middleware.AdminAuthRequired())
 ## 六、开发阶段划分
 
 ### 阶段一：基础设施搭建
+
 - [ ] 创建 `internal/database/` 目录和数据库管理模块
 - [ ] 创建 `data/app.db` 应用数据库
 - [ ] 创建 `internal/crypto/` 加密工具模块
 - [ ] 创建 `internal/config/` 配置管理模块
 
 ### 阶段二：前端访问验证
+
 - [ ] 创建 `middleware/site_access.go` 访问验证中间件
 - [ ] 创建 `api/v1/site/handler.go` 站点公共 API
 - [ ] 创建 `web/templates/access.html` 访问验证页面
 - [ ] 集成到路由配置
 
 ### 阶段三：管理后台认证
+
 - [ ] 创建 `middleware/admin_auth.go` 管理员认证中间件
 - [ ] 创建 `api/v1/admin/handler.go` 登录/登出 API
 - [ ] 创建 `web/templates/admin/login.html` 登录页面
 
 ### 阶段四：配置管理
+
 - [ ] 创建 `api/v1/admin/config.go` 配置管理 API
 - [ ] 创建 `web/templates/admin/config.html` 配置管理页面
 - [ ] 实现访问密码设置功能
 
 ### 阶段五：公告管理
+
 - [ ] 创建 `api/v1/admin/announcement.go` 公告 CRUD API
 - [ ] 创建 `web/templates/admin/announcements.html` 公告管理页面
 - [ ] 创建 `web/templates/components/announcement.html` 公告展示组件
 - [ ] 在各页面集成公告展示
 
 ### 阶段六：测试与优化
+
 - [ ] 功能测试
 - [ ] 安全性检查
 - [ ] UI/UX 优化
@@ -291,17 +305,18 @@ Token = Base64(Payload) + "." + Signature
 ```
 
 **Payload 内容**：
+
 ```json
 {
-    "type": "site|admin",
-    "exp": 1706745600
+  "type": "site|admin",
+  "exp": 1706745600
 }
 ```
 
-| 字段 | 说明 |
-|------|------|
+| 字段   | 说明                                               |
+| ------ | -------------------------------------------------- |
 | `type` | Token 类型：`site`（访问验证）或 `admin`（管理员） |
-| `exp` | 过期时间（Unix 时间戳） |
+| `exp`  | 过期时间（Unix 时间戳）                            |
 
 ### 8.2 Token 生成流程
 
@@ -384,6 +399,7 @@ func init() {
 ```
 
 **注意事项**：
+
 - 生产环境建议在 `.env` 中配置固定密钥
 - 若未配置，每次重启服务会生成新密钥，导致所有 Token 失效
 

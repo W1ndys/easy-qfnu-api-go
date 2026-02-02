@@ -52,9 +52,9 @@ PORT=8141
 
 | 地址 | 说明 |
 |------|------|
-| `http://localhost:8141/` | Web 首页 |
-| `http://localhost:8141/grade` | 成绩查询页面 |
-| `http://localhost:8141/api/health` | API 健康检查 |
+| `http://127.0.0.1:8141/` | Web 首页 |
+| `http://127.0.0.1:8141/grade` | 成绩查询页面 |
+| `http://127.0.0.1:8141/api/health` | API 健康检查 |
 
 ### 生产环境部署建议
 

@@ -316,7 +316,13 @@
                                 <div class="flex items-start justify-between gap-3 mb-3">
                                     <div>
                                         <h3 class="text-[16px] font-semibold text-[#1C1C1E] line-clamp-1" x-text="r.course_name"></h3>
-                                        <p class="text-[13px] text-[#8E8E93] mt-0.5" x-text="r.teacher_name"></p>
+                                        <p class="text-[13px] text-[#8E8E93] mt-0.5">
+                                            <span x-text="r.teacher_name"></span>
+                                            <span class="mx-1">·</span>
+                                            <span x-text="r.campus"></span>
+                                            <span class="mx-1">·</span>
+                                            <span x-text="r.recommendation_year + '年'"></span>
+                                        </p>
                                     </div>
                                     <span class="text-[11px] px-2 py-0.5 rounded-full font-medium shrink-0"
                                         :class="r.is_visible ? 'bg-[#34C759]/10 text-[#34C759]' : 'bg-[#FF9500]/10 text-[#FF9500]'"
@@ -475,6 +481,22 @@
                         class="w-full bg-[#F2F2F7] border-none rounded-xl px-4 py-3 text-[15px] text-[#1C1C1E] placeholder-[#C7C7CC] focus:bg-white focus:ring-2 focus:ring-[#885021]/20 focus:outline-none transition-all duration-200">
                 </div>
 
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[13px] font-medium text-[#1C1C1E] mb-2">校区</label>
+                        <select x-model="recommendationForm.campus"
+                            class="w-full bg-[#F2F2F7] border-none rounded-xl px-4 py-3 text-[15px] text-[#1C1C1E] focus:bg-white focus:ring-2 focus:ring-[#885021]/20 focus:outline-none transition-all duration-200">
+                            <option value="曲阜">曲阜</option>
+                            <option value="日照">日照</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[13px] font-medium text-[#1C1C1E] mb-2">年份</label>
+                        <input type="text" x-model="recommendationForm.recommendation_year" placeholder="年份"
+                            class="w-full bg-[#F2F2F7] border-none rounded-xl px-4 py-3 text-[15px] text-[#1C1C1E] placeholder-[#C7C7CC] focus:bg-white focus:ring-2 focus:ring-[#885021]/20 focus:outline-none transition-all duration-200">
+                    </div>
+                </div>
+
                 <div>
                     <label class="block text-[13px] font-medium text-[#1C1C1E] mb-2">推荐理由</label>
                     <textarea x-model="recommendationForm.recommendation_reason" placeholder="请输入推荐理由" rows="4"
@@ -529,7 +551,7 @@ function adminPanel() {
         editingAnnouncement: null,
         editingRecommendation: null,
         form: { title: '', content: '', type: 'info', is_active: true },
-        recommendationForm: { course_name: '', teacher_name: '', recommendation_reason: '', recommender_nickname: '', is_visible: false },
+        recommendationForm: { course_name: '', teacher_name: '', recommendation_reason: '', recommender_nickname: '', is_visible: false, campus: '', recommendation_year: '' },
         sidebarOpen: false,
         activeTab: 'config',
         // 记录各 tab 数据是否已加载
@@ -681,13 +703,15 @@ function adminPanel() {
                 teacher_name: r.teacher_name,
                 recommendation_reason: r.recommendation_reason,
                 recommender_nickname: r.recommender_nickname,
-                is_visible: r.is_visible
+                is_visible: r.is_visible,
+                campus: r.campus,
+                recommendation_year: r.recommendation_year
             };
         },
 
         closeRecommendationModal() {
             this.editingRecommendation = null;
-            this.recommendationForm = { course_name: '', teacher_name: '', recommendation_reason: '', recommender_nickname: '', is_visible: false };
+            this.recommendationForm = { course_name: '', teacher_name: '', recommendation_reason: '', recommender_nickname: '', is_visible: false, campus: '', recommendation_year: '' };
         },
 
         async saveRecommendation() {

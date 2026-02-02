@@ -86,11 +86,15 @@
                         <div class="flex justify-between items-start mb-3">
                             <div>
                                 <h3 class="text-[17px] font-semibold text-[#1C1C1E] mb-1" x-html="highlight(item.course_name)"></h3>
-                                <div class="flex items-center text-[13px] text-[#8E8E93]">
-                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                    </svg>
-                                    <span x-html="highlight(item.teacher_name)"></span>
+                                <div class="flex items-center text-[13px] text-[#8E8E93] gap-3">
+                                    <div class="flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                        </svg>
+                                        <span x-html="highlight(item.teacher_name)"></span>
+                                    </div>
+                                    <span class="bg-[#F2F2F7] px-2 py-0.5 rounded text-[11px]" x-text="item.campus"></span>
+                                    <span class="bg-[#F2F2F7] px-2 py-0.5 rounded text-[11px]" x-text="item.recommendation_year + '年'"></span>
                                 </div>
                             </div>
                             <span class="text-[11px] text-[#8E8E93] bg-[#F2F2F7] px-2 py-1 rounded-lg" x-text="formatTime(item.recommendation_time)"></span>
@@ -137,6 +141,25 @@
                     <div>
                         <label class="block text-[15px] font-medium text-[#1C1C1E] mb-2">教师姓名 <span class="text-danger">*</span></label>
                         <input type="text" x-model="form.teacher_name" class="input-field" placeholder="例如：张三">
+                    </div>
+
+                    <!-- 校区和年份 (Responsive Grid) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <!-- 所属校区 -->
+                        <div>
+                            <label class="block text-[15px] font-medium text-[#1C1C1E] mb-2">所属校区 <span class="text-danger">*</span></label>
+                            <select x-model="form.campus" class="input-field appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%20stroke%3D%22%236b7280%22%3E%3Cpath%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22M6%208l4%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25rem_1.25rem] bg-no-repeat bg-[right_0.75rem_center]">
+                                <option value="" disabled selected>请选择校区</option>
+                                <option value="曲阜">曲阜校区</option>
+                                <option value="日照">日照校区</option>
+                            </select>
+                        </div>
+
+                        <!-- 推荐依据年份 -->
+                        <div>
+                            <label class="block text-[15px] font-medium text-[#1C1C1E] mb-2">推荐依据年份 <span class="text-danger">*</span></label>
+                            <input type="text" x-model="form.recommendation_year" class="input-field" placeholder="例如：2023">
+                        </div>
                     </div>
 
                     <!-- 推荐理由 -->
@@ -190,7 +213,9 @@
                     course_name: '',
                     teacher_name: '',
                     recommender_nickname: '',
-                    recommendation_reason: ''
+                    recommendation_reason: '',
+                    campus: '',
+                    recommendation_year: new Date().getFullYear().toString()
                 },
                 submitting: false,
 
@@ -244,6 +269,8 @@
                     // 验证
                     if (!this.form.course_name.trim()) return window.Toast.warning('请输入课程名称');
                     if (!this.form.teacher_name.trim()) return window.Toast.warning('请输入教师姓名');
+                    if (!this.form.campus) return window.Toast.warning('请选择所属校区');
+                    if (!this.form.recommendation_year.trim()) return window.Toast.warning('请输入推荐依据年份');
                     if (!this.form.recommendation_reason.trim()) return window.Toast.warning('请输入推荐理由');
                     if (this.form.recommendation_reason.length > 500) return window.Toast.warning('推荐理由字数过多');
 
@@ -262,7 +289,9 @@
                             course_name: '',
                             teacher_name: '',
                             recommender_nickname: '',
-                            recommendation_reason: ''
+                            recommendation_reason: '',
+                            campus: '',
+                            recommendation_year: new Date().getFullYear().toString()
                         };
 
                         // 2秒后切换回查询页

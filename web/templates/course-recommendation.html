@@ -81,7 +81,7 @@
 
             <!-- 结果列表 -->
             <div class="space-y-4">
-                <template x-for="item in results" :key="item.recommendation_time">
+                <template x-for="(item, index) in results" :key="index">
                     <div class="card hover:shadow-md transition-shadow duration-200">
                         <div class="flex justify-between items-start mb-3">
                             <div>
@@ -93,8 +93,8 @@
                                         </svg>
                                         <span x-html="highlight(item.teacher_name)"></span>
                                     </div>
-                                    <span class="bg-[#F2F2F7] px-2 py-0.5 rounded text-[11px]" x-text="item.campus"></span>
-                                    <span class="bg-[#F2F2F7] px-2 py-0.5 rounded text-[11px]" x-text="item.recommendation_year + '年'"></span>
+                                    <span class="bg-[#F2F2F7] px-2 py-0.5 rounded text-[11px]" x-text="item.campus || '未知校区'"></span>
+                                    <span class="bg-[#F2F2F7] px-2 py-0.5 rounded text-[11px]" x-text="item.recommendation_year ? item.recommendation_year + '年' : '未知年份'"></span>
                                 </div>
                             </div>
                             <span class="text-[11px] text-[#8E8E93] bg-[#F2F2F7] px-2 py-1 rounded-lg" x-text="formatTime(item.recommendation_time)"></span>

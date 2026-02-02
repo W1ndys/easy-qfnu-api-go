@@ -101,7 +101,7 @@
                         </div>
 
                         <div class="flex justify-end items-center">
-                            <span class="text-[12px] text-[#8E8E93]">推荐人：<span x-text="item.recommender_nickname"></span></span>
+                            <span class="text-[12px] text-[#8E8E93]">投稿来自：<span x-text="item.recommender_nickname"></span></span>
                         </div>
                     </div>
                 </template>
@@ -139,12 +139,6 @@
                         <input type="text" x-model="form.teacher_name" class="input-field" placeholder="例如：张三">
                     </div>
 
-                    <!-- 推荐人昵称 -->
-                    <div>
-                        <label class="block text-[15px] font-medium text-[#1C1C1E] mb-2">你的昵称 <span class="text-danger">*</span></label>
-                        <input type="text" x-model="form.recommender_nickname" class="input-field" placeholder="可以是化名">
-                    </div>
-
                     <!-- 推荐理由 -->
                     <div>
                         <label class="block text-[15px] font-medium text-[#1C1C1E] mb-2">推荐理由 <span class="text-danger">*</span></label>
@@ -152,6 +146,12 @@
                         <p class="text-[12px] text-[#8E8E93] mt-1 text-right" :class="form.recommendation_reason.length > 500 ? 'text-danger' : ''">
                             <span x-text="form.recommendation_reason.length"></span>/500
                         </p>
+                    </div>
+
+                    <!-- 投稿来自昵称 -->
+                    <div>
+                        <label class="block text-[15px] font-medium text-[#1C1C1E] mb-2">你的昵称 <span class="text-[#8E8E93] font-normal text-[13px]">(可选)</span></label>
+                        <input type="text" x-model="form.recommender_nickname" class="input-field" placeholder="留空则显示为“匿名”">
                     </div>
 
                     <!-- 提交按钮 -->
@@ -244,9 +244,13 @@
                     // 验证
                     if (!this.form.course_name.trim()) return window.Toast.warning('请输入课程名称');
                     if (!this.form.teacher_name.trim()) return window.Toast.warning('请输入教师姓名');
-                    if (!this.form.recommender_nickname.trim()) return window.Toast.warning('请输入您的昵称');
                     if (!this.form.recommendation_reason.trim()) return window.Toast.warning('请输入推荐理由');
                     if (this.form.recommendation_reason.length > 500) return window.Toast.warning('推荐理由字数过多');
+
+                    // 处理可选昵称
+                    if (!this.form.recommender_nickname.trim()) {
+                        this.form.recommender_nickname = '匿名';
+                    }
 
                     this.submitting = true;
                     try {

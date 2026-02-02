@@ -33,6 +33,7 @@ func InitRouter(webFS embed.FS) *gin.Engine {
 }
 
 func installMiddlewares(r *gin.Engine) {
+	r.Use(middleware.Recovery())
 	r.Use(middleware.RequestLogger())
 	r.Use(middleware.Cors())
 	r.Use(middleware.StatsCollector())

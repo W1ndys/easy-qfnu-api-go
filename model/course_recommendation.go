@@ -30,13 +30,23 @@ type CourseRecommendationRecommendRequest struct {
 	CourseName           string `json:"course_name" binding:"required"`
 	TeacherName          string `json:"teacher_name" binding:"required"`
 	RecommendationReason string `json:"recommendation_reason" binding:"required"`
-	RecommenderNickname  string `json:"recommender_nickname" binding:"required"`
+	RecommenderNickname  string `json:"recommender_nickname"` // 允许为空
 }
 
 // CourseRecommendationReviewRequest 审核请求参数
 type CourseRecommendationReviewRequest struct {
 	RecommendationID int64 `json:"recommendation_id" binding:"required"`
 	IsVisible        bool  `json:"is_visible"`
+}
+
+// CourseRecommendationUpdateRequest 更新请求参数（管理员）
+type CourseRecommendationUpdateRequest struct {
+	RecommendationID     int64  `json:"recommendation_id" binding:"required"`
+	CourseName           string `json:"course_name" binding:"required"`
+	TeacherName          string `json:"teacher_name" binding:"required"`
+	RecommendationReason string `json:"recommendation_reason" binding:"required"`
+	RecommenderNickname  string `json:"recommender_nickname"`
+	IsVisible            bool   `json:"is_visible"`
 }
 
 // CourseRecommendationRecommendResponse 推荐成功响应

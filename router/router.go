@@ -119,6 +119,7 @@ func installAPIRoutes(r *gin.Engine) {
 			// 选课推荐管理
 			authAdmin.GET("/course-recommendations", course_recommendation.GetAll)
 			authAdmin.POST("/course-recommendations/review", course_recommendation.Review)
+			authAdmin.POST("/course-recommendations/update", course_recommendation.Update)
 			authAdmin.POST("/course-recommendations/delete", course_recommendation.Delete)
 		}
 	}

@@ -53,16 +53,55 @@ func Recommend(req model.CourseRecommendationRecommendRequest) (int64, error) {
 		return 0, errors.New("数据库连接失败")
 	}
 
+	nickname := req.RecommenderNickname
+	if nickname == "" {
+		nickname = "匿名"
+	}
+
 	now := time.Now().Unix()
 	_, err := db.Exec(`
 		INSERT INTO course_recommendations (course_name, teacher_name, recommendation_reason, recommender_nickname, recommendation_time, is_visible)
 		VALUES (?, ?, ?, ?, ?, 0)
-	`, req.CourseName, req.TeacherName, req.RecommendationReason, req.RecommenderNickname, now)
+	`, req.CourseName, req.TeacherName, req.RecommendationReason, nickname, now)
 	if err != nil {
 		return 0, err
 	}
 
 	return now, nil
+}
+
+// Update 更新课程推荐信息（管理员用）
+func Update(req model.CourseRecommendationUpdateRequest) error {
+	db := database.GetCourseRecDB()
+	if db == nil {
+		return errors.New("数据库连接失败")
+	}
+
+	nickname := req.RecommenderNickname
+	if nickname == "" {
+		nickname = "匿名"
+	}
+
+	visibleInt := 0
+	if req.IsVisible {
+		visibleInt = 1
+	}
+
+	result, err := db.Exec(`
+		UPDATE course_recommendations
+		SET course_name = ?, teacher_name = ?, recommendation_reason = ?, recommender_nickname = ?, is_visible = ?
+		WHERE id = ?
+	`, req.CourseName, req.TeacherName, req.RecommendationReason, nickname, visibleInt, req.RecommendationID)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, _ := result.RowsAffected()
+	if rowsAffected == 0 {
+		return ErrNotFound
+	}
+
+	return nil
 }
 
 // Review 审核课程推荐（设置是否可见）

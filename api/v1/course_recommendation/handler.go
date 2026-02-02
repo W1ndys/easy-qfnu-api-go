@@ -67,6 +67,27 @@ func Review(c *gin.Context) {
 	response.Success(c, gin.H{"message": "审核成功"})
 }
 
+// Update 更新课程推荐接口（管理员）
+func Update(c *gin.Context) {
+	var req model.CourseRecommendationUpdateRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.FailWithCode(c, response.CodeInvalidParam, "参数错误")
+		return
+	}
+
+	err := services.Update(req)
+	if err != nil {
+		if errors.Is(err, services.ErrNotFound) {
+			response.FailWithCode(c, response.CodeResourceNotFound, "推荐记录不存在")
+			return
+		}
+		response.Fail(c, "更新失败: "+err.Error())
+		return
+	}
+
+	response.Success(c, gin.H{"message": "更新成功"})
+}
+
 // GetAll 获取所有课程推荐（管理员）
 func GetAll(c *gin.Context) {
 	list, err := services.GetAll()

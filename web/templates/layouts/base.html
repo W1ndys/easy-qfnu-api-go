@@ -15,8 +15,8 @@
 </head>
 
 <body class="bg-[#F2F2F7] min-h-screen font-sans">
-    <!-- 公告区域 -->
-    <div x-data="announcementBanner()" x-init="init()">
+    <!-- 公告区域 - 仅前端页面显示 -->
+    <div x-data="announcementBanner()" x-init="init()" x-show="!window.location.pathname.startsWith('/admin')" x-cloak>
         <template x-for="a in announcements" :key="a.id">
             <div class="border-b overflow-hidden"
                 :class="{

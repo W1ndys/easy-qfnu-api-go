@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	_ "modernc.org/sqlite" // 使用项目已有的纯 Go SQLite 驱动
@@ -131,6 +132,32 @@ func main() {
 			newTime = time.Now().Unix()
 		}
 
+		// 4. 年份格式标准化处理
+		yearStr := r.Semester.String
+		// 处理 xxxx-xxxx-1/2 格式
+		if strings.Contains(yearStr, "-") {
+			parts := strings.Split(yearStr, "-")
+			// 如果是 xxxx-xxxx-x 格式 (例如 2023-2024-1)
+			if len(parts) >= 3 {
+				term := parts[len(parts)-1]
+				// 第一学期取第一个年份，第二学期取第二个年份
+				if term == "1" {
+					yearStr = parts[0]
+				} else if term == "2" {
+					// 确保第二个年份存在
+					if len(parts) >= 2 {
+						yearStr = parts[1]
+					}
+				} else {
+					// 其他情况默认取第一个年份
+					yearStr = parts[0]
+				}
+			} else if len(parts) == 2 {
+				// 简单的 xxxx-xxxx 格式，默认取第一个年份
+				yearStr = parts[0]
+			}
+		}
+
 		// 3. 执行插入 (String 字段处理 NULL -> 空字符串)
 		_, err = stmt.Exec(
 			r.CourseName.String,
@@ -139,8 +166,8 @@ func main() {
 			r.Nickname.String,
 			newTime,
 			newIsVisible,
-			r.Campus.String,   // 如果是 NULL，这里会是 ""
-			r.Semester.String, // 旧 semester -> 新 recommendation_year
+			r.Campus.String, // 如果是 NULL，这里会是 ""
+			yearStr,         // 使用处理后的年份
 		)
 
 		if err != nil {

@@ -11,11 +11,13 @@ import (
 )
 
 var (
-	statsDB   *sql.DB
-	appDB     *sql.DB
-	statsPath = "./data/stats.db"
-	appPath   = "./data/app.db"
-	mu        sync.Mutex
+	statsDB       *sql.DB
+	appDB         *sql.DB
+	courseRecDB   *sql.DB
+	statsPath     = "./data/stats.db"
+	appPath       = "./data/app.db"
+	courseRecPath = "./data/course_recommendation.db"
+	mu            sync.Mutex
 )
 
 // GetStatsDB 获取统计数据库连接
@@ -58,6 +60,26 @@ func GetAppDB() *sql.DB {
 	return appDB
 }
 
+// GetCourseRecDB 获取课程推荐数据库连接
+func GetCourseRecDB() *sql.DB {
+	mu.Lock()
+	defer mu.Unlock()
+
+	if courseRecDB != nil {
+		if _, err := os.Stat(courseRecPath); os.IsNotExist(err) {
+			courseRecDB.Close()
+			courseRecDB = nil
+		}
+	}
+
+	if courseRecDB == nil {
+		courseRecDB = openDB(courseRecPath)
+		initCourseRecTables()
+	}
+
+	return courseRecDB
+}
+
 // openDB 打开数据库连接
 func openDB(path string) *sql.DB {
 	dir := filepath.Dir(path)
@@ -90,6 +112,10 @@ func Close() {
 	if appDB != nil {
 		appDB.Close()
 		appDB = nil
+	}
+	if courseRecDB != nil {
+		courseRecDB.Close()
+		courseRecDB = nil
 	}
 }
 
@@ -163,4 +189,27 @@ func initAppTables() {
 			updated_at INTEGER NOT NULL
 		)
 	`)
+}
+
+// initCourseRecTables 初始化课程推荐数据库表
+func initCourseRecTables() {
+	if courseRecDB == nil {
+		return
+	}
+
+	// 课程推荐表
+	courseRecDB.Exec(`
+		CREATE TABLE IF NOT EXISTS course_recommendations (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			course_name TEXT NOT NULL,
+			teacher_name TEXT NOT NULL,
+			recommendation_reason TEXT NOT NULL,
+			recommender_nickname TEXT NOT NULL,
+			recommendation_time INTEGER NOT NULL,
+			is_visible INTEGER DEFAULT 0
+		)
+	`)
+	courseRecDB.Exec(`CREATE INDEX IF NOT EXISTS idx_course_rec_course ON course_recommendations(course_name)`)
+	courseRecDB.Exec(`CREATE INDEX IF NOT EXISTS idx_course_rec_teacher ON course_recommendations(teacher_name)`)
+	courseRecDB.Exec(`CREATE INDEX IF NOT EXISTS idx_course_rec_visible ON course_recommendations(is_visible)`)
 }

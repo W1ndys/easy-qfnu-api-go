@@ -73,7 +73,7 @@ func printBanner(port string) {
 	cyan := color.New(color.FgCyan).SprintFunc()
 
 	log.Println(green("√ 服务器启动成功！"))
-	log.Println(cyan("➜ 接口地址: http://127.0.0.1:" + port + "/api/v1/"))
 	log.Println(cyan("➜ 网页首页: http://127.0.0.1:" + port + "/"))
+	log.Println(cyan("➜ 后台地址: http://127.0.0.1:" + port + "/admin"))
 	log.Println(red("! 注意: 请勿关闭此窗口"))
 }

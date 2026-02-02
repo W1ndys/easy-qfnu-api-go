@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/W1ndys/easy-qfnu-api-go/api/v1/admin"
+	course_recommendation "github.com/W1ndys/easy-qfnu-api-go/api/v1/course_recommendation"
 	"github.com/W1ndys/easy-qfnu-api-go/api/v1/questions"
 	"github.com/W1ndys/easy-qfnu-api-go/api/v1/site"
 	"github.com/W1ndys/easy-qfnu-api-go/api/v1/stats"
@@ -70,6 +71,13 @@ func installAPIRoutes(r *gin.Engine) {
 			siteGroup.GET("/check-token", site.CheckToken)
 			siteGroup.GET("/announcements", site.GetAnnouncements)
 		}
+
+		// 选课推荐公开接口
+		courseRecGroup := apiV1.Group("/course-recommendation")
+		{
+			courseRecGroup.GET("/query", course_recommendation.Query)
+			courseRecGroup.POST("/recommend", course_recommendation.Recommend)
+		}
 	}
 
 	// 【受保护接口组】 (Protected)
@@ -107,6 +115,11 @@ func installAPIRoutes(r *gin.Engine) {
 			authAdmin.POST("/announcements", admin.CreateAnnouncement)
 			authAdmin.POST("/announcements/:id/update", admin.UpdateAnnouncement)
 			authAdmin.POST("/announcements/:id/delete", admin.DeleteAnnouncement)
+
+			// 选课推荐管理
+			authAdmin.GET("/course-recommendations", course_recommendation.GetAll)
+			authAdmin.POST("/course-recommendations/review", course_recommendation.Review)
+			authAdmin.POST("/course-recommendations/delete", course_recommendation.Delete)
 		}
 	}
 }
@@ -170,6 +183,9 @@ func installStaticRoutes(r *gin.Engine, webFS embed.FS) {
 		})
 		protected.GET("/questions", func(c *gin.Context) {
 			c.HTML(http.StatusOK, "questions.html", nil)
+		})
+		protected.GET("/course-recommendation", func(c *gin.Context) {
+			c.HTML(http.StatusOK, "course-recommendation.html", nil)
 		})
 	}
 }

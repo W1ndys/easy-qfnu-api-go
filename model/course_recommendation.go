@@ -9,6 +9,8 @@ type CourseRecommendation struct {
 	RecommenderNickname  string `json:"recommender_nickname"`
 	RecommendationTime   int64  `json:"recommendation_time"`
 	IsVisible            bool   `json:"is_visible"`
+	Campus               string `json:"campus"`              // 校区：曲阜/日照
+	RecommendationYear   string `json:"recommendation_year"` // 推荐依据年份
 }
 
 // CourseRecommendationPublic 对外展示的课程推荐（不包含 is_visible 字段）
@@ -18,6 +20,8 @@ type CourseRecommendationPublic struct {
 	RecommendationReason string `json:"recommendation_reason"`
 	RecommenderNickname  string `json:"recommender_nickname"`
 	RecommendationTime   int64  `json:"recommendation_time"`
+	Campus               string `json:"campus"`
+	RecommendationYear   string `json:"recommendation_year"`
 }
 
 // CourseRecommendationQueryRequest 查询请求参数
@@ -31,6 +35,8 @@ type CourseRecommendationRecommendRequest struct {
 	TeacherName          string `json:"teacher_name" binding:"required"`
 	RecommendationReason string `json:"recommendation_reason" binding:"required"`
 	RecommenderNickname  string `json:"recommender_nickname"` // 允许为空
+	Campus               string `json:"campus" binding:"required"`
+	RecommendationYear   string `json:"recommendation_year" binding:"required"`
 }
 
 // CourseRecommendationReviewRequest 审核请求参数
@@ -47,6 +53,8 @@ type CourseRecommendationUpdateRequest struct {
 	RecommendationReason string `json:"recommendation_reason" binding:"required"`
 	RecommenderNickname  string `json:"recommender_nickname"`
 	IsVisible            bool   `json:"is_visible"`
+	Campus               string `json:"campus" binding:"required"`
+	RecommendationYear   string `json:"recommendation_year" binding:"required"`
 }
 
 // CourseRecommendationRecommendResponse 推荐成功响应

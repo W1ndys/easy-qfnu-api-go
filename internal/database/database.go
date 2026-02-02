@@ -206,10 +206,26 @@ func initCourseRecTables() {
 			recommendation_reason TEXT NOT NULL,
 			recommender_nickname TEXT NOT NULL,
 			recommendation_time INTEGER NOT NULL,
-			is_visible INTEGER DEFAULT 0
+			is_visible INTEGER DEFAULT 0,
+			campus TEXT DEFAULT '',
+			recommendation_year TEXT DEFAULT ''
 		)
 	`)
 	courseRecDB.Exec(`CREATE INDEX IF NOT EXISTS idx_course_rec_course ON course_recommendations(course_name)`)
 	courseRecDB.Exec(`CREATE INDEX IF NOT EXISTS idx_course_rec_teacher ON course_recommendations(teacher_name)`)
 	courseRecDB.Exec(`CREATE INDEX IF NOT EXISTS idx_course_rec_visible ON course_recommendations(is_visible)`)
+
+	// 简单的迁移逻辑：检查新字段是否存在，不存在则添加
+	var count int
+	// 检查 campus
+	err := courseRecDB.QueryRow("SELECT COUNT(*) FROM pragma_table_info('course_recommendations') WHERE name='campus'").Scan(&count)
+	if err == nil && count == 0 {
+		courseRecDB.Exec("ALTER TABLE course_recommendations ADD COLUMN campus TEXT DEFAULT ''")
+	}
+
+	// 检查 recommendation_year
+	err = courseRecDB.QueryRow("SELECT COUNT(*) FROM pragma_table_info('course_recommendations') WHERE name='recommendation_year'").Scan(&count)
+	if err == nil && count == 0 {
+		courseRecDB.Exec("ALTER TABLE course_recommendations ADD COLUMN recommendation_year TEXT DEFAULT ''")
+	}
 }

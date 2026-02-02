@@ -92,9 +92,10 @@ func Update(c *gin.Context) {
 // GetAll 获取所有课程推荐（管理员）
 func GetAll(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
-	pageSize, _ := strconv.Atoi(c.DefaultQuery("page_size", "9"))
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("page_size", "6"))
+	status := c.DefaultQuery("status", "pending")
 
-	list, total, err := services.GetAll(page, pageSize)
+	list, total, err := services.GetAll(page, pageSize, status)
 	if err != nil {
 		response.Fail(c, "获取失败: "+err.Error())
 		return

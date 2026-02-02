@@ -4,6 +4,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/W1ndys/easy-qfnu-api-go/common/notify"
 	"github.com/W1ndys/easy-qfnu-api-go/internal/database"
 	"github.com/W1ndys/easy-qfnu-api-go/model"
 )
@@ -66,6 +67,9 @@ func Recommend(req model.CourseRecommendationRecommendRequest) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
+
+	// 发送飞书通知
+	notify.NotifyNewRecommendation(req.CourseName, req.TeacherName, nickname, req.RecommendationReason)
 
 	return now, nil
 }

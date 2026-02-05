@@ -47,8 +47,19 @@ func Set(key, value string) error {
 
 // IsSiteAccessEnabled 是否开启访问验证
 func IsSiteAccessEnabled() bool {
+	// 1. 如果没设置密码，视为无需验证
+	if Get(KeySiteAccessPassword) == "" {
+		return false
+	}
+
+	// 2. 检查开关状态
 	value := Get(KeySiteAccessEnabled)
-	return value != "false"
+	// 如果没初始化（为空）或明确关闭（false），视为无需验证
+	if value == "" || value == "false" {
+		return false
+	}
+
+	return true
 }
 
 // GetTokenExpireHours 获取 Token 过期时间（小时）
